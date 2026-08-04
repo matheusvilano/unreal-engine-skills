@@ -122,6 +122,7 @@ Status: ✅ built · 🟡 planned. (Planned skills are tracked as tasks and buil
 - ✅ `plugins-and-modules` — creating and structuring plugins
 - ✅ `automation-and-testing` — automation specs, functional tests
 - ✅ `profiling-and-optimization` — Unreal Insights, `stat` commands, memory
+- ✅ `game-thread-performance` — game-thread budgets, FPS impact, optimization levers
 - ✅ `packaging-and-deployment` — cooking, packaging, platforms
 - ✅ `debugging-techniques` — debugger, Gameplay Debugger, Visual Logger
 
