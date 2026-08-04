@@ -12,7 +12,7 @@ description: Persist and restore game data in Unreal C++ using the SaveGame syst
   multiple save slots or user profiles, serializing dynamic actor state, migrating old saves, or
   troubleshooting missing fields and null returns on load.
 metadata:
-  engine-version: "5.7"
+  engine-version: "5.8"
   category: systems
 ---
 
@@ -164,7 +164,7 @@ MySaveGame->DynamicActorData = ActorBytes; // store in the USaveGame
 See [references/serializing-actor-state.md](references/serializing-actor-state.md) for the
 full multi-actor pattern, spawn/restore loop, and gotchas.
 
-## Per-player saves — ULocalPlayerSaveGame (UE 5.4+)
+## Per-player saves — ULocalPlayerSaveGame (UE 5.3+)
 
 `ULocalPlayerSaveGame` (also in `SaveGame.h`) extends `USaveGame` with built-in versioning,
 `HandlePostLoad`/`HandlePreSave`/`HandlePostSave` hooks, and synchronous/async helpers tied to a
@@ -183,7 +183,7 @@ ULocalPlayerSaveGame::AsyncLoadOrCreateSaveGameForLocalPlayer(
     FOnLocalPlayerSaveGameLoaded::CreateUObject(this, &AMyHUD::OnPlayerSaveLoaded));
 ```
 
-Declared in `Runtime/Engine/Classes/GameFramework/SaveGame.h`:46-226.
+Declared in `Runtime/Engine/Classes/GameFramework/SaveGame.h`:47-226.
 
 ## Versioning & migration
 
@@ -236,8 +236,9 @@ void UMySaveGame::PostLoad()
 
 ## Version notes
 
-- `ULocalPlayerSaveGame` and `UAsyncActionHandleSaveGame` arrived in UE 5.4+. Earlier code uses
-  only `USaveGame` + the `UGameplayStatics` free functions.
+- `ULocalPlayerSaveGame` arrived in UE 5.3 (it lives in `SaveGame.h`, not its own header);
+  `UAsyncActionHandleSaveGame` is much older (UE 4.x). Earlier code uses only `USaveGame` +
+  the `UGameplayStatics` free functions.
 - `SaveGameToMemory` / `LoadGameFromMemory` / `SaveDataToSlot` / `LoadDataFromSlot` are
   available as of UE 5.3 for in-memory and two-phase save flows.
 - The `ISaveGameSystem` platform layer is stable across UE5; on PC it writes `.sav` files to
@@ -245,29 +246,29 @@ void UMySaveGame::PostLoad()
 
 ## References & source material
 
-Engine source (UE 5.7, under `Engine/Source/`):
+Engine source (UE 5.8, under `Engine/Source/`):
 - `Runtime/Engine/Classes/GameFramework/SaveGame.h` — `USaveGame` (abstract, `Blueprintable`);
-  `ULocalPlayerSaveGame` with versioning hooks:46-226.
-- `Runtime/Engine/Classes/Kismet/GameplayStatics.h` — `CreateSaveGameObject`:1125,
-  `SaveGameToMemory`:1135, `SaveDataToSlot`:1144, `AsyncSaveGameToSlot`:1156,
-  `SaveGameToSlot`:1168, `DoesSaveGameExist`:1176, `LoadGameFromMemory`:1183,
-  `LoadDataFromSlot`:1192, `AsyncLoadGameFromSlot`:1203, `LoadGameFromSlot`:1212,
-  `DeleteGameInSlot`:1232. Delegates `FAsyncSaveGameToSlotDelegate` /
+  `ULocalPlayerSaveGame` with versioning hooks:47-226.
+- `Runtime/Engine/Classes/Kismet/GameplayStatics.h` — `CreateSaveGameObject`:1124,
+  `SaveGameToMemory`:1134, `SaveDataToSlot`:1143, `AsyncSaveGameToSlot`:1155,
+  `SaveGameToSlot`:1167, `DoesSaveGameExist`:1175, `LoadGameFromMemory`:1182,
+  `LoadDataFromSlot`:1191, `AsyncLoadGameFromSlot`:1202, `LoadGameFromSlot`:1211,
+  `DeleteGameInSlot`:1231. Delegates `FAsyncSaveGameToSlotDelegate` /
   `FAsyncLoadGameFromSlotDelegate`:43-47.
 - `Runtime/Engine/Public/SaveGameSystem.h` — `ISaveGameSystem` interface: `SaveGame`,
   `LoadGame`, `DeleteGame`, `DoesSaveGameExist`, async variants; `FGenericSaveGameSystem`
   (writes `Saved/SaveGames/<Name>.sav`).
-- `Runtime/CoreUObject/Public/UObject/ObjectMacros.h` — `CPF_SaveGame` flag:443;
-  `SaveGame` specifier keyword:1152 — gates serialization when `ArIsSaveGame` is set.
-- `Runtime/Core/Public/Serialization/Archive.h` — `ArIsSaveGame` bitfield:933;
-  `IsSaveGame()` accessor:623-626.
+- `Runtime/CoreUObject/Public/UObject/ObjectMacros.h` — `CPF_SaveGame` flag:458;
+  `SaveGame` specifier keyword:1194 — gates serialization when `ArIsSaveGame` is set.
+- `Runtime/Core/Public/Serialization/Archive.h` — `ArIsSaveGame` bitfield:942;
+  `IsSaveGame()` accessor:659-662.
 - `Runtime/CoreUObject/Public/Serialization/ObjectAndNameAsStringProxyArchive.h` —
   `FObjectAndNameAsStringProxyArchive`: serializes `UObject*` and `FName` as strings; wrap
   around `FMemoryWriter`/`FMemoryReader` for actor state capture.
 - `Runtime/Core/Public/Serialization/MemoryWriter.h` — `FMemoryWriter` (32-bit index):100-106.
 - `Runtime/Core/Public/Serialization/MemoryReader.h` — `FMemoryReader`:16-69.
 
-Official docs (UE 5.7, verified live):
+Official docs (UE 5.8, verified live):
 - Saving and Loading Your Game —
   <https://dev.epicgames.com/documentation/unreal-engine/saving-and-loading-your-game-in-unreal-engine>
 

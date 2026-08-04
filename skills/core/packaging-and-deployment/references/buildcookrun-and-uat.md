@@ -1,7 +1,7 @@
 # BuildCookRun & UAT — full reference
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the Unreal Automation Tool structure,
-BuildCookRun stages, flag reference, and CI pipeline patterns. Grounded in UE 5.7
+BuildCookRun stages, flag reference, and CI pipeline patterns. Grounded in UE 5.8
 (`Engine/Source/Programs/AutomationTool/Scripts/BuildCookRun.Automation.cs`) and the
 official
 [Build Operations: Cook, Package, Deploy, and Run](https://dev.epicgames.com/documentation/unreal-engine/build-operations-cooking-packaging-deploying-and-running-projects-in-unreal-engine)

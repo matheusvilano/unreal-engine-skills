@@ -15,7 +15,7 @@ description: Build game UI in Unreal — UMG user widgets (UUserWidget) with the
   handling button/input events, choosing UMG vs Slate vs CommonUI, debugging BindWidget name
   mismatches, optimizing slow UI, or architecting screen flow for a production game.
 metadata:
-  engine-version: "5.7"
+  engine-version: "5.8"
   category: ui
 ---
 
@@ -48,7 +48,7 @@ Underneath sits **Slate**, the lower-level C++ UI framework. Prefer UMG for game
 
 ## UUserWidget lifecycle
 
-Declare in `UserWidget.h`:1574-1578.
+Declare in `UserWidget.h`:1582-1586.
 
 | Callback | When | Put here |
 |---|---|---|
@@ -194,7 +194,7 @@ void AMyPlayerController::HideHUD()
 }
 ```
 
-- `CreateWidget` is a templated free function (`UserWidget.h`:1811); it accepts a `UWorld*`,
+- `CreateWidget` is a templated free function (`UserWidget.h`:1819); it accepts a `UWorld*`,
   `APlayerController*`, `UGameInstance*`, `UWidget*`, or `UWidgetTree*` as owner.
 - Hold widget pointers in a `UPROPERTY()` — without it the GC destroys the widget even if it
   is displayed (`memory-and-gc`).
@@ -206,7 +206,7 @@ void AMyPlayerController::HideHUD()
 |---|---|
 | **Push setters** (recommended) | Call `SetScore()`/`SetHealthPercent()` from gameplay code when data changes — zero per-frame cost. |
 | **UMG Property Binding** (legacy) | A function returning a value bound in the editor; re-evaluates every frame — avoid for many widgets. |
-| **MVVM Viewmodel plugin** | Declare `UMVVMViewModelBase` with `FieldNotify` properties; view bindings update only on change. Best for larger data-driven UIs (UE 5.1+, still Beta in 5.7). |
+| **MVVM Viewmodel plugin** | Declare `UMVVMViewModelBase` with `FieldNotify` properties; view bindings update only on change. Best for larger data-driven UIs (UE 5.1+, still Beta in 5.8). |
 
 Epic's hard rule: **never raw property bindings** — they poll every frame per widget.
 Drive updates from gameplay delegates, and pull initial state once in `NativeConstruct`.
@@ -247,7 +247,7 @@ The rules agents most often need — deep dive with engine citations in
 
 ## UWidgetComponent — 3D in-world widgets
 
-`UWidgetComponent` (`WidgetComponent.h`:94) is a `UMeshComponent` that renders a
+`UWidgetComponent` (`WidgetComponent.h`:95) is a `UMeshComponent` that renders a
 `UUserWidget` onto a render target, then displays it on a plane or cylinder in 3D space.
 
 ```cpp
@@ -270,7 +270,7 @@ For player interaction with 3D widgets, pair with `UWidgetInteractionComponent`.
 
 The **CommonUI** plugin (`Engine/Plugins/Runtime/CommonUI/`) builds on UMG for structured,
 multiplatform UI:
-- **`UCommonUserWidget`** — `UUserWidget` + input-action binding (`CommonUserWidget.h`:21).
+- **`UCommonUserWidget`** — `UUserWidget` + input-action binding (`CommonUserWidget.h`:33).
 - **`UCommonActivatableWidget`** — adds activate/deactivate semantics and a back-navigation
   stack; the widget can turn on/off without being removed from the hierarchy
   (`CommonActivatableWidget.h`:43).
@@ -315,8 +315,8 @@ public:
 ```
 
 Core Slate types:
-- `SWidget` (`SlateCore/Public/Widgets/SWidget.h`) — base; pure abstract (`OnPaint`:1650,
-  `ComputeDesiredSize`:731, `GetChildren`:856).
+- `SWidget` (`SlateCore/Public/Widgets/SWidget.h`) — base; pure abstract (`OnPaint`:1771,
+  `ComputeDesiredSize`:774, `GetChildren`:899).
 - `SCompoundWidget` (`SCompoundWidget.h`) — single `ChildSlot`; base for most authored widgets.
 - `SLeafWidget` — no children; for custom-drawn leaf elements.
 - `SNew(WidgetType)` / `SAssignNew(Ptr, WidgetType)` — declarative construction macros
@@ -360,47 +360,47 @@ For game UI, stay in UMG/CommonUI — Slate skips `UPROPERTY`/GC and needs more 
   settings are correct; `EWidgetSpace::Screen` ignores world occlusion.
 - **`NativeTick` never called** — `UUserWidget` has `DisableNativeTick` by default; the tick
   only runs if you override `NativeTick` and the widget has latent actions or Blueprint tick
-  is set to `Auto` (`EWidgetTickFrequency`:`UserWidget.h`:120).
+  is set to `Auto` (`EWidgetTickFrequency`:`UserWidget.h`:117).
 
 ## Version notes
 
 - `RemoveFromViewport` deprecated in 5.1; replaced by `RemoveFromParent` (from `UWidget`).
 - `UTextBlock`/`UButton` direct property access deprecated in 5.1/5.2 respectively; use
   getter/setter methods (`GetText()`/`SetText()`, `GetStyle()`/`SetStyle()`).
-- UMG Viewmodel (MVVM) plugin available since 5.1, Beta in 5.7; stable enough for production
-  with care.
+- UMG Viewmodel (MVVM) plugin available since 5.1, still Beta in 5.8; stable enough for
+  production with care.
 - CommonUI ships in engine and is stable; Lyra uses it as the canonical game UI reference.
 
 ## References & source material
 
-Engine source (UE 5.7, under `Engine/Source/`):
-- `Runtime/UMG/Public/Blueprint/UserWidget.h` — `UUserWidget` UCLASS:282,
-  `AddToViewport`:345, `AddToPlayerScreen`:354, `RemoveFromViewport` (deprecated 5.1):359,
-  `NativeOnInitialized`:1574, `NativePreConstruct`:1575, `NativeConstruct`:1576,
-  `NativeDestruct`:1577, `NativeTick`:1578, `CreateWidgetInstance` (backing `CreateWidget`):1462-1466,
-  `EWidgetTickFrequency`:120.
-- `Runtime/UMG/Public/Blueprint/WidgetTree.h` — `UWidgetTree`, `RootWidget`:142,
-  `ConstructWidget<T>`:102, `ForEachWidget`:74, `FindWidget`:30.
-- `Runtime/UMG/Public/Components/Widget.h` — `UWidget` UCLASS:215,
-  `BindWidget`/`BindWidgetOptional` metadata enum:68-74.
+Engine source (UE 5.8, under `Engine/Source/`):
+- `Runtime/UMG/Public/Blueprint/UserWidget.h` — `UUserWidget` UCLASS:280,
+  `AddToViewport`:342, `AddToPlayerScreen`:351, `RemoveFromViewport` (deprecated 5.1):358,
+  `NativeOnInitialized`:1582, `NativePreConstruct`:1583, `NativeConstruct`:1584,
+  `NativeDestruct`:1585, `NativeTick`:1586, `CreateWidgetInstance` (backing `CreateWidget`):1470-1474,
+  `EWidgetTickFrequency`:117.
+- `Runtime/UMG/Public/Blueprint/WidgetTree.h` — `UWidgetTree`, `RootWidget`:150,
+  `ConstructWidget<T>`:106, `ForEachWidget`:78, `FindWidget`:34.
+- `Runtime/UMG/Public/Components/Widget.h` — `UWidget` UCLASS:216,
+  `BindWidget`/`BindWidgetOptional` metadata enum:69-74.
 - `Runtime/UMG/Public/Components/Button.h` — `UButton`:32, `OnClicked` delegate:76,
-  `OnPressed`:80, `OnReleased`:83, `SetStyle`:117, `GetStyle`:119.
-- `Runtime/UMG/Public/Components/TextBlock.h` — `UTextBlock`:22, `SetText`/`GetText` (via
-  Getter/Setter specifiers):30.
+  `OnPressed`:80, `OnReleased`:84, `SetStyle`:117, `GetStyle`:119.
+- `Runtime/UMG/Public/Components/TextBlock.h` — `UTextBlock`:23, `SetText`/`GetText` (via
+  Getter/Setter specifiers):31.
 - `Runtime/UMG/Public/Components/PanelWidget.h` — `UPanelWidget`:14, `AddChild`:59,
   `GetChildAt`:36, `GetChildrenCount`:28.
-- `Runtime/UMG/Public/Components/WidgetComponent.h` — `UWidgetComponent`:94,
-  `EWidgetSpace`:24, `GetWidget`:206, `SetWidget`:213, `SetWidgetClass`:337.
-- `Runtime/SlateCore/Public/Widgets/SWidget.h` — `SWidget`, `ComputeDesiredSize`:731,
-  `GetChildren`:856, `OnPaint`:1650.
+- `Runtime/UMG/Public/Components/WidgetComponent.h` — `UWidgetComponent`:95,
+  `EWidgetSpace`:25, `GetWidget`:207, `SetWidget`:214, `SetWidgetClass`:338.
+- `Runtime/SlateCore/Public/Widgets/SWidget.h` — `SWidget`, `ComputeDesiredSize`:774,
+  `GetChildren`:899, `OnPaint`:1771.
 - `Runtime/SlateCore/Public/Widgets/SCompoundWidget.h` — `SCompoundWidget`:21, `ChildSlot`:113.
 - `Runtime/SlateCore/Public/Widgets/DeclarativeSyntaxSupport.h` — `SNew`:37, `SAssignNew`:41.
 - `Engine/Plugins/Runtime/CommonUI/Source/CommonUI/Public/CommonUserWidget.h` —
-  `UCommonUserWidget`:21.
+  `UCommonUserWidget`:33.
 - `Engine/Plugins/Runtime/CommonUI/Source/CommonUI/Public/CommonActivatableWidget.h` —
   `UCommonActivatableWidget`:43, `ActivateWidget`:52, `DeactivateWidget`:55.
 
-Official docs (UE 5.7, verified):
+Official docs (UE 5.8, verified):
 - Creating User Interfaces —
   <https://dev.epicgames.com/documentation/unreal-engine/creating-user-interfaces-with-umg-and-slate-in-unreal-engine>
 - Slate UI Framework —

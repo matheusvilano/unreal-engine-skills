@@ -1,6 +1,6 @@
 # DrawDebug helpers and console commands — full reference
 
-Deep dive for [../SKILL.md](../SKILL.md). Grounded in UE 5.7
+Deep dive for [../SKILL.md](../SKILL.md). Grounded in UE 5.8
 (`Engine/Source/Runtime/Engine/Public/DrawDebugHelpers.h` and
 `Engine/Source/Runtime/Engine/Classes/Engine/Engine.h`).
 
@@ -68,9 +68,9 @@ if (GEngine)
 }
 ```
 
-Source: `Runtime/Engine/Classes/Engine/Engine.h` — `AddOnScreenDebugMessage` (uint64 key):2138,
-`AddOnScreenDebugMessage` (int32 key):2141, `ClearOnScreenDebugMessages`:2147,
-`RemoveOnScreenDebugMessage`:2150.
+Source: `Runtime/Engine/Classes/Engine/Engine.h` — `AddOnScreenDebugMessage` (uint64 key):2197,
+`AddOnScreenDebugMessage` (int32 key):2200, `ClearOnScreenDebugMessages`:2206,
+`RemoveOnScreenDebugMessage`:2209.
 
 Key rules:
 - `Key = INDEX_NONE` appends a new entry every call — suitable for one-shot events, not for

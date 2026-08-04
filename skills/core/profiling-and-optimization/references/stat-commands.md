@@ -1,7 +1,7 @@
 # Stat commands — full reference
 
 Deep dive for [../SKILL.md](../SKILL.md). Full command table, reading `stat unit`,
-custom stat groups, and stat file capture. Grounded in UE 5.7 source
+custom stat groups, and stat file capture. Grounded in UE 5.8 source
 (`Engine/Source/Runtime/Core/Public/Stats/Stats.h`) and the official
 [Stat Commands](https://dev.epicgames.com/documentation/unreal-engine/stat-commands-in-unreal-engine)
 and [Stats System Overview](https://dev.epicgames.com/documentation/unreal-engine/unreal-engine-stats-system-overview)
@@ -100,14 +100,14 @@ Macro reference (all in `Stats/Stats.h`):
 
 | Macro | Line | Purpose |
 |---|---|---|
-| `DECLARE_STATS_GROUP` | 225 | Group enabled by default |
-| `DECLARE_STATS_GROUP_VERBOSE` | 231 | Group disabled by default |
-| `DECLARE_CYCLE_STAT` | 146 | Cycle counter, file-scoped |
-| `DECLARE_CYCLE_STAT_EXTERN` | 187 | Cycle counter, multi-file |
-| `SCOPE_CYCLE_COUNTER` | 245 | Use a declared cycle stat |
-| `CONDITIONAL_SCOPE_CYCLE_COUNTER` | 251 | Conditional use |
-| `DECLARE_SCOPE_CYCLE_COUNTER` | 237 | Declare + use in one function |
-| `QUICK_SCOPE_CYCLE_COUNTER` | 242 | Temporary, no prior declaration |
+| `DECLARE_STATS_GROUP` | 209 | Group enabled by default |
+| `DECLARE_STATS_GROUP_VERBOSE` | 215 | Group disabled by default |
+| `DECLARE_CYCLE_STAT` | 130 | Cycle counter, file-scoped |
+| `DECLARE_CYCLE_STAT_EXTERN` | 171 | Cycle counter, multi-file |
+| `SCOPE_CYCLE_COUNTER` | 229 | Use a declared cycle stat |
+| `CONDITIONAL_SCOPE_CYCLE_COUNTER` | 235 | Conditional use |
+| `DECLARE_SCOPE_CYCLE_COUNTER` | 221 | Declare + use in one function |
+| `QUICK_SCOPE_CYCLE_COUNTER` | 226 | Temporary, no prior declaration |
 
 ## Stat file capture (legacy)
 

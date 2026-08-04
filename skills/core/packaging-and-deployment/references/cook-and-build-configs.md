@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the cook pipeline internals, cook rules,
 what the configurations actually control, shader sharing, iterative cook, and the cook
-commandlet flags. Grounded in UE 5.7
+commandlet flags. Grounded in UE 5.8
 (`Engine/Source/Developer/DeveloperToolSettings/Classes/Settings/ProjectPackagingSettings.h`
 and `Engine/Source/Programs/UnrealBuildTool/Configuration/UEBuildTarget.cs`) and the
 official
@@ -33,10 +33,11 @@ Cook rules are attached to primary assets via the Asset Manager (`FPrimaryAssetR
 | Rule | Behavior |
 |---|---|
 | `Unknown` | Follow reference graph (default for most assets) |
-| `AlwaysCook` | Force-cook even if no runtime reference exists |
-| `AlwaysCookAndNeverBundle` | Always cook but never put into a bundle/chunk |
-| `NeverCook` | Exclude from the cook even if referenced |
-| `DevelopmentCook` | Include only in non-Shipping cooks |
+| `AlwaysCook` | Force-cook in both development and production, even with no runtime reference |
+| `NeverCook` | Exclude from the cook even if referenced (error if something depends on it) |
+| `ProductionNeverCook` (legacy name `DevelopmentCook`) | Cook in development if referenced; never in production builds |
+| `DevelopmentAlwaysProductionNeverCook` (legacy `DevelopmentAlwaysCook`) | Always cook in development; never in production |
+| `DevelopmentAlwaysProductionUnknownCook` | Always cook in development; follow references in production |
 
 Set via `DefaultGame.ini`:
 
@@ -50,7 +51,7 @@ apply the same logic at directory granularity without touching the Asset Manager
 
 ## Build configuration details
 
-`UnrealTargetConfiguration` (source: `UEBuildTarget.cs`:1066) maps to compiler flags
+`UnrealTargetConfiguration` (source: `UEBuildTarget.cs`:1147) maps to compiler flags
 and engine preprocessor macros:
 
 **`Debug`** — no optimization (`/Od` on MSVC), full debug info. Both engine and game

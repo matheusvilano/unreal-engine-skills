@@ -10,7 +10,7 @@ description: Animate skeletal meshes in Unreal using the AnimInstance / Animatio
   gameplay events at precise animation frames (notifies), switching animation sets at
   runtime, or integrating the Pose Search / Motion Warping plugins.
 metadata:
-  engine-version: "5.7"
+  engine-version: "5.8"
   category: animation
 ---
 
@@ -275,50 +275,50 @@ The linked AnimBP class must implement the same `UAnimLayerInterface` interface 
 
 ## References & source material
 
-Engine source (UE 5.7):
-- `Runtime/Engine/Classes/Animation/AnimInstance.h` — `UAnimInstance`:352,
-  `NativeInitializeAnimation`:1372, `NativeUpdateAnimation`:1375,
-  `NativeThreadSafeUpdateAnimation`:1378, `NativePostEvaluateAnimation`:1380,
-  `NativeBeginPlay`:1391, `Montage_Play`:613, `Montage_Stop`:626,
-  `Montage_JumpToSection`:650, `GetCurrentActiveMontage`:741,
-  `OnMontageBlendingOut`:745, `OnMontageEnded`:757, `Montage_SetEndDelegate`:771,
-  `TryGetPawnOwner`:452, `GetOwningActor`:533, `GetOwningComponent`:537,
-  `LinkAnimClassLayers`:860, `UnlinkAnimClassLayers`:871,
-  `GetLinkedAnimLayerInstanceByClass`:893, `bUseMultiThreadedAnimationUpdate`:376.
-- `Runtime/Engine/Classes/Animation/AnimMontage.h` — `UAnimMontage`:621,
-  `FCompositeSection`:37, `FSlotAnimationTrack`:83, `BlendIn`:637, `BlendOut`:646,
-  `CompositeSections`:684, `SlotAnimTracks`:688.
+Engine source (UE 5.8):
+- `Runtime/Engine/Classes/Animation/AnimInstance.h` — `UAnimInstance`:358,
+  `NativeInitializeAnimation`:1436, `NativeUpdateAnimation`:1439,
+  `NativeThreadSafeUpdateAnimation`:1442, `NativePostEvaluateAnimation`:1444,
+  `NativeBeginPlay`:1457, `Montage_Play`:626, `Montage_Stop`:639,
+  `Montage_JumpToSection`:663, `GetCurrentActiveMontage`:754,
+  `OnMontageBlendingOut`:758, `OnMontageEnded`:770, `Montage_SetEndDelegate`:784,
+  `TryGetPawnOwner`:465, `GetOwningActor`:546, `GetOwningComponent`:550,
+  `LinkAnimClassLayers`:877, `UnlinkAnimClassLayers`:888,
+  `GetLinkedAnimLayerInstanceByClass`:910, `bUseMultiThreadedAnimationUpdate`:382.
+- `Runtime/Engine/Classes/Animation/AnimMontage.h` — `UAnimMontage`:635,
+  `FCompositeSection`:37, `FSlotAnimationTrack`:83, `BlendIn`:650, `BlendOut`:659,
+  `CompositeSections`:697, `SlotAnimTracks`:701.
 - `Runtime/Engine/Classes/Animation/AnimSequenceBase.h` — `UAnimSequenceBase`:36,
-  `Notifies`:43, `RateScale`:61, `GetDataModel`:258.
+  `Notifies`:43, `RateScale`:61, `GetDataModel`:243.
 - `Runtime/Engine/Classes/Animation/AnimSequence.h` — `UAnimSequence`:202,
   `bEnableRootMotion`:320, `RootMotionRootLock`:324.
-- `Runtime/Engine/Classes/Animation/BlendSpace.h` — `UBlendSpace`:466,
-  `BlendParameters`:907, `NotifyTriggerMode`:849.
+- `Runtime/Engine/Classes/Animation/BlendSpace.h` — `UBlendSpace`:470,
+  `BlendParameters`:926, `NotifyTriggerMode`:864.
 - `Runtime/Engine/Classes/Animation/BlendSpace1D.h` — `UBlendSpace1D`:19.
 - `Runtime/Engine/Classes/Animation/AnimNotifies/AnimNotify.h` — `UAnimNotify`:51,
-  `Notify`:87, `GetNotifyName`:59.
-- `Runtime/Engine/Classes/Animation/AnimNotifies/AnimNotifyState.h` — `UAnimNotifyState`:24,
-  `NotifyBegin`:71, `NotifyTick`:72, `NotifyEnd`:73.
-- `Runtime/Engine/Classes/Animation/AnimNode_StateMachine.h` — `FAnimNode_StateMachine`:122,
-  `GetCurrentStateName`:178, `GetStateWeight`:258.
+  `Notify`:85, `GetNotifyName`:59.
+- `Runtime/Engine/Classes/Animation/AnimNotifies/AnimNotifyState.h` — `UAnimNotifyState`:34,
+  `NotifyBegin`:74, `NotifyTick`:75, `NotifyEnd`:76.
+- `Runtime/Engine/Classes/Animation/AnimNode_StateMachine.h` — `FAnimNode_StateMachine`:119,
+  `GetCurrentStateName`:175, `GetStateWeight`:255.
 - `Runtime/Engine/Classes/Animation/Skeleton.h` — `USkeleton`:294,
-  `CompatibleSkeletons`:345, `IsCompatibleMesh`:771.
-- `Runtime/Engine/Classes/Components/SkeletalMeshComponent.h` — `SetAnimInstanceClass`:1010,
-  `GetAnimInstance`:1025, `LinkAnimClassLayers`:1105, `UnlinkAnimClassLayers`:1116,
+  `CompatibleSkeletons`:345, `IsCompatibleMesh`:766.
+- `Runtime/Engine/Classes/Components/SkeletalMeshComponent.h` — `SetAnimInstanceClass`:1096,
+  `GetAnimInstance`:1111, `LinkAnimClassLayers`:1194, `UnlinkAnimClassLayers`:1205,
   `GetLinkedAnimLayerInstanceByClass` (via `UAnimInstance`).
-- `Runtime/Engine/Classes/GameFramework/Character.h` — `PlayAnimMontage`:773,
-  `StopAnimMontage`:777, `GetCurrentMontage`:781.
+- `Runtime/Engine/Classes/GameFramework/Character.h` — `PlayAnimMontage`:890,
+  `StopAnimMontage`:894, `GetCurrentMontage`:898.
 - `Runtime/Engine/Public/Animation/AnimNotifyQueue.h` — `FAnimNotifyEventReference`:21.
 - `Runtime/AnimGraphRuntime/Public/KismetAnimationLibrary.h` —
   `UKismetAnimationLibrary::CalculateDirection`:225.
 - `Runtime/AnimGraphRuntime/Public/AnimNodes/AnimNode_LayeredBoneBlend.h` —
   `FAnimNode_LayeredBoneBlend`:21.
 - `Plugins/Animation/MotionWarping/Source/MotionWarping/Public/MotionWarpingComponent.h` —
-  `UMotionWarpingComponent`:99, `AddOrUpdateWarpTargetFromTransform`:166.
+  `UMotionWarpingComponent`:100, `AddOrUpdateWarpTargetFromTransform`:186.
 - `Plugins/Animation/PoseSearch/Source/Runtime/Public/PoseSearch/PoseSearchLibrary.h` —
-  `UPoseSearchLibrary`:159, `FMotionMatchingState`:56.
+  `UPoseSearchLibrary`:141, `FMotionMatchingState`:56.
 
-Official docs (UE 5.7):
+Official docs (UE 5.8):
 - Skeletal Mesh Animation System —
   <https://dev.epicgames.com/documentation/unreal-engine/skeletal-mesh-animation-system-in-unreal-engine>
 - Animation Blueprints —

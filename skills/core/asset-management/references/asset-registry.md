@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers `IAssetRegistry` in detail: obtaining the
 registry, query methods, filter construction, searchable tags, async discovery callbacks,
-dependency/referencer queries, and cooked-game behavior. Grounded in UE 5.7
+dependency/referencer queries, and cooked-game behavior. Grounded in UE 5.8
 (`Engine/Source/Runtime/AssetRegistry/Public/AssetRegistry/IAssetRegistry.h` and
 `AssetRegistryModule.h`).
 
@@ -50,11 +50,11 @@ All declared in `IAssetRegistry.h`:
 
 | Method | Signature summary | Line |
 |---|---|---|
-| `GetAssetsByClass` | `(FTopLevelAssetPath, TArray<FAssetData>&, bool bSubClasses)` | 333 |
-| `GetAssetsByPath` | `(FName PackagePath, TArray<FAssetData>&, bool bRecursive)` | 309 |
-| `GetAssetsByPackageName` | `(FName PackageName, TArray<FAssetData>&)` | 296 |
-| `GetAssetsByTags` | `(TArray<FName> Tags, TArray<FAssetData>&)` | 341 |
-| `GetAssetsByTagValues` | `(TMultiMap<FName,FString>, TArray<FAssetData>&)` | 349 |
+| `GetAssetsByClass` | `(FTopLevelAssetPath, TArray<FAssetData>&, bool bSubClasses)` | 335 |
+| `GetAssetsByPath` | `(FName PackagePath, TArray<FAssetData>&, bool bRecursive)` | 311 |
+| `GetAssetsByPackageName` | `(FName PackageName, TArray<FAssetData>&)` | 298 |
+| `GetAssetsByTags` | `(TArray<FName> Tags, TArray<FAssetData>&)` | 343 |
+| `GetAssetsByTagValues` | `(TMultiMap<FName,FString>, TArray<FAssetData>&)` | 351 |
 
 ```cpp
 // Find all UStaticMesh assets including subclasses:
@@ -76,7 +76,7 @@ Filter.bRecursivePaths = true;
 Filter.bRecursiveClasses = true;           // include UStaticMesh subclasses too
 
 TArray<FAssetData> Results;
-AR.GetAssets(Filter, Results);             // IAssetRegistry.h:361
+AR.GetAssets(Filter, Results);             // IAssetRegistry.h:363
 ```
 
 An asset passes the filter when it satisfies **all** populated components. Within each component
@@ -107,14 +107,14 @@ Find what an asset depends on (hard/soft references to other packages):
 ```cpp
 TArray<FName> Deps;
 AR.GetDependencies(FName("/Game/Weapons/W_Rifle"), Deps,
-    UE::AssetRegistry::EDependencyCategory::Package);   // IAssetRegistry.h:511
+    UE::AssetRegistry::EDependencyCategory::Package);   // IAssetRegistry.h:517
 ```
 
 Find which assets reference a given package:
 ```cpp
 TArray<FName> Refs;
 AR.GetReferencers(FName("/Game/Materials/M_Metal"), Refs,
-    UE::AssetRegistry::EDependencyCategory::Package);   // IAssetRegistry.h:574
+    UE::AssetRegistry::EDependencyCategory::Package);   // IAssetRegistry.h:580
 ```
 These are graph queries and can be slow for deep dependency trees. Run offline (editor/commandlet)
 or cache results rather than calling per-frame.

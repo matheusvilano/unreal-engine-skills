@@ -11,7 +11,7 @@ description: Implement player input with Unreal's Enhanced Input system — UInp
   mapping contexts at runtime (on-foot vs. in-vehicle vs. menu), reading analog values, or
   migrating from legacy BindAxis/BindAction input.
 metadata:
-  engine-version: "5.7"
+  engine-version: "5.8"
   category: gameplay-framework
 ---
 
@@ -253,7 +253,7 @@ At runtime, Enhanced Input accumulates all active mappings for an action per fra
 
 ## Legacy input (you will still encounter it)
 
-Older projects use `DefaultInput.ini` axis/action mappings and `BindAxis`/`BindAction(FName, ...)` on `UInputComponent`. These still compile in 5.7 but cannot coexist cleanly with
+Older projects use `DefaultInput.ini` axis/action mappings and `BindAxis`/`BindAction(FName, ...)` on `UInputComponent`. These still compile in 5.8 but cannot coexist cleanly with
 `UEnhancedInputComponent` (legacy binds are explicitly deleted on the enhanced component by
 default). Migrate by replacing axis/action map entries with `UInputAction` + `UInputMappingContext` assets, and replacing `BindAxis`/`BindAction(FName, ...)` calls with
 `UEnhancedInputComponent::BindAction`.
@@ -269,39 +269,40 @@ default). Migrate by replacing axis/action map entries with `UInputAction` + `UI
 
 ## References & source material
 
-Engine source (UE 5.7, plugin path prefix:
+Engine source (UE 5.8, plugin path prefix:
 `Engine/Plugins/EnhancedInput/Source/EnhancedInput/Public/`):
-- `InputAction.h` — `UInputAction`:54 (`UDataAsset` subclass), `EInputActionValueType`:9
-  (`Boolean`/`Axis1D`/`Axis2D`/`Axis3D`), `EInputActionAccumulationBehavior`:24,
-  `FInputActionInstance`:196 (`GetValue()`:249, `GetTriggerEvent()`:246).
+- `InputAction.h` — `UInputAction`:55 (`UDataAsset` subclass), `EInputActionValueType`
+  (`InputActionValue.h`:10, `Boolean`/`Axis1D`/`Axis2D`/`Axis3D`),
+  `EInputActionAccumulationBehavior`:24,
+  `FInputActionInstance`:207 (`GetValue()`:259, `GetTriggerEvent()`:256).
 - `InputActionValue.h` — `FInputActionValue`:23; `Get<bool>()`:205, `Get<float>()`:212,
   `Get<FVector2D>()`:218, `Get<FVector>()`:224; `EInputActionValueType` reused here.
 - `InputMappingContext.h` — `UInputMappingContext`:87 (`UDataAsset` subclass);
   `DefaultKeyMappings`:101 (5.7 replacement for deprecated `Mappings`).
 - `EnhancedInputComponent.h` — `UEnhancedInputComponent`:373; `BindAction` template
-  macro `DEFINE_BIND_ACTION`:465 (four signature overloads); `BindActionValue`:538;
-  `RemoveBinding`:460; `BindActionInstanceLambda`:524.
+  macro `DEFINE_BIND_ACTION`:480 (four signature overloads); `BindActionValue`:553;
+  `RemoveBinding`:475; `BindActionInstanceLambda`:539.
 - `EnhancedInputSubsystems.h` — `UEnhancedInputLocalPlayerSubsystem`:21
   (`ULocalPlayerSubsystem` + `IEnhancedInputSubsystemInterface`);
   `AddMappingContext`:37; `RemoveMappingContext`:38.
 - `EnhancedInputSubsystemInterface.h` — `IEnhancedInputSubsystemInterface`:103;
   `FModifyContextOptions`:47 (`bIgnoreAllPressedKeysUntilRelease`, `bForceImmediately`,
-  `bNotifyUserSettings`); `HasMappingContext`:363; `ClearAllMappings`:251.
+  `bNotifyUserSettings`); `HasMappingContext`:368; `ClearAllMappings`:256.
 - `InputTriggers.h` — `ETriggerEvent`:34 (`None`/`Triggered`/`Started`/`Ongoing`/
-  `Canceled`/`Completed`); `UInputTrigger`:112 (`ActuationThreshold`:129);
-  concrete triggers: `UInputTriggerPressed`:253, `UInputTriggerReleased`:268,
-  `UInputTriggerHold`:292 (`HoldTimeThreshold`:307), `UInputTriggerTap`:337,
-  `UInputTriggerPulse`:416, `UInputTriggerChordAction`:452.
-- `InputModifiers.h` — `UInputModifier`:15 (`ModifyRaw_Implementation`); concrete
-  modifiers: `UInputModifierDeadZone`:146, `UInputModifierNegate`:222,
-  `UInputModifierSwizzleAxis`:381 (`EInputAxisSwizzle::YXZ`), `UInputModifierScalar`:182,
-  `UInputModifierSmooth`:244, `UInputModifierResponseCurveExponential`:274.
+  `Canceled`/`Completed`); `UInputTrigger`:113 (`ActuationThreshold`:130);
+  concrete triggers: `UInputTriggerPressed`:279, `UInputTriggerReleased`:298,
+  `UInputTriggerHold`:318 (`HoldTimeThreshold`:334), `UInputTriggerTap`:365,
+  `UInputTriggerPulse`:457, `UInputTriggerChordAction`:494.
+- `InputModifiers.h` — `UInputModifier`:16 (`ModifyRaw_Implementation`); concrete
+  modifiers: `UInputModifierDeadZone`:170, `UInputModifierNegate`:253,
+  `UInputModifierSwizzleAxis`:412 (`EInputAxisSwizzle::YXZ`), `UInputModifierScalar`:213,
+  `UInputModifierSmooth`:275, `UInputModifierResponseCurveExponential`:306.
 - `EnhancedActionKeyMapping.h` — `FEnhancedActionKeyMapping`:37 (`Action`, `Key`,
   `Modifiers[]`, `Triggers[]`).
 - `EnhancedInputDeveloperSettings.h` — `UEnhancedInputDeveloperSettings`:43
   (`DefaultMappingContexts`, `bEnableInputModeFiltering`, `DefaultInputMode`).
 
-Official docs (UE 5.7):
+Official docs (UE 5.8):
 - Enhanced Input — <https://dev.epicgames.com/documentation/unreal-engine/enhanced-input-in-unreal-engine>
 - Input overview — <https://dev.epicgames.com/documentation/unreal-engine/input-in-unreal-engine>
 

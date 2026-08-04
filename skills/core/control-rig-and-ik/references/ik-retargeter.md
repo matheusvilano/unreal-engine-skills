@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers IK Rig retarget chain setup, the retarget
 pose workflow, the Retarget Operation Stack, and runtime retargeting with
-`FAnimNode_RetargetPoseFromMesh`. Grounded in UE 5.7
+`FAnimNode_RetargetPoseFromMesh`. Grounded in UE 5.8
 (`Engine/Plugins/Animation/IKRig/Source/IKRig/Public/`).
 
 ---
@@ -17,7 +17,7 @@ an optional IK Goal. The retargeter matches chains between source and target by 
 Chains are stored in `FRetargetDefinition` (`IKRigDefinition.h`:165), which also holds the
 **pelvis bone** name. The pelvis controls how root motion height transfers proportionally.
 
-On `UIKRigDefinition` (`IKRigDefinition.h`:186), the relevant accessors are:
+On `UIKRigDefinition` (`IKRigDefinition.h`:206), the relevant accessors are:
 - `GetRetargetChains()` — read-only access to all `FBoneChain` entries.
 - `GetPelvis()` — the name of the designated pelvis/root bone.
 - `GetRetargetChainByName(FName)` — look up a chain by name.
@@ -48,7 +48,7 @@ symmetrical chains, or use `_l`/`_r` suffixes — fuzzy matching handles both).
 
 ## Retarget pose editing
 
-A **retarget pose** (`FIKRetargetPose`, `IKRetargeter.h`:21) stores per-bone delta
+A **retarget pose** (`FIKRetargetPose`, `IKRetargeter.h`:32) stores per-bone delta
 rotations (local space) and a root translation offset. Its purpose is to align the
 reference pose of the source and target before retargeting begins — most commonly correcting
 T-pose vs A-pose differences.
@@ -100,7 +100,7 @@ UIKRetargeter* Retargeter = ...;
 
 ## Runtime retargeting: FAnimNode_RetargetPoseFromMesh
 
-`FAnimNode_RetargetPoseFromMesh` (`AnimNode_RetargetPoseFromMesh.h`:27) evaluates the
+`FAnimNode_RetargetPoseFromMesh` (`AnimNode_RetargetPoseFromMesh.h`:28) evaluates the
 IK Retargeter at runtime each frame, streaming the source character's pose onto the target.
 
 ### Setup requirements
@@ -139,17 +139,17 @@ animation set; use runtime retargeting for NPCs or crowds that share a source li
 
 ---
 
-## Source references (UE 5.7)
+## Source references (UE 5.8)
 
 All paths under `Engine/Plugins/Animation/IKRig/Source/IKRig/Public/`:
 - `Rig/IKRigDefinition.h`:134 — `FBoneChain`.
 - `Rig/IKRigDefinition.h`:165 — `FRetargetDefinition`.
-- `Rig/IKRigDefinition.h`:186 — `UIKRigDefinition`, `GetRetargetChains()`, `GetPelvis()`.
-- `Retargeter/IKRetargeter.h`:21 — `FIKRetargetPose`.
-- `Retargeter/IKRetargeter.h`:59 — `UIKRetargeter`, `GetIKRig()`, `GetRetargetOps()`.
-- `Retargeter/IKRetargetSettings.h` — `FRetargetProfile`, per-op LOD settings.
-- `AnimNodes/AnimNode_RetargetPoseFromMesh.h`:27 — `FAnimNode_RetargetPoseFromMesh`.
-- `AnimNodes/AnimNode_RetargetPoseFromMesh.h`:37 — `ERetargetSourceMode`.
+- `Rig/IKRigDefinition.h`:206 — `UIKRigDefinition`, `GetRetargetChains()`, `GetPelvis()`.
+- `Retargeter/IKRetargeter.h`:32 — `FIKRetargetPose`.
+- `Retargeter/IKRetargeter.h`:70 — `UIKRetargeter`, `GetIKRig()`, `GetRetargetOps()`.
+- `Retargeter/IKRetargetProfile.h`:79 — `FRetargetProfile`, per-op LOD settings.
+- `AnimNodes/AnimNode_RetargetPoseFromMesh.h`:28 — `FAnimNode_RetargetPoseFromMesh`.
+- `AnimNodes/AnimNode_RetargetPoseFromMesh.h`:20 — `ERetargetSourceMode`.
 
-Official docs (UE 5.7):
+Official docs (UE 5.8):
 - IK Rig Retargeting — <https://dev.epicgames.com/documentation/unreal-engine/ik-rig-animation-retargeting-in-unreal-engine>

@@ -1,7 +1,7 @@
 # Cameras & camera cuts — full reference
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers `UCineCameraComponent`, `ACineCameraActor`,
-the Camera Cuts track, camera blending, and the `OnCameraCut` delegate. Grounded in UE 5.7
+the Camera Cuts track, camera blending, and the `OnCameraCut` delegate. Grounded in UE 5.8
 (`Engine/Source/Runtime/CinematicCamera/Public/CineCameraComponent.h`,
 `CineCameraActor.h`, `Engine/Source/Runtime/LevelSequence/Public/LevelSequencePlayer.h`).
 
@@ -40,9 +40,9 @@ into `FMinimalViewInfo` each frame.
 ### Focus settings
 
 `FCameraFocusSettings.FocusMethod`:
-- `EFocusMethod::DoNotOverride` — disable cinematic focus.
-- `EFocusMethod::Manual` — set `ManualFocusDistance` in world units.
-- `EFocusMethod::Tracking` — track an actor; the component raycasts to the target each tick.
+- `ECameraFocusMethod::DoNotOverride` — disable cinematic focus.
+- `ECameraFocusMethod::Manual` — set `ManualFocusDistance` in world units.
+- `ECameraFocusMethod::Tracking` — track an actor; the component raycasts to the target each tick.
 
 ## ACineCameraActor
 
@@ -106,7 +106,7 @@ void AMyListener::OnCamCut(UCameraComponent* NewCam)
 Camera cuts default to an instant hard cut. For blended transitions, configure the cut
 section's **Easing** settings in the Sequencer UI (ease in/out curves on the section border).
 The underlying blend uses the same `FCameraBlendView` used by gameplay camera blending;
-the sequence player's `GetCameraBlendPlayRate()` (virtual, line 140 in LevelSequencePlayer.h)
+the sequence player's `GetCameraBlendPlayRate()` (virtual, line 139 in LevelSequencePlayer.h)
 controls the rate.
 
 ## FLevelSequenceCameraSettings

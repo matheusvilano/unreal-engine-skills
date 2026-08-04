@@ -3,24 +3,24 @@
 Deep dive for [../SKILL.md](../SKILL.md). Covers the dual-array container design,
 every matching function with hierarchy semantics, `FGameplayTagQuery` internals, the
 query expression builder API, net serialization, and performance guidance. Grounded in
-UE 5.7 (`Engine/Source/Runtime/GameplayTags/Classes/GameplayTagContainer.h`).
+UE 5.8 (`Engine/Source/Runtime/GameplayTags/Classes/GameplayTagContainer.h`).
 
 ## FGameplayTagContainer internals
 
-`FGameplayTagContainer` (`GameplayTagContainer.h`:250) stores two parallel `TArray<FGameplayTag>`
+`FGameplayTagContainer` (`GameplayTagContainer.h`:247) stores two parallel `TArray<FGameplayTag>`
 members (both `UPROPERTY`):
 
 | Member | Contains | Serialized |
 |---|---|---|
-| `GameplayTags` (`:625`) | Explicit tags — the ones you `AddTag` | Yes (`VisibleAnywhere, SaveGame`) |
-| `ParentTags` (`:629`) | Implicit parent tags expanded from `GameplayTags` | No (`Transient`) |
+| `GameplayTags` (`:620`) | Explicit tags — the ones you `AddTag` | Yes (`VisibleAnywhere, SaveGame`) |
+| `ParentTags` (`:624`) | Implicit parent tags expanded from `GameplayTags` | No (`Transient`) |
 
-`ParentTags` is populated by `FillParentTags()` (`:604`) after any mutation. It exists
+`ParentTags` is populated by `FillParentTags()` (`:599`) after any mutation. It exists
 purely for fast `HasTag`/`HasAny`/`HasAll` queries — those check both arrays rather
-than walking the tag tree at query time (`:311`, `:345`, `:390`).
+than walking the tag tree at query time (`:306`, `:341`, `:387`).
 
 Because `ParentTags` is `Transient`, it is not saved to disk and must be rebuilt on
-load. `PostScriptConstruct()` (`:547`) does this automatically for Blueprint-constructed
+load. `PostScriptConstruct()` (`:542`) does this automatically for Blueprint-constructed
 containers; `Serialize` handles it for C++ UObject serialization.
 
 ## Full matching API
@@ -74,14 +74,14 @@ bool bMatches = Container.MatchesQuery(SomeQuery);  // delegates to FGameplayTag
 
 ## FGameplayTagQuery internals
 
-`FGameplayTagQuery` (`GameplayTagContainer.h`:738) stores three private fields:
+`FGameplayTagQuery` (`GameplayTagContainer.h`:737) stores three private fields:
 
 - `TagDictionary` — deduplicated list of `FGameplayTag` values referenced by the query.
 - `QueryTokenStream` — a `TArray<uint8>` bytecode stream encoding the expression tree.
 - `UserDescription` / `AutoDescription` — human-readable strings for the editor.
 
 The bytecode is evaluated at runtime by `FQueryEvaluator` (friend class) without
-allocating. This makes `Matches` (`:804`) very fast for common cases.
+allocating. This makes `Matches` (`:803`) very fast for common cases.
 
 ### Building queries in C++
 
@@ -97,7 +97,7 @@ FGameplayTagQuery Q = FGameplayTagQuery::BuildQuery(
 );
 ```
 
-Available expression types (`EGameplayTagQueryExprType`, `:692`):
+Available expression types (`EGameplayTagQueryExprType`, `:690`):
 
 | Type | Tests |
 |---|---|
@@ -110,7 +110,7 @@ Available expression types (`EGameplayTagQueryExprType`, `:692`):
 | `AllExprMatch` | All sub-expressions return true |
 | `NoExprMatch` | No sub-expression returns true |
 
-Factory shortcuts for one-level queries (`GameplayTagContainer.h`:855):
+Factory shortcuts for one-level queries (`GameplayTagContainer.h`:854):
 
 ```cpp
 FGameplayTagQuery::MakeQuery_MatchAnyTags(Container)
@@ -123,7 +123,7 @@ FGameplayTagQuery::MakeQuery_MatchTag(SingleTag)
 
 ### Replacing tags in a cached query
 
-`ReplaceTagsFast` and `ReplaceTagFast` (`:788`, `:796`) swap tags in an existing query
+`ReplaceTagsFast` and `ReplaceTagFast` (`:787`, `:795`) swap tags in an existing query
 without rebuilding the expression tree. Use this to avoid reallocating the byte stream
 when you repeat the same logical condition against different tag sets:
 
@@ -146,7 +146,7 @@ requires that the tag dictionary is identical on client and server.
 tolerates tag mismatches between client and server at slightly higher per-connection cost.
 
 `FGameplayTagNetIndex` is `uint16`; `INVALID_TAGNETINDEX` is `MAX_uint16`
-(`GameplayTagContainer.h`:36-37).
+(`GameplayTagContainer.h`:33-34).
 
 ## Performance guidance
 

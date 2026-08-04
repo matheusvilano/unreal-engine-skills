@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers `FVector`, `FRotator`, `FQuat`,
 `FTransform`, `FMath`, and the Large World Coordinates (LWC) precision model introduced in
-UE5. Grounded in UE 5.7 (`Runtime/Core/Public/Math/`).
+UE5. Grounded in UE 5.8 (`Runtime/Core/Public/Math/`).
 
 ## Large World Coordinates (LWC) — UE5 precision model
 
@@ -37,16 +37,16 @@ FVector Forward = Actor->GetActorForwardVector();  // unit vector from rotation
 FVector Midpoint = (A + B) * 0.5;
 
 // Distance helpers — DistSquared is faster when only comparing magnitudes
-double Dist  = FVector::Dist(A, B);          // Dist:1017
-double Dist2 = FVector::DistSquared(A, B);   // DistSquared:1043
+double Dist  = FVector::Dist(A, B);          // Dist:1015
+double Dist2 = FVector::DistSquared(A, B);   // DistSquared:1041
 
 // Dot and cross
-double Dot  = FVector::DotProduct(A, B);     // DotProduct:265
-FVector Cross = FVector::CrossProduct(A, B); // CrossProduct:240
+double Dot  = FVector::DotProduct(A, B);     // DotProduct:263
+FVector Cross = FVector::CrossProduct(A, B); // CrossProduct:238
 
 // Normalization
-FVector Safe = Direction.GetSafeNormal();    // GetSafeNormal:649 — returns zero vector if near-zero
-Direction.Normalize();                        // in-place, Normalize:632
+FVector Safe = Direction.GetSafeNormal();    // GetSafeNormal:647 — returns zero vector if near-zero
+Direction.Normalize();                        // in-place, Normalize:630
 ```
 
 **Common pitfalls:**
@@ -93,7 +93,7 @@ FQuat LocalRot = FQuat(FVector::UpVector, FMath::DegreesToRadians(45.0)); // axi
 FQuat Combined = Q * LocalRot;
 
 // Spherical interpolation — for smooth rotation blending
-FQuat Blended = FQuat::Slerp(A, B, Alpha);          // Slerp:660
+FQuat Blended = FQuat::Slerp(A, B, Alpha);          // Slerp:658
 
 // Create from Euler angles (degrees)
 FQuat FromEuler = FQuat::MakeFromEuler(FVector(Pitch, Yaw, Roll)); // MakeFromEuler:374
@@ -115,15 +115,15 @@ object-to-world mapping used by actors and scene components.
 
 ```cpp
 FTransform T = Actor->GetActorTransform();
-FVector Loc  = T.GetLocation();    // GetLocation:602
+FVector Loc  = T.GetLocation();    // GetLocation:599
 FQuat   Rot  = T.GetRotation();
-FVector Scale = T.GetScale3D();    // GetScale3D:1240
+FVector Scale = T.GetScale3D();    // GetScale3D:1237
 
 // Transform a world-space point to local space
-FVector LocalPt = T.InverseTransformPosition(WorldPoint); // InverseTransformPosition:570
+FVector LocalPt = T.InverseTransformPosition(WorldPoint); // InverseTransformPosition:567
 
 // Transform a local-space vector (direction, not position — ignores translation)
-FVector WorldDir = T.TransformVector(LocalDir); // TransformVector:565
+FVector WorldDir = T.TransformVector(LocalDir); // TransformVector:569
 
 // Compose transforms: apply Inner then Outer
 FTransform Composed = Inner * Outer;
@@ -150,9 +150,9 @@ float M = FMath::Max(A, B);                   // templated
 float R = FMath::RandRange(Min, Max);         // RandRange:289
 
 // Interpolation
-float L  = FMath::Lerp(A, B, Alpha);              // Lerp:1116
-float FI = FMath::FInterpTo(Cur, Tgt, Dt, Speed); // FInterpTo:1502  — frame-rate independent
-float FC = FMath::FInterpConstantTo(Cur, Tgt, Dt, Speed); // FInterpConstantTo:1483 — constant rate
+float L  = FMath::Lerp(A, B, Alpha);              // Lerp:1123
+float FI = FMath::FInterpTo(Cur, Tgt, Dt, Speed); // FInterpTo:1509  — frame-rate independent
+float FC = FMath::FInterpConstantTo(Cur, Tgt, Dt, Speed); // FInterpConstantTo:1490 — constant rate
 
 // Angle helpers
 float Rad = FMath::DegreesToRadians(Degrees);

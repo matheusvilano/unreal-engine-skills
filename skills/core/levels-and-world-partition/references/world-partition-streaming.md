@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the streaming lifecycle, spatial-hash
 grid internals, runtime overrides, server streaming, and useful debug commands. Grounded
-in UE 5.7 `Engine/Source/Runtime/Engine/Public/WorldPartition/`.
+in UE 5.8 `Engine/Source/Runtime/Engine/Public/WorldPartition/`.
 
 ## Streaming lifecycle
 
@@ -63,8 +63,8 @@ except listed).
 `EStreamingSourcePriority` (`Highest`=0 … `Lowest`=255): when cells have multiple sources,
 the highest priority wins for target state and block-on-slow decisions.
 
-Source: `Runtime/Engine/Public/WorldPartition/WorldPartitionStreamingSource.h`:329
-(`FWorldPartitionStreamingSource`), :330 (`EStreamingSourcePriority`).
+Source: `Runtime/Engine/Public/WorldPartition/WorldPartitionStreamingSource.h`:341
+(`FWorldPartitionStreamingSource`), :328 (`EStreamingSourcePriority`).
 
 ## Cell target states
 
@@ -80,7 +80,7 @@ Set on the component via `TargetState` or on a per-source basis via
 
 By default World Partition does not stream on dedicated servers (all actors are loaded).
 This is configurable per-level with `EWorldPartitionServerStreamingMode`
-(`WorldPartition.h`:71):
+(`WorldPartition.h`:72):
 - `ProjectDefault` — uses `wp.Runtime.EnableServerStreaming` CVar.
 - `Disabled` / `Enabled` / `EnabledInPIE`.
 

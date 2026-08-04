@@ -1,7 +1,7 @@
 # Unreal Insights & Trace — full reference
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the Trace framework, channel selection,
-session workflow, Timing Insights anatomy, and GPU profiling. Grounded in UE 5.7 source
+session workflow, Timing Insights anatomy, and GPU profiling. Grounded in UE 5.8 source
 (`Engine/Source/Runtime/Core/Public/ProfilingDebugging/CpuProfilerTrace.h`) and the
 official [Unreal Insights](https://dev.epicgames.com/documentation/unreal-engine/unreal-insights-in-unreal-engine),
 [Trace](https://dev.epicgames.com/documentation/unreal-engine/trace-in-unreal-engine-5),
@@ -19,7 +19,7 @@ together:
 - **Unreal Insights** (`Engine/Binaries/Win64/UnrealInsights.exe`) — offline or live
   viewer that reads `.utrace`/`.ucache` files.
 
-Traces are self-describing and version-tolerant; a 5.5 trace opens in a 5.7 viewer.
+Traces are self-describing and version-tolerant; a 5.5 trace opens in a 5.8 viewer.
 
 ## Channels
 
@@ -144,8 +144,8 @@ the client and sent on connection, so one-time events are not missed. Trigger wi
 trace.send 127.0.0.1     # in-game console; send to Insights on localhost
 ```
 
-## Version notes (5.7)
+## Version notes (5.8)
 
 - Timing Insights gained a **Verse Sampling** track in 5.7 (toggle `Shift+V`).
 - `UnrealTraceServer` has been the unified trace server across desktop platforms since 5.3.
-- Memory Insights Android callstack support added in 5.4; available in 5.7.
+- Memory Insights Android callstack support added in 5.4; available in 5.8.

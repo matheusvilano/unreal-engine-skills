@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers `UInputAction` value types and
 accumulation, `UInputMappingContext` structure, priority, and runtime add/remove/query.
-Grounded in UE 5.7 (`Engine/Plugins/EnhancedInput/Source/EnhancedInput/Public/`).
+Grounded in UE 5.8 (`Engine/Plugins/EnhancedInput/Source/EnhancedInput/Public/`).
 
 ## UInputAction
 
@@ -18,7 +18,7 @@ capability (Jump, Move, Fire, Aim). Key properties:
 | `Triggers[]` | `TArray<UInputTrigger*>` | Action-level triggers (applied after mapping-level triggers) |
 | `Modifiers[]` | `TArray<UInputModifier*>` | Action-level modifiers (applied after mapping-level modifiers) |
 
-Source: `InputAction.h`:87–145.
+Source: `InputAction.h`:84–153 (`ValueType`:116, `AccumulationBehavior`:127).
 
 ### Value types
 
@@ -29,7 +29,7 @@ EInputActionValueType::Axis2D   → FVector2D (Value.X, Value.Y)
 EInputActionValueType::Axis3D   → FVector
 ```
 
-Source: `InputActionValue.h`:9–19. The underlying storage in `FInputActionValue` is always
+Source: `InputActionValue.h`:10–20. The underlying storage in `FInputActionValue` is always
 `FVector` with unused components zeroed.
 
 ### Accumulation
@@ -42,7 +42,7 @@ accumulates their values each tick:
 - `Cumulative`: values are summed. Useful for WASD (W pushes +Y, S pushes −Y; the sum is
   the net direction). Enable on the action asset's `AccumulationBehavior` property.
 
-Source: `InputAction.h`:119–128 (`EInputActionAccumulationBehavior`).
+Source: `InputAction.h`:24 (`EInputActionAccumulationBehavior`), `AccumulationBehavior`:127.
 
 ## UInputMappingContext
 
@@ -68,7 +68,7 @@ Processing pipeline for one key press:
 5. Action-level `Triggers[]` evaluated.
 6. Resulting `FInputActionValue` and `ETriggerEvent` delivered to bound handlers.
 
-Source: `EnhancedActionKeyMapping.h`:85–91 (mapping modifiers applied before action modifiers).
+Source: `EnhancedActionKeyMapping.h`:83–90 (mapping modifiers applied before action modifiers).
 
 ## Priority and context switching
 
@@ -91,8 +91,8 @@ Subsys->RemoveMappingContext(VehicleIMC);
 bool bActive = Subsys->HasMappingContext(VehicleIMC);
 ```
 
-Source: `EnhancedInputSubsystemInterface.h`:258–270 (`AddMappingContext`, `RemoveMappingContext`);
-`HasMappingContext`:363.
+Source: `EnhancedInputSubsystemInterface.h`:265–274 (`AddMappingContext`, `RemoveMappingContext`);
+`HasMappingContext`:368.
 
 ### FModifyContextOptions
 
@@ -135,7 +135,7 @@ the `FEnhancedActionKeyMapping` (set `SettingBehavior = OverrideSettings`) or on
 `UEnhancedInputDeveloperSettings::bEnableUserSettings`) manages per-user remapping and
 persistence.
 
-Source: `EnhancedActionKeyMapping.h`:121–133; `InputAction.h`:151–153.
+Source: `EnhancedActionKeyMapping.h`:120–132; `InputAction.h`:153.
 
 ## FInputActionInstance
 
@@ -154,4 +154,4 @@ void AMyClass::OnAction(const FInputActionInstance& Instance)
 }
 ```
 
-Source: `InputAction.h`:196–271 (`FInputActionInstance` member functions).
+Source: `InputAction.h`:207–280 (`FInputActionInstance` member functions).

@@ -10,7 +10,7 @@ description: Procedural animation and inverse kinematics in Unreal Engine — Co
   UIKRigDefinition, UIKRetargeter, FAnimNode_ControlRig, FAnimNode_IKRig,
   FAnimNode_RetargetPoseFromMesh, FIKRigGoal, UControlRigComponent, UIKRigComponent.
 metadata:
-  engine-version: "5.7"
+  engine-version: "5.8"
   category: animation
 ---
 
@@ -59,7 +59,7 @@ control transforms at runtime.
 
 ### Placing Control Rig in an AnimGraph
 
-The AnimGraph node `FAnimNode_ControlRig` (`AnimNode_ControlRig.h`:20) integrates a
+The AnimGraph node `FAnimNode_ControlRig` (`AnimNode_ControlRig.h`:21) integrates a
 `UControlRig` into an Animation Blueprint. It accepts a source pose, drives the rig's
 Forward Solve each frame, and outputs the modified pose.
 
@@ -108,7 +108,7 @@ control transforms back to bones. From C++, retrieve the running rig via
 
 ### Mental model
 
-An **IK Rig** (`UIKRigDefinition`, `IKRigDefinition.h`:186) is an asset bound to a
+An **IK Rig** (`UIKRigDefinition`, `IKRigDefinition.h`:206) is an asset bound to a
 skeleton that holds:
 - **Goals** (`UIKRigEffectorGoal`) — named effector points with position/rotation targets.
 - **Solvers** — ordered stack of `FIKRigSolverBase` subclasses that pull bones toward
@@ -165,7 +165,7 @@ already-computed base pose.
 
 ### Mental model
 
-An **IK Retargeter** (`UIKRetargeter`, `IKRetargeter.h`:59) links a *source* `UIKRigDefinition`
+An **IK Retargeter** (`UIKRetargeter`, `IKRetargeter.h`:70) links a *source* `UIKRigDefinition`
 to a *target* `UIKRigDefinition`. It matches named **retarget chains** (spine, arm-left,
 leg-right…) by fuzzy name and transfers motion proportionally, compensating for different
 bone lengths and proportions.
@@ -179,7 +179,7 @@ Workflow:
 
 ### Runtime retargeting: FAnimNode_RetargetPoseFromMesh
 
-`FAnimNode_RetargetPoseFromMesh` (`AnimNode_RetargetPoseFromMesh.h`:27) retargets the pose
+`FAnimNode_RetargetPoseFromMesh` (`AnimNode_RetargetPoseFromMesh.h`:28) retargets the pose
 of a *source* skeletal mesh component onto the current character in real time. The source
 mesh component must tick before the target's AnimBP.
 
@@ -268,32 +268,32 @@ blend, before output.
 
 ## References & source material
 
-Engine source (UE 5.7 — all paths under `Engine/Plugins/Animation/`):
-- `ControlRig/Source/ControlRig/Public/ControlRig.h`:60 — `UControlRig` class declaration.
-- `ControlRig/Source/ControlRig/Public/ControlRig.h`:201 — `GetHierarchy()`.
-- `ControlRig/Source/ControlRig/Public/ControlRig.h`:275 — `Execute(const FName&)`.
-- `ControlRig/Source/ControlRig/Public/ControlRig.h`:317 — `SetControlValue<T>()`.
-- `ControlRig/Source/ControlRig/Public/AnimNode_ControlRig.h`:20 — `FAnimNode_ControlRig`.
+Engine source (UE 5.8 — all paths under `Engine/Plugins/Animation/`):
+- `ControlRig/Source/ControlRig/Public/ControlRig.h`:63 — `UControlRig` class declaration.
+- `ControlRig/Source/ControlRig/Public/ControlRig.h`:203 — `GetHierarchy()`.
+- `ControlRig/Source/ControlRig/Public/ControlRig.h`:277 — `Execute(const FName&)`.
+- `ControlRig/Source/ControlRig/Public/ControlRig.h`:331 — `SetControlValue<T>()`.
+- `ControlRig/Source/ControlRig/Public/AnimNode_ControlRig.h`:21 — `FAnimNode_ControlRig`.
 - `ControlRig/Source/ControlRig/Public/ControlRigComponent.h`:175 — `UControlRigComponent`.
 - `ControlRig/Source/ControlRig/Public/ModularRig.h` — `UModularRig`, `FRigModuleInstance`.
 - `ControlRig/Source/ControlRig/Public/Units/RigUnit.h`:59 — `FRigUnit` base struct.
 - `ControlRig/Source/ControlRig/Public/Rigs/RigHierarchy.h`:167 — `URigHierarchy`.
-- `ControlRig/Source/ControlRig/Public/Rigs/RigHierarchy.h`:2138 — `GetLocalTransform()`.
-- `ControlRig/Source/ControlRig/Public/Rigs/RigHierarchy.h`:2186 — `SetLocalTransform()`.
-- `ControlRig/Source/ControlRig/Public/Rigs/RigHierarchy.h`:2234 — `GetGlobalTransform()`.
+- `ControlRig/Source/ControlRig/Public/Rigs/RigHierarchy.h`:2181 — `GetLocalTransform()`.
+- `ControlRig/Source/ControlRig/Public/Rigs/RigHierarchy.h`:2229 — `SetLocalTransform()`.
+- `ControlRig/Source/ControlRig/Public/Rigs/RigHierarchy.h`:2277 — `GetGlobalTransform()`.
 - `IKRig/Source/IKRig/Public/Rig/IKRigDefinition.h`:134 — `FBoneChain`.
 - `IKRig/Source/IKRig/Public/Rig/IKRigDefinition.h`:165 — `FRetargetDefinition`.
-- `IKRig/Source/IKRig/Public/Rig/IKRigDefinition.h`:186 — `UIKRigDefinition`.
+- `IKRig/Source/IKRig/Public/Rig/IKRigDefinition.h`:206 — `UIKRigDefinition`.
 - `IKRig/Source/IKRig/Public/Rig/Solvers/IKRigFullBodyIK.h`:15 — `FIKRigFBIKGoalSettings` (FBIK solver settings).
 - `IKRig/Source/IKRig/Public/Rig/Solvers/IKRigLimbSolver.h`:34 — `FIKRigLimbSolver`.
-- `IKRig/Source/IKRig/Public/Retargeter/IKRetargeter.h`:21 — `FIKRetargetPose`.
-- `IKRig/Source/IKRig/Public/Retargeter/IKRetargeter.h`:59 — `UIKRetargeter`.
+- `IKRig/Source/IKRig/Public/Retargeter/IKRetargeter.h`:32 — `FIKRetargetPose`.
+- `IKRig/Source/IKRig/Public/Retargeter/IKRetargeter.h`:70 — `UIKRetargeter`.
 - `IKRig/Source/IKRig/Public/AnimNodes/AnimNode_IKRig.h`:22 — `FAnimNode_IKRig`.
-- `IKRig/Source/IKRig/Public/AnimNodes/AnimNode_RetargetPoseFromMesh.h`:27 — `FAnimNode_RetargetPoseFromMesh`.
+- `IKRig/Source/IKRig/Public/AnimNodes/AnimNode_RetargetPoseFromMesh.h`:28 — `FAnimNode_RetargetPoseFromMesh`.
 - `IKRig/Source/IKRig/Public/ActorComponents/IKRigComponent.h`:14 — `UIKRigComponent`.
 - `IKRig/Source/IKRig/Public/Rig/IKRigDataTypes.h` — `FIKRigGoal`, `EIKRigGoalSpace`.
 
-Official docs (UE 5.7, confirmed live):
+Official docs (UE 5.8, confirmed live):
 - Control Rig overview — <https://dev.epicgames.com/documentation/unreal-engine/control-rig-in-unreal-engine>
 - Control Rig in Animation Blueprints — <https://dev.epicgames.com/documentation/unreal-engine/control-rig-in-animation-blueprints-in-unreal-engine>
 - IK Rig editor — <https://dev.epicgames.com/documentation/unreal-engine/ik-rig-in-unreal-engine>

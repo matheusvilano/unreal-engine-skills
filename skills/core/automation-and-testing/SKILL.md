@@ -9,7 +9,7 @@ description: Write and run automated tests for Unreal Engine projects — simple
   or CI. Use when writing unit or integration tests for gameplay logic or systems,
   setting up headless CI test runs, verifying data/content, or catching regressions.
 metadata:
-  engine-version: "5.7"
+  engine-version: "5.8"
   category: tooling
 ---
 
@@ -276,19 +276,19 @@ indicates test failures when `-unattended` is set.
 
 ## References & source material
 
-Engine source (UE 5.7):
-- `Runtime/Core/Public/Misc/AutomationTest.h` — `EAutomationTestFlags`:87,
-  `FAutomationTestBase`:1593, `RunTest`:2639, `TestEqual`:2004, `TestFalse`:2353,
-  `TestNull`:2516, `TestTrue`:2589, `FAutomationSpecBase`:2885, `Describe`:2743,
-  `BeforeEach`:2807, `It`:2775, `IAutomationLatentCommand`:524,
-  `DEFINE_LATENT_AUTOMATION_COMMAND`:3779, `ADD_LATENT_AUTOMATION_COMMAND`:4070,
-  `IMPLEMENT_SIMPLE_AUTOMATION_TEST`:4276, `DEFINE_SPEC`:4318, `BEGIN_DEFINE_SPEC`:4325.
+Engine source (UE 5.8):
+- `Runtime/Core/Public/Misc/AutomationTest.h` — `EAutomationTestFlags`:88,
+  `FAutomationTestBase`:1594, `RunTest`:2653, `TestEqual`:1985, `TestFalse`:2367,
+  `TestNull`:2530, `TestTrue`:2603, `FAutomationSpecBase`:2899, `Describe`:2757,
+  `BeforeEach`:2821, `It`:2789, `IAutomationLatentCommand`:525,
+  `DEFINE_LATENT_AUTOMATION_COMMAND`:3796, `ADD_LATENT_AUTOMATION_COMMAND`:4087,
+  `IMPLEMENT_SIMPLE_AUTOMATION_TEST`:4297, `DEFINE_SPEC`:4339, `BEGIN_DEFINE_SPEC`:4346.
 - `Developer/FunctionalTesting/Classes/FunctionalTest.h` — `AFunctionalTest`:249,
-  `FinishTest`:678, `PrepareTest`:779, `IsReady_Implementation`:816, `AddError`:659.
+  `FinishTest`:678, `PrepareTest`:777, `IsReady_Implementation`:814, `AddError`:659.
 - `Developer/LowLevelTestsRunner/Public/TestHarness.h` — Catch2 bridge/harness header.
 - `Developer/CQTest/` — `CQTest` module (`TEST`, `TEST_CLASS`, `ASSERT_THAT` macros).
 
-Official docs (UE 5.7):
+Official docs (UE 5.8):
 - Automation Test Framework —
   <https://dev.epicgames.com/documentation/unreal-engine/automation-test-framework-in-unreal-engine>
 - Write C++ Tests —

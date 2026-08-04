@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the foliage type hierarchy, HISM cluster
 tree internals, procedural foliage volumes, scalability settings, and World Partition foliage.
-Grounded in UE 5.7 (`Engine/Source/Runtime/Foliage/Public/`,
+Grounded in UE 5.8 (`Engine/Source/Runtime/Foliage/Public/`,
 `Engine/Source/Runtime/Engine/Classes/Components/`) and the official
 [Foliage Mode](https://dev.epicgames.com/documentation/unreal-engine/foliage-mode-in-unreal-engine)
 and [Procedural Foliage Tool](https://dev.epicgames.com/documentation/unreal-engine/procedural-foliage-tool-in-unreal-engine)
@@ -155,7 +155,7 @@ UnrealEditor.exe MyProject MyMap -run=WorldPartitionBuilderCommandlet
 Foliage instances that straddle a cell boundary are assigned to one cell; they are not
 split. Keep dense foliage painting within cell bounds to avoid unexpected unloading.
 
-## Key source paths (UE 5.7)
+## Key source paths (UE 5.8)
 
 All under `Engine/Source/Runtime/Foliage/Public/` unless noted:
 - `FoliageType.h`:105 — `UFoliageType`; placement properties (Density, Radius, ScaleX/Y/Z,
@@ -165,5 +165,5 @@ All under `Engine/Source/Runtime/Foliage/Public/` unless noted:
 - `InstancedFoliageActor.h`:28 — `AInstancedFoliageActor`, `ForEachFoliageInfo`.
 - `ProceduralFoliageComponent.h`:42 — `UProceduralFoliageComponent`.
 - `Engine/Classes/Components/HierarchicalInstancedStaticMeshComponent.h`:135 —
-  `UHierarchicalInstancedStaticMeshComponent`; `AddInstance`:305, `AddInstances`:306,
-  `RemoveInstance`:307, `UpdateInstanceTransform`:310, `BuildTreeIfOutdated`:332.
+  `UHierarchicalInstancedStaticMeshComponent`; `AddInstance`:303, `AddInstances`:304,
+  `RemoveInstance`:305, `UpdateInstanceTransform`:308, `BuildTreeIfOutdated`:330.

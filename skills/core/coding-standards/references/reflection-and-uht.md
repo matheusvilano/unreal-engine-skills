@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers `UCLASS`, `USTRUCT`, `UENUM`,
 `UPROPERTY`, `UFUNCTION`, `GENERATED_BODY`, modern specifiers, `TObjectPtr`, and what
-UHT requires to generate code correctly. Grounded in UE 5.7.
+UHT requires to generate code correctly. Grounded in UE 5.8.
 
 ## How UHT works
 
@@ -42,7 +42,7 @@ Key specifiers:
 - `meta=(ShortTooltip="...")` — appears in editor tooltips and the Blueprint palette.
 
 Engine example: `UCLASS(BlueprintType, Blueprintable, config=Engine, ..., MinimalAPI)` at
-`GameFramework/Actor.h`:255.
+`GameFramework/Actor.h`:281.
 
 ## USTRUCT
 
@@ -124,10 +124,10 @@ UPROPERTY(EditDefaultsOnly, Category="Gameplay")
 TObjectPtr<UDataTable> StatsTable;
 ```
 
-Engine examples: `TObjectPtr<USceneComponent> RootComponent` at `Actor.h`:995;
-`TObjectPtr<class UInputComponent> InputComponent` at `Actor.h`:862.
+Engine examples: `TObjectPtr<USceneComponent> RootComponent` at `Actor.h`:1024;
+`TObjectPtr<class UInputComponent> InputComponent` at `Actor.h`:891.
 
-For arrays: `TArray<TObjectPtr<AActor>> Children` at `Actor.h`:990.
+For arrays: `TArray<TObjectPtr<AActor>> Children` at `Actor.h`:1019.
 
 ## UFUNCTION
 
@@ -179,8 +179,8 @@ public:
 };
 ```
 
-Engine evidence: `UActorComponent` at `Components/ActorComponent.h`:153;
-`UObject` at `CoreUObject/Public/UObject/Object.h`:96.
+Engine evidence: `UActorComponent` at `Components/ActorComponent.h`:162;
+`UObject` at `CoreUObject/Public/UObject/Object.h`:100.
 
 ## Common UHT gotchas
 
@@ -196,9 +196,9 @@ Engine evidence: `UActorComponent` at `Components/ActorComponent.h`:153;
 
 ## Source material
 
-Engine source paths verified in UE 5.7:
-- `Runtime/Engine/Classes/GameFramework/Actor.h`:255–256 — `UCLASS(...)` / `class AActor`.
-- `Runtime/Engine/Classes/GameFramework/Actor.h`:862, 990, 995 — `TObjectPtr` member examples.
-- `Runtime/Engine/Classes/Components/ActorComponent.h`:150–153 — `UCLASS()` + `GENERATED_BODY()`.
-- `Runtime/CoreUObject/Public/UObject/Object.h`:93–96 — `UCLASS(Abstract, MinimalAPI)` + `GENERATED_BODY()`.
-- `Runtime/Engine/Classes/Interfaces/Interface_AssetUserData.h`:13–16 — `UINTERFACE()` + `GENERATED_UINTERFACE_BODY()`.
+Engine source paths verified in UE 5.8:
+- `Runtime/Engine/Classes/GameFramework/Actor.h`:281–282 — `UCLASS(...)` / `class AActor`.
+- `Runtime/Engine/Classes/GameFramework/Actor.h`:891, 1019, 1024 — `TObjectPtr` member examples.
+- `Runtime/Engine/Classes/Components/ActorComponent.h`:159–162 — `UCLASS()` + `GENERATED_BODY()`.
+- `Runtime/CoreUObject/Public/UObject/Object.h`:97–100 — `UCLASS(Abstract, MinimalAPI)` + `GENERATED_BODY()`.
+- `Runtime/Engine/Classes/Interfaces/Interface_AssetUserData.h`:16–19 — `UINTERFACE()` + `GENERATED_UINTERFACE_BODY()`.

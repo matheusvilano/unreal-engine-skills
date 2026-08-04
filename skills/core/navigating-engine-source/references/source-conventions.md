@@ -1,7 +1,7 @@
 # Source conventions and naming
 
-Deep-dive companion to [../SKILL.md](../SKILL.md). Grounded in UE 5.7 at
-`E:\Program Files\Epic Games\UE_5.7\Engine\Source` (Build.version: 5.7.4).
+Deep-dive companion to [../SKILL.md](../SKILL.md). Grounded in UE 5.8 at
+`E:\Program Files\Epic Games\UE_5.8\Engine\Source` (Build.version: 5.8.1).
 
 Covers naming prefixes, the Public/Private/Classes folder convention, how
 `*.generated.h` fits in, and Include What You Use (IWYU) rules.
@@ -114,7 +114,7 @@ body. Placing anything before it causes a UHT parse error.
 Every module has exactly one `<ModuleName>.Build.cs` in its root. The file:
 - Declares the class `<ModuleName> : ModuleRules`.
 - Lists `PublicDependencyModuleNames` and `PrivateDependencyModuleNames`.
-- Optionally sets `PCHUsage`, `bEnforceIWYU`, platform conditions, defines.
+- Optionally sets `PCHUsage`, `IWYUSupport`, platform conditions, defines.
 
 Key rules:
 - **Public vs Private dependency**: use `PublicDependencyModuleNames` only if a
@@ -147,6 +147,6 @@ Key rules:
 The Public/Private/Classes convention and UHT/IWYU rules are stable across UE5.
 Plugin module layout (matching `Source/<Module>/Public/` etc.) has been consistent
 since UE4. The `TObjectPtr<T>` member idiom (replacing raw `T*` in UPROPERTYs) was
-introduced in UE5.0 and is the preferred form in UE 5.7 — both compile and behave
+introduced in UE5.0 and is the preferred form in UE 5.8 — both compile and behave
 correctly, but `TObjectPtr` participates in access tracking and is the engine's
 current standard. See the `cpp-fundamentals` and `memory-and-gc` skills for detail.

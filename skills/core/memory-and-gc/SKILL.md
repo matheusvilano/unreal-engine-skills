@@ -9,7 +9,7 @@ description: Manage UObject lifetime and plain C++ memory in Unreal Engine. Cove
   investigating dangling pointer or use-after-free bugs, holding UObjects from non-UObject
   classes, or picking between TSharedPtr and TUniquePtr for plain C++ objects.
 metadata:
-  engine-version: "5.7"
+  engine-version: "5.8"
   category: cpp-foundations
 ---
 
@@ -52,8 +52,9 @@ tracked reference types. Anything not reachable is collected: `BeginDestroy` is 
 **GC clustering** groups subobjects together so the whole cluster is reclaimed at once, reducing
 overhead. Configurable under *Project Settings → Garbage Collection*.
 
-**Incremental GC** (enabled by default in UE5) spreads the mark pass across multiple frames to
-reduce hitches. `TObjectPtr` members enable GC write barriers that make incremental marking safe.
+**Incremental GC** spreads the mark pass across multiple frames to reduce hitches; incremental
+reachability analysis is opt-in via `gc.AllowIncrementalReachability` (incremental purge is on by
+default). `TObjectPtr` members enable GC write barriers that make incremental marking safe.
 
 Full reachability cycle and destruction callbacks:
 [references/uobject-gc-and-roots.md](references/uobject-gc-and-roots.md).
@@ -126,7 +127,7 @@ if (Pinned)
 }
 ```
 
-`IsValid` is declared in `Runtime/CoreUObject/Public/UObject/Object.h`:1875.
+`IsValid` is declared in `Runtime/CoreUObject/Public/UObject/Object.h`:1886.
 `TWeakObjectPtr` resolves to null automatically after the target is collected — unlike a raw
 pointer, which becomes a dangling address.
 
@@ -166,7 +167,7 @@ inside a UObject without `UPROPERTY` creates cycles that the GC cannot collect. 
 genuinely non-UObject owners (subsystem helpers, RAII guards, test fixtures).
 
 `FGCObject` instances are **not trivially relocatable** — don't put them in `TArray` by value.
-See the `static_assert` in `GCObject.h`:226.
+See the `TIsTriviallyRelocatable` specialization in `GCObject.h`:226.
 
 ## Creating, destroying, and the root set
 
@@ -190,13 +191,13 @@ MyActor->Destroy();
 ```
 
 `AddToRoot`/`RemoveFromRoot`/`MarkAsGarbage` are declared in
-`Runtime/CoreUObject/Public/UObject/UObjectBaseUtility.h`:206, 212, 182.
+`Runtime/CoreUObject/Public/UObject/UObjectBaseUtility.h`:231, 237, 207.
 
 `NewObject` overloads are declared in
-`Runtime/CoreUObject/Public/UObject/UObjectGlobals.h`:1891.
+`Runtime/CoreUObject/Public/UObject/UObjectGlobals.h`:1931.
 
 `CollectGarbage` / `TryCollectGarbage` (force a GC pass) are declared in
-`Runtime/CoreUObject/Public/UObject/UObjectGlobals.h`:930.
+`Runtime/CoreUObject/Public/UObject/UObjectGlobals.h`:952.
 
 ## Non-UObject memory — plain C++ smart pointers
 
@@ -255,29 +256,29 @@ Full smart-pointer guide with thread-safety notes and `TSharedFromThis`:
 - `TObjectPtr<T>` is the UE5 idiom for UObject `UPROPERTY` members. Older codebases use raw `T*
   UPROPERTY`, which still compiles and works, but `TObjectPtr` adds the GC write barrier needed
   for incremental GC and cook-time dependency tracking.
-- `TLazyObjectPtr` is deprecated in 5.7; migrate to `TSoftObjectPtr`.
+- `TLazyObjectPtr` is slated for deprecation; migrate to `TSoftObjectPtr`.
 - `FGCObject::EFlags::RegisterLater` (UE 5.4+) allows deferred GC registration for
   partially-initialized objects; register explicitly with `RegisterGCObject()`.
 
 ## References & source material
 
-Engine source (UE 5.7, under `Engine/Source/`):
+Engine source (UE 5.8, under `Engine/Source/`):
 - `Runtime/CoreUObject/Public/UObject/ObjectPtr.h` — `TObjectPtr<T>` / `FObjectPtr`.
 - `Runtime/CoreUObject/Public/UObject/WeakObjectPtr.h` — `TWeakObjectPtr<T>`, `FWeakObjectPtr`.
 - `Runtime/Core/Public/UObject/StrongObjectPtrTemplates.h` — `TStrongObjectPtr<T>`:25.
 - `Runtime/CoreUObject/Public/UObject/GCObject.h` — `FGCObject`:127,
   `AddReferencedObjects`:195, `GetReferencerName`:198.
-- `Runtime/CoreUObject/Public/UObject/UObjectBaseUtility.h` — `MarkAsGarbage`:182,
-  `AddToRoot`:206, `RemoveFromRoot`:212.
-- `Runtime/CoreUObject/Public/UObject/Object.h` — `IsValid`:1875.
-- `Runtime/CoreUObject/Public/UObject/UObjectGlobals.h` — `NewObject`:1891,
-  `CollectGarbage`:930, `TryCollectGarbage`:940.
+- `Runtime/CoreUObject/Public/UObject/UObjectBaseUtility.h` — `MarkAsGarbage`:207,
+  `AddToRoot`:231, `RemoveFromRoot`:237.
+- `Runtime/CoreUObject/Public/UObject/Object.h` — `IsValid`:1886.
+- `Runtime/CoreUObject/Public/UObject/UObjectGlobals.h` — `NewObject`:1931,
+  `CollectGarbage`:952, `TryCollectGarbage`:962.
 - `Runtime/CoreUObject/Public/UObject/SoftObjectPtr.h` — `TSoftObjectPtr<T>`.
 - `Runtime/CoreUObject/Public/UObject/GarbageCollection.h` — GC internals, `CollectGarbage` flags.
 - `Runtime/Core/Public/Templates/SharedPointer.h` — `TSharedPtr`/`TSharedRef`/`TWeakPtr`.
 - `Runtime/Core/Public/Templates/UniquePtr.h` — `TUniquePtr`.
 
-Official docs (UE 5.7, all verified live):
+Official docs (UE 5.8, all verified live):
 - Object Pointers —
   <https://dev.epicgames.com/documentation/unreal-engine/object-pointers-in-unreal-engine>
 - Unreal Object Handling —

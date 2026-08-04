@@ -3,18 +3,18 @@
 Deep dive for [../SKILL.md](../SKILL.md). Covers `UWidgetComponent` configuration for
 world-space and screen-space UI, `UWidgetInteractionComponent` for player interaction with
 3D widgets, input mode management on `APlayerController`, and focus/navigation for menus.
-Grounded in UE 5.7 (`Engine/Source/Runtime/UMG/Public/Components/WidgetComponent.h`).
+Grounded in UE 5.8 (`Engine/Source/Runtime/UMG/Public/Components/WidgetComponent.h`).
 
 ## UWidgetComponent overview
 
-`UWidgetComponent` (`WidgetComponent.h`:94) is a `UMeshComponent` that renders a
+`UWidgetComponent` (`WidgetComponent.h`:95) is a `UMeshComponent` that renders a
 `UUserWidget` to a `UTextureRenderTarget2D`, then projects the result onto a quad or cylinder
 in the 3D world. It handles its own tick to keep the render target synchronized with widget
 state.
 
 ### Space modes
 
-Controlled by `EWidgetSpace` (`WidgetComponent.h`:24):
+Controlled by `EWidgetSpace` (`WidgetComponent.h`:25):
 
 | `EWidgetSpace` | Behavior |
 |---|---|
@@ -28,14 +28,14 @@ InteractPrompt->SetDrawSize(FVector2D(300.f, 100.f)); // render target resolutio
 
 ### Tick modes
 
-`ETickMode` (`WidgetComponent.h`:70):
+`ETickMode` (`WidgetComponent.h`:71):
 - `Disabled` — component never ticks (use for truly static widgets).
 - `Enabled` — always ticks.
 - `Automatic` — ticks only when the widget is visible (default; usually correct).
 
 ### Blend modes
 
-`EWidgetBlendMode` (`WidgetComponent.h`:41):
+`EWidgetBlendMode` (`WidgetComponent.h`:43):
 - `Opaque` — no transparency.
 - `Masked` — clip by alpha.
 - `Transparent` — alpha blending (most common for UI quads).
@@ -62,7 +62,7 @@ PromptComponent->SetWidgetClass(PromptWidgetClass);
 void AMyActor::BeginPlay()
 {
     Super::BeginPlay();
-    if (UUserWidget* W = PromptComponent->GetWidget())  // WidgetComponent.h:206
+    if (UUserWidget* W = PromptComponent->GetWidget())  // WidgetComponent.h:207
     {
         // Cast and call typed methods:
         if (UMyPromptWidget* Prompt = Cast<UMyPromptWidget>(W))
@@ -73,7 +73,7 @@ void AMyActor::BeginPlay()
 }
 ```
 
-`InitWidget()` (`WidgetComponent.h`:134) is called automatically on `BeginPlay`; it
+`InitWidget()` (`WidgetComponent.h`:135) is called automatically on `BeginPlay`; it
 `CreateWidget`s the instance if not already done. Call `SetWidgetClass` before `BeginPlay`
 or before `InitWidget` if setting it at runtime.
 
@@ -128,8 +128,8 @@ to pass to `SetWidgetToFocus`.
 
 - `UWidget::SetUserFocus(PlayerController)` — programmatically focus a specific widget.
 - Override `NativeSupportsKeyboardFocus()` → `return true;` on a `UUserWidget` to allow it to
-  receive keyboard focus (`UserWidget.h`:1590).
-- Override `NativeOnFocusReceived` / `NativeOnFocusLost` (`UserWidget.h`:1593-1594) for
+  receive keyboard focus (`UserWidget.h`:1598).
+- Override `NativeOnFocusReceived` / `NativeOnFocusLost` (`UserWidget.h`:1601-1602) for
   per-widget focus response.
 - `UWidgetNavigation` on each widget controls which neighbor receives focus when the
   player presses directional input — configurable in the Blueprint designer or via

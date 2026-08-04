@@ -2,13 +2,13 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the channel taxonomy, custom channel
 setup, collision presets, `FCollisionResponseContainer`, and the per-component response API.
-Grounded in UE 5.7 (`Engine/Source/Runtime/Engine/Classes/Engine/EngineTypes.h`) and the
+Grounded in UE 5.8 (`Engine/Source/Runtime/Engine/Classes/Engine/EngineTypes.h`) and the
 official [Collision Overview](https://dev.epicgames.com/documentation/unreal-engine/collision-in-unreal-engine---overview)
 doc.
 
 ## Channel taxonomy
 
-`ECollisionChannel` (declared `EngineTypes.h`:1087) has two categories:
+`ECollisionChannel` (declared `EngineTypes.h`:1098) has two categories:
 
 **Object channels** — what a component *is*:
 
@@ -28,17 +28,18 @@ doc.
 | `ECC_Visibility` | generic line-of-sight / weapon traces |
 | `ECC_Camera` | camera collision avoidance |
 
-**Custom channels** occupy `ECC_GameTraceChannel1`–`ECC_GameTraceChannel18`. In Project
+**Custom channels** occupy `ECC_GameTraceChannel1`–`ECC_GameTraceChannel50` (expanded from
+18 to 50 in 5.8). In Project
 Settings → Collision you assign human-readable names (e.g. `Interactable`) and a default
 response. At C++ level they remain `ECC_GameTraceChannel1`, etc. Use
 `UEngineTypes::ConvertToCollisionChannel(ETraceTypeQuery)` and
 `UEngineTypes::ConvertToObjectType(ECollisionChannel)` to convert between Blueprint-facing
-enums and the runtime enum (`EngineTypes.h`:3824–3833).
+enums and the runtime enum (`EngineTypes.h`:4066–4072).
 
 ## FCollisionResponseContainer
 
 Each component stores its per-channel responses in an `FCollisionResponseContainer`
-(`EngineTypes.h`:1346). The struct lays out one `TEnumAsByte<ECollisionResponse>` per built-in
+(`EngineTypes.h`:1445). The struct lays out one `TEnumAsByte<ECollisionResponse>` per built-in
 channel as named fields (`WorldStatic`, `Pawn`, `Visibility`, etc.) plus unnamed slots for
 custom channels. Read/write via the named methods on `UPrimitiveComponent` rather than
 directly to keep the bookkeeping in sync.
@@ -52,7 +53,7 @@ MyComp->SetCollisionResponseToChannels(Responses);
 ```
 
 `FCollisionResponseContainer::SetResponse(ECollisionChannel, ECollisionResponse)` is declared
-at `EngineTypes.h`:1518.
+at `EngineTypes.h`:1753.
 
 ## Collision presets (profiles)
 
@@ -100,13 +101,13 @@ All on `UPrimitiveComponent` (`PrimitiveComponent.h`):
 
 | Method | Line | Purpose |
 |---|---|---|
-| `SetCollisionEnabled(Type)` | 1943 | Enable/disable query/physics participation |
-| `SetCollisionObjectType(Channel)` | 1964 | What this component is |
-| `SetCollisionProfileName(Name)` | 1953 | Apply a named preset |
-| `SetCollisionResponseToChannel(Ch, Resp)` | 2852 | Set one channel's response |
-| `SetCollisionResponseToAllChannels(Resp)` | 2860 | Set all channels at once |
-| `SetCollisionResponseToChannels(Container)` | 2867 | Bulk-set from a container |
-| `SetGenerateOverlapEvents(bool)` | 373 | Enable/disable overlap callbacks |
+| `SetCollisionEnabled(Type)` | 2026 | Enable/disable query/physics participation |
+| `SetCollisionObjectType(Channel)` | 2047 | What this component is |
+| `SetCollisionProfileName(Name)` | 2036 | Apply a named preset |
+| `SetCollisionResponseToChannel(Ch, Resp)` | 2944 | Set one channel's response |
+| `SetCollisionResponseToAllChannels(Resp)` | 2952 | Set all channels at once |
+| `SetCollisionResponseToChannels(Container)` | 2959 | Bulk-set from a container |
+| `SetGenerateOverlapEvents(bool)` | 418 | Enable/disable overlap callbacks |
 
 ## Interaction rules (summarized)
 

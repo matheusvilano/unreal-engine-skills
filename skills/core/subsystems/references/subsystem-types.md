@@ -1,7 +1,7 @@
 # Subsystem types — per-type reference
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the creation timing, world availability, and
-special APIs for each subsystem base class. Grounded in UE 5.7
+special APIs for each subsystem base class. Grounded in UE 5.8
 (`Engine/Source/Runtime/Engine/Public/Subsystems/`).
 
 ## UEngineSubsystem
@@ -24,11 +24,11 @@ UMyEngineSubsystem* Sub = GEngine->GetEngineSubsystem<UMyEngineSubsystem>();
 ```
 
 **Dynamic loading:** `UEngineSubsystem` (and `UEditorSubsystem`) are *dynamic* subsystems via
-`UDynamicSubsystem` (`Subsystem.h`:87). If a plugin containing a `UEngineSubsystem` subclass is
+`UDynamicSubsystem` (`Subsystem.h`:80). If a plugin containing a `UEngineSubsystem` subclass is
 loaded at runtime, the collection instantiates the subsystem automatically. Similarly, unloading
 the plugin calls `Deinitialize` and removes the instance. Use
 `FSubsystemCollectionBase::ActivateExternalSubsystem` / `DeactivateExternalSubsystem`
-(`SubsystemCollection.h`:48, :53) if you need to manually trigger this.
+(`SubsystemCollection.h`:50, :55) if you need to manually trigger this.
 
 **Use for:** process-wide services that outlive any game session — asset registries, analytics
 services, cross-session caches, plugin lifecycle management.
@@ -49,7 +49,7 @@ during game instance initialization before `UGameInstance::OnStart`.
 be assigned to the game instance at that point. For world-dependent initialization, subscribe to
 world begin-play via `FWorldDelegates::OnWorldBeginPlay` or use a companion
 `UWorldSubsystem`. The convenience method `GetGameInstance()` on the subsystem returns the
-owning `UGameInstance` (`GameInstanceSubsystem.h`:23).
+owning `UGameInstance` (`GameInstanceSubsystem.h`:25).
 
 **Access:**
 ```cpp
@@ -72,15 +72,15 @@ cross-level player progression, plugin feature flags.
 **Lifetime:** one `UWorld` instance. Recreated fresh after every seamless travel or `LoadMap`.
 Destroyed before the world is torn down.
 
-**Creation timing:** during `UWorld` initialization. `Initialize` (overridden in
-`WorldSubsystem.h`:36) is followed by `PostInitialize` (`:39`) once all world subsystems have
-been initialized — use `PostInitialize` for cross-subsystem setup within the world scope.
-`OnWorldBeginPlay` (`:45`) is called when gameplay starts, mirroring `AActor::BeginPlay`.
+**Creation timing:** during `UWorld` initialization. `Initialize` (inherited from
+`USubsystem`) is followed by `PostInitialize` (`WorldSubsystem.h`:37) once all world subsystems
+have been initialized — use `PostInitialize` for cross-subsystem setup within the world scope.
+`OnWorldBeginPlay` (`:43`) is called when gameplay starts, mirroring `AActor::BeginPlay`.
 
 **World access:** `GetWorld()` is always valid after `Initialize`; the world subsystem is owned
 by its world.
 
-**Filtering by world type:** override `DoesSupportWorldType` (`WorldSubsystem.h`:61) to skip
+**Filtering by world type:** override `DoesSupportWorldType` (`WorldSubsystem.h`:66) to skip
 creation in certain world types (e.g. only create in game worlds, not preview or editor worlds):
 
 ```cpp
@@ -144,7 +144,7 @@ public:
 };
 ```
 
-`GetStatId` is declared `PURE_VIRTUAL` in `WorldSubsystem.h`:87. Every concrete subclass must
+`GetStatId` is declared `PURE_VIRTUAL` in `WorldSubsystem.h`:92. Every concrete subclass must
 implement it; forgetting it results in a compile error because the class remains abstract.
 
 `IsTickable` defaults to `true`. Override it if tick should be paused conditionally.
@@ -159,7 +159,7 @@ implement it; forgetting it results in a compile error because the class remains
 
 **Creation timing:** when the local player is created (before a player controller is assigned).
 
-**Player controller access:** override `PlayerControllerChanged` (`LocalPlayerSubsystem.h`:37)
+**Player controller access:** override `PlayerControllerChanged` (`LocalPlayerSubsystem.h`:35)
 to react when the player's controller changes (e.g. after seamless travel or login).
 
 **Access:**
@@ -190,9 +190,9 @@ utility extensions, scripted validation pipelines.
 
 ## Version notes
 
-- `UWorldSubsystem::UpdateStreamingState` was deprecated in UE 5.5. Implement
-  `IStreamingWorldSubsystemInterface` instead if streaming state callbacks are needed.
-- `GetSubsystemChecked` on `UWorld` (`World.h`:4205) is new in UE 5.x; it returns
+- `UWorldSubsystem::UpdateStreamingState` was deprecated in UE 5.5 and removed in 5.8.
+  Implement `IStreamingWorldSubsystemInterface` instead if streaming state callbacks are needed.
+- `GetSubsystemChecked` on `UWorld` (`World.h`:4321) is new in UE 5.x; it returns
   `TNotNull<T*>` and asserts when the subsystem is absent.
 - The subsystem framework is stable across UE5; the per-type headers and class hierarchy
   have not changed since the feature was introduced in UE 4.22.

@@ -3,9 +3,9 @@
 Deep dive for [../SKILL.md](../SKILL.md). Covers interface declaration, all three function types
 (C++ only, `BlueprintImplementableEvent`, `BlueprintNativeEvent`), the dispatch rules, `Cast<>`
 vs. `Execute_` vs. `Implements<>`, and `TScriptInterface` safe storage.
-Grounded in UE 5.7:
+Grounded in UE 5.8:
 - `Engine/Source/Runtime/CoreUObject/Public/UObject/Interface.h`
-- `Engine/Source/Runtime/CoreUObject/Public/UObject/ObjectMacros.h` (namespace `UI`, lines 925–940)
+- `Engine/Source/Runtime/CoreUObject/Public/UObject/ObjectMacros.h` (namespace `UI`, lines 965–983)
 - Official [Interfaces](https://dev.epicgames.com/documentation/unreal-engine/interfaces-in-unreal-engine) doc.
 
 ## Interface declaration (always two classes)
@@ -40,7 +40,7 @@ public:
 The `U`-prefixed class needs no body beyond `GENERATED_BODY()`. The `I`-prefixed class is what
 C++ code inherits and what holds function declarations.
 
-## UINTERFACE specifiers (`ObjectMacros.h`:925–940)
+## UINTERFACE specifiers (`ObjectMacros.h`:965–983)
 
 | Specifier | Effect |
 |---|---|

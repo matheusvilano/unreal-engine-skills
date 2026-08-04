@@ -10,7 +10,7 @@ description: >
   it to the process, game session, world, or local player — and when choosing between a
   subsystem, a manager actor, or a GameInstance override.
 metadata:
-  engine-version: "5.7"
+  engine-version: "5.8"
   category: gameplay-framework
 ---
 
@@ -220,29 +220,29 @@ caching, and UI logic. See `networking-and-replication` and `gameplay-framework`
 
 ## References & source material
 
-Engine source (UE 5.7, `Engine/Source/Runtime/Engine/Public/Subsystems/`):
-- `Subsystem.h` — `USubsystem`:47 — `ShouldCreateSubsystem`:61, `Initialize`:64,
-  `Deinitialize`:67. `UDynamicSubsystem`:87 (base for `UEngineSubsystem`).
-- `SubsystemCollection.h` — `FSubsystemCollectionBase`:14, `InitializeDependency`:33,
-  `ActivateExternalSubsystem`:48, `DeactivateExternalSubsystem`:53.
+Engine source (UE 5.8, `Engine/Source/Runtime/Engine/Public/Subsystems/`):
+- `Subsystem.h` — `USubsystem`:44 — `ShouldCreateSubsystem`:56, `Initialize`:59,
+  `Deinitialize`:62. `UDynamicSubsystem`:80 (base for `UEngineSubsystem`).
+- `SubsystemCollection.h` — `FSubsystemCollectionBase`:16, `InitializeDependency`:35,
+  `ActivateExternalSubsystem`:50, `DeactivateExternalSubsystem`:55.
 - `GameInstanceSubsystem.h` — `UGameInstanceSubsystem`:16 (`Within=GameInstance`),
-  `GetGameInstance()`:23.
-- `WorldSubsystem.h` — `UWorldSubsystem`:15 — `PostInitialize`:39,
-  `OnWorldBeginPlay`:45, `DoesSupportWorldType`:61. `UTickableWorldSubsystem`:75 —
-  `GetStatId` pure virtual:87.
+  `GetGameInstance()`:25.
+- `WorldSubsystem.h` — `UWorldSubsystem`:16 — `PostInitialize`:37,
+  `OnWorldBeginPlay`:43, `DoesSupportWorldType`:66. `UTickableWorldSubsystem`:80 —
+  `GetStatId` pure virtual:92.
 - `LocalPlayerSubsystem.h` — `ULocalPlayerSubsystem`:17 (`Within=LocalPlayer`),
-  `PlayerControllerChanged`:37.
-- `EngineSubsystem.h` — `UEngineSubsystem`:21 (derives from `UDynamicSubsystem`).
-- `SubsystemBlueprintLibrary.h` — Blueprint-internal getters for all subsystem types:14.
+  `PlayerControllerChanged`:35.
+- `EngineSubsystem.h` — `UEngineSubsystem`:20 (derives from `UDynamicSubsystem`).
+- `SubsystemBlueprintLibrary.h` — Blueprint-internal getters for all subsystem types:15.
 
-Engine source (UE 5.7, `Engine/Source/Runtime/Engine/Classes/Engine/`):
+Engine source (UE 5.8, `Engine/Source/Runtime/Engine/Classes/Engine/`):
 - `GameInstance.h` — `GetSubsystem<T>()`:440, static `GetSubsystem(GameInstance*)`:450.
-- `World.h` — `GetSubsystem<T>()`:4196, `GetSubsystemChecked<T>()`:4205,
-  static `GetSubsystem(World*)`:4215.
-- `LocalPlayer.h` — `GetSubsystem<T>()`:355, `GetSubsystemFromController<T>()`:379.
-- `Engine.h` — `GetEngineSubsystem<T>()`:3779, `EngineSubsystemCollection`:3809.
+- `World.h` — `GetSubsystem<T>()`:4312, `GetSubsystemChecked<T>()`:4321,
+  static `GetSubsystem(World*)`:4331.
+- `LocalPlayer.h` — `GetSubsystem<T>()`:365, `GetSubsystemFromController<T>()`:389.
+- `Engine.h` — `GetEngineSubsystem<T>()`:3847, `EngineSubsystemCollection`:3877.
 
-Official docs (UE 5.7):
+Official docs (UE 5.8):
 - Programming Subsystems —
   <https://dev.epicgames.com/documentation/unreal-engine/programming-subsystems-in-unreal-engine>
 

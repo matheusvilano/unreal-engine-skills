@@ -27,11 +27,11 @@ correct in Unreal*, not *which tool to operate*.
 
 | Item | Value |
 |---|---|
-| Primary engine version | **UE 5.7** (`E:\Program Files\Epic Games\UE_5.7`) |
-| Engine source for cross-ref | 5.7 (binary install incl. source), 5.5.1 + 5.8 full source builds |
-| Engine source root (5.7) | `E:\Program Files\Epic Games\UE_5.7\Engine\Source` |
+| Primary engine version | **UE 5.8** (`E:\Program Files\Epic Games\UE_5.8`) |
+| Engine source for cross-ref | 5.8 (binary install incl. source); 5.7 install kept for version diffing |
+| Engine source root (5.8) | `E:\Program Files\Epic Games\UE_5.8\Engine\Source` |
 
-Skills target 5.7 APIs. Where an API moved or changed between 5.x versions, the skill notes it.
+Skills target 5.8 APIs. Where an API moved or changed between 5.x versions, the skill notes it.
 
 ## Repository layout
 
@@ -161,8 +161,8 @@ See [`docs/skill-authoring-guide.md`](docs/skill-authoring-guide.md). In short:
 - `name`: lowercase letters/digits/hyphens, ≤64 chars, no leading/trailing/double hyphens.
 - `description`: ≤1024 chars, states **what it does and when to use it**, with searchable keywords.
 - Keep `SKILL.md` under ~500 lines; push deep detail into `references/`.
-- Ground claims in real 5.7 source paths; cite `Engine/Source/...` locations.
-- Prefer C++ that compiles against 5.7; flag version-specific behavior.
+- Ground claims in real 5.8 source paths; cite `Engine/Source/...` locations.
+- Prefer C++ that compiles against 5.8; flag version-specific behavior.
 
 ## Validation
 
@@ -187,5 +187,5 @@ Set `UE_ENGINE_ROOT` if your engine install is not at the default path.
 
 `evals/tasks/` holds golden tasks for high-traffic skills — realistic prompts with
 checkable acceptance criteria, used to compare an agent's output with and without the
-skill loaded. See [`evals/README.md`](evals/README.md) for the method and the UE 5.7
+skill loaded. See [`evals/README.md`](evals/README.md) for the method and the UE 5.8
 compile-check workflow.

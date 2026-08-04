@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers every folder in a UE project, what is
 authored vs generated, content paths and mount points, and a complete `.gitignore`
-strategy. Grounded in UE 5.7
+strategy. Grounded in UE 5.8
 (`Engine/Source/Runtime/Core/Public/Misc/Paths.h`,
 `Engine/Source/Runtime/Projects/Public/ProjectDescriptor.h`).
 
@@ -67,14 +67,14 @@ project descriptor and is always committed. For the cascade and syntax see
 [references/config-system.md](config-system.md).
 
 `FPaths::ProjectConfigDir()` resolves to this folder at runtime
-(`Runtime/Core/Public/Misc/Paths.h:298`).
+(`Runtime/Core/Public/Misc/Paths.h:283`).
 
 ### Content/
 
 All Unreal assets (`.uasset`) and maps (`.umap`) live here. The engine refers to them
 via the `/Game/` virtual mount point; never use OS paths to reference content.
 
-`FPaths::ProjectContentDir()` resolves to this folder (`Paths.h:291`).
+`FPaths::ProjectContentDir()` resolves to this folder (`Paths.h:276`).
 
 Binary assets do not text-merge. Use **Git LFS** (tracking `*.uasset` and `*.umap`) or
 Perforce with exclusive checkout on any project where multiple people edit the same
@@ -118,7 +118,7 @@ shared network DDC path (`[InstalledDerivedDataBackend]` in `Engine/Config/BaseE
 Never commit the local DDC.
 
 `FPaths::ProjectSavedDir()` and `FPaths::ProjectIntermediateDir()` resolve to `Saved/` and
-`Intermediate/` respectively (`Paths.h:305`, `Paths.h:312`).
+`Intermediate/` respectively (`Paths.h:290`, `Paths.h:297`).
 
 ### Saved/
 

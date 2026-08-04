@@ -1,7 +1,7 @@
 # Control Rig graph — deep reference
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the RigVM graph, `FRigUnit` C++ authoring,
-`URigHierarchy` element types, solve events, and the Modular Rig system. Grounded in UE 5.7
+`URigHierarchy` element types, solve events, and the Modular Rig system. Grounded in UE 5.8
 (`Engine/Plugins/Animation/ControlRig/Source/ControlRig/Public/`).
 
 ---
@@ -43,10 +43,10 @@ Access transforms from C++:
 // Read a bone's current global transform
 URigHierarchy* Hier = ControlRig->GetHierarchy();
 FRigElementKey BoneKey(FName("foot_l"), ERigElementType::Bone);
-FTransform T = Hier->GetGlobalTransform(BoneKey);   // RigHierarchy.h:2234
+FTransform T = Hier->GetGlobalTransform(BoneKey);   // RigHierarchy.h:2277
 
 // Write a bone's local transform (non-initial, affects children)
-Hier->SetLocalTransform(BoneKey, NewLocal);          // RigHierarchy.h:2186
+Hier->SetLocalTransform(BoneKey, NewLocal);          // RigHierarchy.h:2229
 ```
 
 `GetLocalTransform` / `SetLocalTransform` operate in the element's parent space.
@@ -173,22 +173,22 @@ to bind arbitrary scene components or socket transforms as rig inputs or outputs
 
 ---
 
-## Source references (UE 5.7)
+## Source references (UE 5.8)
 
 All paths under `Engine/Plugins/Animation/ControlRig/Source/ControlRig/Public/`:
-- `ControlRig.h`:60 — `UControlRig` class.
-- `ControlRig.h`:201 — `GetHierarchy()`.
-- `ControlRig.h`:275 — `Execute(const FName&)`.
-- `ControlRig.h`:317 — `SetControlValue<T>()`.
-- `ControlRig.h`:324 — `GetControlValue()`.
-- `ControlRig.h`:427 — `OnPreConstruction_AnyThread()`, `OnPostConstruction_AnyThread()`.
-- `AnimNode_ControlRig.h`:20 — `FAnimNode_ControlRig`.
-- `AnimNode_ControlRig.h`:38 — `Evaluate_AnyThread()`.
+- `ControlRig.h`:63 — `UControlRig` class.
+- `ControlRig.h`:203 — `GetHierarchy()`.
+- `ControlRig.h`:277 — `Execute(const FName&)`.
+- `ControlRig.h`:331 — `SetControlValue<T>()`.
+- `ControlRig.h`:338 — `GetControlValue()`.
+- `ControlRig.h`:443 — `OnPreConstruction_AnyThread()`, `OnPostConstruction_AnyThread()`.
+- `AnimNode_ControlRig.h`:21 — `FAnimNode_ControlRig`.
+- `AnimNode_ControlRig.h`:42 — `Evaluate_AnyThread()`.
 - `ControlRigComponent.h`:175 — `UControlRigComponent`.
 - `ModularRig.h` — `UModularRig`, `FRigModuleInstance`, `FModuleInstanceHandle`.
 - `Units/RigUnit.h`:59 — `FRigUnit`.
 - `Rigs/RigHierarchy.h`:167 — `URigHierarchy`.
-- `Rigs/RigHierarchy.h`:2138 — `GetLocalTransform()`.
-- `Rigs/RigHierarchy.h`:2186 — `SetLocalTransform()`.
-- `Rigs/RigHierarchy.h`:2234 — `GetGlobalTransform()`.
+- `Rigs/RigHierarchy.h`:2181 — `GetLocalTransform()`.
+- `Rigs/RigHierarchy.h`:2229 — `SetLocalTransform()`.
+- `Rigs/RigHierarchy.h`:2277 — `GetGlobalTransform()`.
 - `Rigs/RigHierarchyElements.h` — `FRigBaseElement`, `FRigControlElement`, `FRigElementKey`.

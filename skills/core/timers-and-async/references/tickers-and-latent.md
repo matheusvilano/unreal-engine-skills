@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers `FTSTicker` API, `FTSTickerObjectBase`,
 timer-skew semantics, use cases, and an overview of latent actions
-(`FPendingLatentAction`, `UBlueprintAsyncActionBase`). Grounded in UE 5.7:
+(`FPendingLatentAction`, `UBlueprintAsyncActionBase`). Grounded in UE 5.8:
 `Runtime/Core/Public/Containers/Ticker.h`.
 
 ## FTSTicker
@@ -70,7 +70,7 @@ public:
 ```
 
 `FTSTickerObjectBase` registers the ticker in its constructor and unregisters in its
-destructor (verified: `Ticker.h`:147-150). No manual handle bookkeeping needed.
+destructor (verified: `Ticker.h`:148-150). No manual handle bookkeeping needed.
 
 ### When not to use FTSTicker
 
@@ -83,7 +83,7 @@ destructor (verified: `Ticker.h`:147-150). No manual handle bookkeeping needed.
 ### FTicker (removed)
 
 `FTicker` was the UE4 / early UE5 equivalent. It was **not** thread-safe. It was removed
-in UE5 (confirmed absent from the UE 5.7 source tree). All `FTicker` call sites must be
+in UE5 (confirmed absent from the UE 5.8 source tree). All `FTicker` call sites must be
 ported to `FTSTicker`.
 
 ## Latent actions (overview)
@@ -134,7 +134,7 @@ if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetW
 
 ### Preferred alternative: UBlueprintAsyncActionBase
 
-For most custom async Blueprint nodes in 5.7, prefer subclassing
+For most custom async Blueprint nodes in 5.8, prefer subclassing
 `UBlueprintAsyncActionBase`. It handles the delegate pins, execution context, and garbage
 collection automatically, and works with Blueprint's async graph evaluation without manual
 latent action plumbing.
@@ -156,7 +156,7 @@ public:
 ```
 
 `UBlueprintAsyncActionBase` is declared in
-`Engine/Classes/Engine/BlueprintAsyncActionBase.h`. The `meta=(BlueprintInternalUseOnly="true")`
+`Engine/Classes/Kismet/BlueprintAsyncActionBase.h`. The `meta=(BlueprintInternalUseOnly="true")`
 specifier hides the function from the Blueprint palette while the async node remains
 accessible through the async action machinery.
 

@@ -8,7 +8,7 @@ description: Use Unreal's core C++ types instead of the standard library — con
   collections, manipulates strings, does 3D math, or when choosing between FString/FName/
   FText, between std:: and UE containers, or between FRotator and FQuat for rotation.
 metadata:
-  engine-version: "5.7"
+  engine-version: "5.8"
   category: cpp-foundations
 ---
 
@@ -144,8 +144,8 @@ B.Appendf(TEXT(" X=%.1f"), Loc.X);
 FString Result(B);
 ```
 
-`TStringBuilder<N>` is the alias defined at `Containers/StringFwd.h`:30 for
-`TStringBuilderWithBuffer<TCHAR, N>` (`Misc/StringBuilder.h`:508).
+`TStringBuilder<N>` is the alias defined at `Containers/StringFwd.h`:32 for
+`TStringBuilderWithBuffer<TCHAR, N>` (`Misc/StringBuilder.h`:496).
 
 See [references/strings-and-text.md](references/strings-and-text.md) for the full
 conversion matrix, `FStringView`, string tables, encoding rules, and `NSLOCTEXT` vs
@@ -252,36 +252,36 @@ See [references/utility-types.md](references/utility-types.md) for usage rules, 
 
 ## References & source material
 
-Engine source (UE 5.7, under `Engine/Source/Runtime/Core/Public/`):
-- `Containers/Array.h`:669 — `TArray<T>` template class; `Contains`:1518, `Reserve`:3016,
-  `Sort`:3418.
+Engine source (UE 5.8, under `Engine/Source/Runtime/Core/Public/`):
+- `Containers/Array.h`:767 — `TArray<T>` template class; `Contains`:1757, `Reserve`:3268,
+  `Sort`:3654.
 - `Containers/Map.h` (via `Map.h.inl`) — `TMap<K,V>`; uses sparse-array + hash bucket
   backing.
 - `Containers/Set.h` — `TSet<T>`.
 - `Containers/Queue.h`:47 — `TQueue<T>`, `Enqueue`:123, `Dequeue`:80, `IsEmpty`:206.
 - `Containers/ArrayView.h` — `TArrayView<T>`.
-- `Containers/ContainerAllocationPolicies.h`:1073 — `TInlineAllocator`; :1275 — `TFixedAllocator`.
+- `Containers/ContainerAllocationPolicies.h`:1328 — `TInlineAllocator`; :1530 — `TFixedAllocator`.
 - `Containers/StaticArray.h`:25 — `TStaticArray<T,N>`.
-- `Containers/UnrealString.h` (impl in `UnrealString.h.inl`:54) — `FString`; `Printf`:1423,
-  `Format`:1465, `FromInt`:2023.
-- `Containers/StringFwd.h`:21 — `FStringBuilderBase`; :30 — `TStringBuilder<N>` alias.
-- `Misc/StringBuilder.h`:78 — `TStringBuilderBase`; `Append`:238, `Appendf`:419.
-- `UObject/NameTypes.h`:616 — `FName`; `ToString`:675.
-- `Internationalization/Text.h`:384 — `FText`; `Format`:647, `FromString`:497,
-  `EqualTo`:571, `AsNumber`:407.
-- `Misc/Optional.h`:127 — `TOptional<T>`; `IsSet`:69 (via base), `GetValue`:443, `Get`:472.
-- `Misc/TVariant.h`:42 — `TVariant<T,Ts...>`; `IsType`:140, `Get`:148, `TryGet`:177.
-- `Templates/Tuple.h`:651 — `TTuple<...>`; `MakeTuple`:58, `Get<N>()`:307.
+- `Containers/UnrealString.h` (impl in `UnrealString.h.inl`:58) — `FString`; `Printf`:1376,
+  `Format`:1418, `FromInt`:1992.
+- `Containers/StringFwd.h`:23 — `FStringBuilderBase`; :32 — `TStringBuilder<N>` alias.
+- `Misc/StringBuilder.h`:78 — `TStringBuilderBase`; `Append`:238, `Appendf`:407.
+- `UObject/NameTypes.h`:631 — `FName`; `ToString`:697.
+- `Internationalization/Text.h`:406 — `FText`; `Format`:675, `FromString`:520,
+  `EqualTo`:599, `AsNumber`:428.
+- `Misc/Optional.h`:47 — `TOptional<T>`; `IsSet`:359, `GetValue`:370, `Get`:407.
+- `Misc/TVariant.h`:42 — `TVariant<T,Ts...>`; `IsType`:124, `Get`:132, `TryGet`:160.
+- `Templates/Tuple.h`:531 — `TTuple<...>`; `MakeTuple`:45, `Get<N>()`:245.
 - `Math/MathFwd.h`:47 — type aliases: `FVector`, `FQuat`:50, `FTransform`:53, `FRotator`:57.
-- `Math/Vector.h`:50 — `TVector<T>`; `Dist`:1017, `DotProduct`:265, `CrossProduct`:240,
-  `GetSafeNormal`:649, `Normalize`:632.
-- `Math/Quat.h`:38 — `TQuat<T>`; `Slerp`:660, `MakeFromEuler`:374.
-- `Math/TransformVectorized.h`:61 — `TTransform<T>`; `GetLocation`:602, `GetScale3D`:1240,
-  `TransformPosition`:565, `InverseTransformPosition`:570.
-- `Math/UnrealMathUtility.h` — `FMath`; `Clamp`:592, `Lerp`:1116, `FInterpTo`:1502,
-  `FInterpConstantTo`:1483, `RandRange`:289.
+- `Math/Vector.h`:50 — `TVector<T>`; `Dist`:1015, `DotProduct`:263, `CrossProduct`:238,
+  `GetSafeNormal`:647, `Normalize`:630.
+- `Math/Quat.h`:38 — `TQuat<T>`; `Slerp`:658, `MakeFromEuler`:374.
+- `Math/TransformVectorized.h`:61 — `TTransform<T>`; `GetLocation`:599, `GetScale3D`:1237,
+  `TransformPosition`:562, `InverseTransformPosition`:567.
+- `Math/UnrealMathUtility.h` — `FMath`; `Clamp`:592, `Lerp`:1123, `FInterpTo`:1509,
+  `FInterpConstantTo`:1490, `RandRange`:289.
 
-Official docs (UE 5.7):
+Official docs (UE 5.8):
 - Containers overview — <https://dev.epicgames.com/documentation/unreal-engine/containers-in-unreal-engine>
 - TArray — <https://dev.epicgames.com/documentation/unreal-engine/array-containers-in-unreal-engine>
 - TMap — <https://dev.epicgames.com/documentation/unreal-engine/map-containers-in-unreal-engine>

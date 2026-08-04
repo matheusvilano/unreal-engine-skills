@@ -2,15 +2,15 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers `FSoundAttenuationSettings`
 fields, distance-volume models, spatialization algorithms, occlusion, reverb
-sends, and Audio Gameplay Volumes. Grounded in UE 5.7
+sends, and Audio Gameplay Volumes. Grounded in UE 5.8
 (`Engine/Source/Runtime/Engine/Classes/Sound/SoundAttenuation.h`).
 
 ## Key types
 
 - `USoundAttenuation` — UObject asset wrapping an `FSoundAttenuationSettings`
-  struct (`SoundAttenuation.h`:442–448). Create one in the Content Browser and
+  struct (`SoundAttenuation.h`:453–459). Create one in the Content Browser and
   assign it to sounds or pass it to play functions.
-- `FSoundAttenuationSettings` — the full settings struct (`SoundAttenuation.h`:138).
+- `FSoundAttenuationSettings` — the full settings struct (`SoundAttenuation.h`:148).
   Can be embedded directly on a `UAudioComponent` via `AttenuationOverrides` when
   `bOverrideAttenuation` is true, avoiding a separate asset.
 
@@ -59,7 +59,7 @@ float LPFFrequencyAtMin, LPFFrequencyAtMax;  // filter frequency at min/max dist
 
 Air absorption progressively low-pass-filters sounds as distance grows, simulating
 high-frequency rolloff through air. `EAirAbsorptionMethod` is declared in
-`SoundAttenuation.h`:40–47.
+`SoundAttenuation.h`:41–48.
 
 ## Occlusion
 
@@ -85,7 +85,7 @@ float ReverbDistanceMin, ReverbDistanceMax;
 ```
 
 Reverb send level scales linearly (or via custom curve) with distance. `EReverbSendMethod`
-is declared `SoundAttenuation.h`:51–61. Manual mode sends a constant level regardless
+is declared `SoundAttenuation.h`:52–62. Manual mode sends a constant level regardless
 of distance — useful for 2D sounds you still want reverb on.
 
 ## Applying attenuation per-call vs. per-sound
@@ -110,12 +110,12 @@ active sound if already playing.
 
 ## Audio Gameplay Volumes
 
-Audio Gameplay Volumes (plugin: `AudioGameplayVolumes`) replace `AudioVolume`
+Audio Gameplay Volumes (plugin: `AudioGameplayVolume`) replace `AudioVolume`
 actors for modular volume-based audio behaviour. Each volume has components
 (`UAGVPrimitiveComponentProxy`) that define per-volume effects: reverb, occlusion,
 ambient zone settings, and listener effects. Volumes can stack and blend as the
 listener moves. Declared in
-`Plugins/Runtime/AudioGameplay/Source/AudioGameplay/Public/`.
+`Plugins/AudioGameplayVolume/Source/AudioGameplayVolume/Public/`.
 
 The official doc is at
 <https://dev.epicgames.com/documentation/unreal-engine/audio-gameplay-volumes-in-unreal-engine>.
@@ -128,7 +128,7 @@ EPriorityAttenuationMethod PriorityAttenuationMethod;  // Linear, CustomCurve, M
 float PriorityAttenuationMin, PriorityAttenuationMax;
 ```
 
-`EPriorityAttenuationMethod` (`SoundAttenuation.h`:64–74) lowers a sound's voice
+`EPriorityAttenuationMethod` (`SoundAttenuation.h`:65–75) lowers a sound's voice
 priority as it moves farther away, making it easier for the concurrency system to
 evict distant sounds when voices are scarce.
 

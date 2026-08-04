@@ -12,7 +12,7 @@ description: >
   editor tasks, or exposing custom C++ editor APIs to Python/Blueprints. Editor-only —
   never used in packaged games.
 metadata:
-  engine-version: "5.7"
+  engine-version: "5.8"
   category: tooling
 ---
 
@@ -130,11 +130,11 @@ Content Browser. Populate `SupportedClasses` (class defaults) to filter which as
 show the action. `GetSupportedClass()` is deprecated since UE 5.2.
 
 **`UEditorUtilitySubsystem`** manages widget tabs and utility tasks
-(`Editor/Blutility/Public/EditorUtilitySubsystem.h:46`):
+(`Editor/Blutility/Public/EditorUtilitySubsystem.h:47`):
 ```cpp
 // Open an Editor Utility Widget tab from C++:
 UEditorUtilitySubsystem* EUS = GEditor->GetEditorSubsystem<UEditorUtilitySubsystem>();
-EUS->SpawnAndRegisterTab(MyWidgetBlueprint);  // line 87
+EUS->SpawnAndRegisterTab(MyWidgetBlueprint);  // line 88
 // From Python:
 // eus = unreal.get_editor_subsystem(unreal.EditorUtilitySubsystem)
 // eus.spawn_and_register_tab(widget_bp)
@@ -183,17 +183,17 @@ Level-file and viewport operations:
 
 ```cpp
 ULevelEditorSubsystem* LS = GEditor->GetEditorSubsystem<ULevelEditorSubsystem>();
-LS->NewLevel("/Game/Maps/MyLevel");        // :106
-LS->LoadLevel("/Game/Maps/Existing");      // :126
-LS->SaveCurrentLevel();                    // :133
+LS->NewLevel("/Game/Maps/MyLevel");        // :147
+LS->LoadLevel("/Game/Maps/Existing");      // :167
+LS->SaveCurrentLevel();                    // :174
 LS->EditorRequestBeginPlay();              // :78
 ```
 
-### `UAssetEditorSubsystem` (`Editor/UnrealEd/Public/Subsystems/AssetEditorSubsystem.h:105`)
+### `UAssetEditorSubsystem` (`Editor/UnrealEd/Public/Subsystems/AssetEditorSubsystem.h:112`)
 
 Open assets in their specialized asset editors programmatically.
 
-### `UUnrealEditorSubsystem` (`Editor/UnrealEd/Public/Subsystems/UnrealEditorSubsystem.h:15`)
+### `UUnrealEditorSubsystem` (`Editor/UnrealEd/Public/Subsystems/UnrealEditorSubsystem.h:17`)
 
 Viewport camera query/set (`GetLevelViewportCameraInfo`, `SetLevelViewportCameraInfo`)
 and `GetEditorWorld()`.
@@ -214,7 +214,7 @@ Python the class name loses its prefix and the function name becomes `snake_case
 
 Marks a function to appear as a button in the actor Details panel when an instance is
 selected in the editor. Works on `AActor` and `UActorComponent` subclasses.
-Source: `Runtime/CoreUObject/Public/UObject/ObjectMacros.h:1005`.
+Source: `Runtime/CoreUObject/Public/UObject/ObjectMacros.h:1047`.
 
 ```cpp
 UFUNCTION(BlueprintCallable, Category = "Validation", meta = (CallInEditor = "true"))
@@ -232,8 +232,8 @@ static FVector ScaleVector(const FVector& V, float Factor);
 // Python: v.scale_vector(2.0)  instead of  unreal.MyLib.scale_vector(v, 2.0)
 ```
 
-Source: `Runtime/CoreUObject/Public/UObject/ObjectMacros.h:1671`. Related specifiers:
-`ScriptMethodSelfReturn` (:1674), `ScriptMethodMutable` (:1677).
+Source: `Runtime/CoreUObject/Public/UObject/ObjectMacros.h:1723`. Related specifiers:
+`ScriptMethodSelfReturn` (:1726), `ScriptMethodMutable` (:1729).
 
 ### `meta = (ScriptName = "PythonName")` — override the Python/scripting name
 
@@ -243,7 +243,7 @@ static UTexture* LoadTexture_Internal(const FString& Path);
 // Python: unreal.MyLib.load_texture(path)
 ```
 
-Source: `Runtime/CoreUObject/Public/UObject/ObjectMacros.h:1243`.
+Source: `Runtime/CoreUObject/Public/UObject/ObjectMacros.h:1285`.
 
 ---
 
@@ -255,7 +255,7 @@ Source: `Runtime/CoreUObject/Public/UObject/ObjectMacros.h:1243`.
   Prefer `UEditorAssetSubsystem` and `UEditorActorSubsystem` in all new code.
 - `UAssetActionUtility::GetSupportedClass()` deprecated UE 5.2; use the `SupportedClasses`
   array in class defaults instead.
-- Python 3.11.8 is the embedded version for UE 5.7 (VFX Reference Platform CY2024).
+- Python 3.11.8 is the embedded version for UE 5.8 (VFX Reference Platform CY2024).
   Set `UE_PYTHON_DIR` to embed a different CPython build (requires source rebuild).
 
 ## Gotchas
@@ -278,28 +278,28 @@ Source: `Runtime/CoreUObject/Public/UObject/ObjectMacros.h:1243`.
 
 ## References & source material
 
-Engine source (UE 5.7):
+Engine source (UE 5.8):
 
 **Blutility** (`Engine/Source/Editor/Blutility/`):
-- `Classes/EditorUtilityWidget.h` — `UEditorUtilityWidget`:27, `Run()`:33, `TabDisplayName`:73
+- `Classes/EditorUtilityWidget.h` — `UEditorUtilityWidget`:27, `Run()`:34, `TabDisplayName`:74
 - `Classes/EditorUtilityObject.h` — `UEditorUtilityObject`:20, `bRunEditorUtilityOnStartup`:41
-- `Classes/AssetActionUtility.h` — `UAssetActionUtility`:60, `SupportedClasses`, deprecated `GetSupportedClass()`:69
+- `Classes/AssetActionUtility.h` — `UAssetActionUtility`:60, `SupportedClasses`, deprecated `GetSupportedClass()`:71
 - `Classes/EditorUtilityTask.h` — `UEditorUtilityTask`:32, `FinishExecutingTask()`:56
-- `Public/EditorUtilitySubsystem.h` — `UEditorUtilitySubsystem`:46, `SpawnAndRegisterTab`:87, `RegisterAndExecuteTask`:135, `TryRun`:75
+- `Public/EditorUtilitySubsystem.h` — `UEditorUtilitySubsystem`:47, `SpawnAndRegisterTab`:88, `RegisterAndExecuteTask`:140, `TryRun`:76
 
 **Editor subsystems** (`Engine/Source/Editor/UnrealEd/Public/Subsystems/`):
 - `EditorActorSubsystem.h` — `UEditorActorSubsystem`:49, `GetAllLevelActors`:166, `SpawnActorFromClass`:228, `DestroyActor`:236
 - `EditorAssetSubsystem.h` — `UEditorAssetSubsystem`:38, `LoadAsset`:54, `SaveAsset`:296, `DuplicateAsset`:185, `RenameAsset`:215, `DeleteAsset`:155
-- `AssetEditorSubsystem.h` — `UAssetEditorSubsystem`:105
-- `UnrealEditorSubsystem.h` — `UUnrealEditorSubsystem`:15, `GetLevelViewportCameraInfo`:30
+- `AssetEditorSubsystem.h` — `UAssetEditorSubsystem`:112
+- `UnrealEditorSubsystem.h` — `UUnrealEditorSubsystem`:17, `GetLevelViewportCameraInfo`:32
 
 **Level editor** (`Engine/Source/Editor/LevelEditor/Public/`):
-- `LevelEditorSubsystem.h` — `ULevelEditorSubsystem`:38, `NewLevel`:106, `LoadLevel`:126, `SaveCurrentLevel`:133, `EditorRequestBeginPlay`:78
+- `LevelEditorSubsystem.h` — `ULevelEditorSubsystem`:38, `NewLevel`:147, `LoadLevel`:167, `SaveCurrentLevel`:174, `EditorRequestBeginPlay`:78
 
 **Python plugin** (`Engine/Plugins/Experimental/PythonScriptPlugin/`):
-- `Source/PythonScriptPlugin/Public/IPythonScriptPlugin.h` — `IPythonScriptPlugin`:11, `ExecPythonCommand`:49
+- `Source/PythonScriptPlugin/Public/IPythonScriptPlugin.h` — `IPythonScriptPlugin`:11, `ExecPythonCommand`:54
 - `Source/PythonScriptPlugin/Private/PythonScriptCommandlet.h` — `UPythonScriptCommandlet`:10
-- `Source/PythonScriptPlugin/Private/PythonScriptPluginSettings.h` — `StartupScripts`:67, `AdditionalPaths`:70
+- `Source/PythonScriptPlugin/Private/PythonScriptPluginSettings.h` — `StartupScripts`:67, `AdditionalPaths`:71
 
 **Reflection/meta specifiers** (`Engine/Source/Runtime/CoreUObject/Public/UObject/ObjectMacros.h`):
 - `CallInEditor`:1005, `ScriptName`:1243, `ScriptMethod`:1671, `ScriptMethodSelfReturn`:1674, `ScriptMethodMutable`:1677
@@ -308,7 +308,7 @@ Engine source (UE 5.7):
 - `Engine/Plugins/Editor/EditorScriptingUtilities/Source/EditorScriptingUtilities/Public/EditorAssetLibrary.h`
 - `Engine/Plugins/Editor/EditorScriptingUtilities/Source/EditorScriptingUtilities/Public/EditorLevelLibrary.h` (deprecated UE 5.0)
 
-Official docs (UE 5.7):
+Official docs (UE 5.8):
 - Scripting and Automating the Unreal Editor — <https://dev.epicgames.com/documentation/unreal-engine/scripting-and-automating-the-unreal-editor>
 - Scripting the Unreal Editor Using Python — <https://dev.epicgames.com/documentation/unreal-engine/scripting-the-unreal-editor-using-python>
 - Scripting the Unreal Editor Using Blueprints — <https://dev.epicgames.com/documentation/unreal-engine/scripting-the-unreal-editor-using-blueprints>

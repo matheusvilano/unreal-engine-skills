@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers every single-cast and multicast
 binding form, what lifetime guarantee each provides, payload variable syntax,
-`FDelegateHandle` management, and `EndPlay` cleanup patterns. Grounded in UE 5.7
+`FDelegateHandle` management, and `EndPlay` cleanup patterns. Grounded in UE 5.8
 (`Engine/Source/Runtime/Core/Public/Delegates/DelegateSignatureImpl.inl`).
 
 ## Binding form reference table
@@ -13,13 +13,13 @@ multicast (`TMulticastDelegate`). Source: `DelegateSignatureImpl.inl`.
 | Form | Object type | Weak ref? | Safe if object dies? | Lines |
 |---|---|---|---|---|
 | `BindStatic` / `AddStatic` | global/static fn | — | yes (no object) | — |
-| `BindUObject` / `AddUObject` | `UObject` subclass | yes (`TWeakObjectPtr`) | skipped if GC'd | 276 / 969 |
-| `BindSP` / `AddSP` | `TSharedRef`/`TSharedPtr` | yes (`TWeakPtr`) | skipped if expired | 179 / 864 |
-| `BindWeakLambda` / `AddWeakLambda` | `UObject` subclass | yes (weak UObject) | lambda not called | 151 / 828 |
-| `BindSPLambda` / `AddSPLambda` | shared-ptr object | yes (weak SP) | lambda not called | 136 / 815 |
-| `BindLambda` / `AddLambda` | any (functor) | **no** | **crash if capture dead** | 126 / 802 |
-| `BindRaw` / `AddRaw` | any raw ptr | **no** | **crash if object dead** | 163 / 843 |
-| `BindUFunction` / `AddUFunction` | `UObject` by FName | yes | skipped if GC'd | 259 / 950 |
+| `BindUObject` / `AddUObject` | `UObject` subclass | yes (`TWeakObjectPtr`) | skipped if GC'd | 288 / 1020 |
+| `BindSP` / `AddSP` | `TSharedRef`/`TSharedPtr` | yes (`TWeakPtr`) | skipped if expired | 191 / 895 |
+| `BindWeakLambda` / `AddWeakLambda` | `UObject` subclass | yes (weak UObject) | lambda not called | 163 / 853 |
+| `BindSPLambda` / `AddSPLambda` | shared-ptr object | yes (weak SP) | lambda not called | 148 / 838 |
+| `BindLambda` / `AddLambda` | any (functor) | **no** | **crash if capture dead** | 138 / 823 |
+| `BindRaw` / `AddRaw` | any raw ptr | **no** | **crash if object dead** | 175 / 870 |
+| `BindUFunction` / `AddUFunction` | `UObject` by FName | yes | skipped if GC'd | 271 / 997 |
 
 All weak-ref forms call `ExecuteIfBound`-style logic internally — the binding is
 silently skipped rather than crashing when the referent no longer exists.

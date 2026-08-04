@@ -1,6 +1,6 @@
 # `.uplugin` Descriptor Reference
 
-Full field reference for the `.uplugin` JSON descriptor. Grounded in UE 5.7
+Full field reference for the `.uplugin` JSON descriptor. Grounded in UE 5.8
 `Runtime/Projects/Public/PluginDescriptor.h` (`FPluginDescriptor`:38) and the official
 [Plugins in Unreal Engine](https://dev.epicgames.com/documentation/unreal-engine/plugins-in-unreal-engine)
 doc. See [../SKILL.md](../SKILL.md) for the plugin overview and common patterns.
@@ -32,15 +32,15 @@ Fields map to `FPluginDescriptor` in `Runtime/Projects/Public/PluginDescriptor.h
 | `MarketplaceURL` | `MarketplaceURL`:68 | string | Marketplace URL embedded in projects. |
 | `SupportURL` | `SupportURL`:71 | string | Support URL or email; optional. |
 | `EngineVersion` | `EngineVersion`:74 | string | Compatible engine version; optional. |
-| `EnabledByDefault` | `EnabledByDefault`:118 (`EPluginEnabledByDefault`:28) | bool/omit | `true`/`false`; omit for `Unspecified` (user decides). |
-| `CanContainContent` | `bCanContainContent`:121 | bool | Must be `true` to mount the `Content/` folder. |
-| `IsBetaVersion` | `bIsBetaVersion`:128 | bool | Shows a "Beta" badge in Plugin Browser. |
-| `IsExperimentalVersion` | `bIsExperimentalVersion`:131 | bool | Shows "Experimental" badge. |
-| `Installed` | `bInstalled`:133 | bool | `true` for installed (Marketplace) plugins. |
-| `ExplicitlyLoaded` | `bExplicitlyLoaded`:148 | bool | Plugin won't load automatically; must call `MountExplicitlyLoadedPlugin`. |
+| `EnabledByDefault` | `EnabledByDefault`:124 (`EPluginEnabledByDefault`:28) | bool/omit | `true`/`false`; omit for `Unspecified` (user decides). |
+| `CanContainContent` | `bCanContainContent`:127 | bool | Must be `true` to mount the `Content/` folder. |
+| `IsBetaVersion` | `bIsBetaVersion`:133 | bool | Shows a "Beta" badge in Plugin Browser. |
+| `IsExperimentalVersion` | `bIsExperimentalVersion`:136 | bool | Shows "Experimental" badge. |
+| `Installed` | `bInstalled`:139 | bool | `true` for installed (Marketplace) plugins. |
+| `ExplicitlyLoaded` | `bExplicitlyLoaded`:154 | bool | Plugin won't load automatically; must call `MountExplicitlyLoadedPlugin`. |
 | `SupportedTargetPlatforms` | `SupportedTargetPlatforms`:81 | string[] | Limits which platforms stage this plugin. |
 | `Modules` | `Modules`:90 (`TArray<FModuleDescriptor>`) | object[] | Code modules; see below. |
-| `Plugins` | `Plugins`:163 (`TArray<FPluginReferenceDescriptor>`) | object[] | Dependency plugins; see below. |
+| `Plugins` | `Plugins`:174 (`TArray<FPluginReferenceDescriptor>`) | object[] | Dependency plugins; see below. |
 
 Rarely-needed fields: `ParentPluginName` (extending another plugin), `bNoCode` (content-only
 enforcement), `bIsSealed` (prevents other plugins depending on this one),
@@ -68,9 +68,9 @@ Each entry in `"Modules"` corresponds to `FModuleDescriptor`
 | `LoadingPhase` | `LoadingPhase`:163 (`ELoadingPhase::Type`) | When to load relative to engine startup. See `ELoadingPhase` table below. |
 | `PlatformAllowList` | `PlatformAllowList`:166 | Load only on listed platforms (empty = all). |
 | `PlatformDenyList` | `PlatformDenyList`:169 | Skip listed platforms. |
-| `TargetAllowList` | `TargetAllowList`:175 | Load only for listed `EBuildTargetType` values. |
-| `TargetDenyList` | `TargetDenyList`:178 | Skip listed target types. |
-| `AdditionalDependencies` | `AdditionalDependencies`:201 | Extra link-time dependencies for UBT. |
+| `TargetAllowList` | `TargetAllowList`:178 | Load only for listed `EBuildTargetType` values. |
+| `TargetDenyList` | `TargetDenyList`:181 | Skip listed target types. |
+| `AdditionalDependencies` | `AdditionalDependencies`:202 | Extra link-time dependencies for UBT. |
 
 ### `EHostType` values (`ModuleDescriptor.h`:82)
 
@@ -109,7 +109,7 @@ Each entry in `"Modules"` corresponds to `FModuleDescriptor`
 ## Plugin reference descriptor (`FPluginReferenceDescriptor`)
 
 Each entry in `"Plugins"` corresponds to `FPluginReferenceDescriptor`
-(`Runtime/Projects/Public/PluginReferenceDescriptor.h`:27):
+(`Runtime/Projects/Public/PluginReferenceDescriptor.h`:26):
 
 ```json
 {
@@ -121,13 +121,13 @@ Each entry in `"Plugins"` corresponds to `FPluginReferenceDescriptor`
 | Field | C++ member | Notes |
 |---|---|---|
 | `Name` | `Name`:29 | Internal name of the dependency plugin. |
-| `Enabled` | `bEnabled`:37 | Must be `true` to activate the dependency. |
-| `Optional` | `bOptional`:40 | If `true`, the plugin silently ignores the dependency being absent. |
-| `PlatformAllowList` | `PlatformAllowList`:46 | Enable on listed platforms only. |
-| `PlatformDenyList` | `PlatformDenyList`:49 | Disable on listed platforms. |
-| `TargetAllowList` | `TargetAllowList`:60 | Enable for listed `EBuildTargetType` values only. |
-| `TargetDenyList` | `TargetDenyList`:63 | Disable for listed target types. |
-| `RequestedVersion` | `RequestedVersion`:71 | Pin a specific plugin `Version` integer. |
+| `Enabled` | `bEnabled`:32 | Must be `true` to activate the dependency. |
+| `Optional` | `bOptional`:35 | If `true`, the plugin silently ignores the dependency being absent. |
+| `PlatformAllowList` | `PlatformAllowList`:50 | Enable on listed platforms only. |
+| `PlatformDenyList` | `PlatformDenyList`:53 | Disable on listed platforms. |
+| `TargetAllowList` | `TargetAllowList`:62 | Enable for listed `EBuildTargetType` values only. |
+| `TargetDenyList` | `TargetDenyList`:65 | Disable for listed target types. |
+| `RequestedVersion` | `RequestedVersion`:74 | Pin a specific plugin `Version` integer. |
 
 ## Complete example
 
@@ -161,5 +161,5 @@ A plugin with a runtime module, an editor module, and plugin content, depending 
 - `Runtime/Projects/Public/PluginDescriptor.h` — `FPluginDescriptor`:38
 - `Runtime/Projects/Public/ModuleDescriptor.h` — `FModuleDescriptor`:154, `EHostType`:82,
   `ELoadingPhase`:24
-- `Runtime/Projects/Public/PluginReferenceDescriptor.h` — `FPluginReferenceDescriptor`:27
+- `Runtime/Projects/Public/PluginReferenceDescriptor.h` — `FPluginReferenceDescriptor`:26
 - Official doc: <https://dev.epicgames.com/documentation/unreal-engine/plugins-in-unreal-engine>

@@ -1,6 +1,6 @@
 # Ability Tasks and Gameplay Cues
 
-> Deep-dive reference for `UAbilityTask` and the Gameplay Cue system. Grounded in UE 5.7 source at
+> Deep-dive reference for `UAbilityTask` and the Gameplay Cue system. Grounded in UE 5.8 source at
 > `Engine/Plugins/Runtime/GameplayAbilities/Source/GameplayAbilities/Public/`.
 > Return to [../SKILL.md](../SKILL.md) for the entry-level overview.
 
@@ -36,7 +36,7 @@ subclasses.
 ## Task lifecycle
 
 Tasks hold `TObjectPtr<UGameplayAbility> Ability` and `TWeakObjectPtr<UAbilitySystemComponent>
-AbilitySystemComponent` (`AbilityTask.h:109,113`). When the ability ends, the ASC automatically
+AbilitySystemComponent` (`AbilityTask.h:110,113`). When the ability ends, the ASC automatically
 calls `EndTask` on all active tasks belonging to it, which calls `OnDestroy(true)`.
 
 **Custom task checklist:**
@@ -107,7 +107,7 @@ void UMyAbilityTask_WaitInput::OnDestroy(bool bInOwnerFinished)
 }
 ```
 
-## Built-in tasks (UE 5.7)
+## Built-in tasks (UE 5.8)
 
 All live under `Abilities/Tasks/` in the plugin's Public folder.
 
@@ -157,7 +157,7 @@ ASC->AddGameplayCue(FGameplayTag::RequestGameplayTag("GameplayCue.Burning"), Ctx
 ASC->RemoveGameplayCue(FGameplayTag::RequestGameplayTag("GameplayCue.Burning"));
 ```
 
-`ExecuteGameplayCue`:881, `AddGameplayCue`:885, `RemoveGameplayCue`:892 in `AbilitySystemComponent.h`.
+`ExecuteGameplayCue`:887, `AddGameplayCue`:891, `RemoveGameplayCue`:898 in `AbilitySystemComponent.h`.
 
 Cues can also be embedded directly in a `UGameplayEffect` as `GameplayCues` entries; they
 automatically fire `OnActive`/`OnRemove` when the GE is applied/removed.

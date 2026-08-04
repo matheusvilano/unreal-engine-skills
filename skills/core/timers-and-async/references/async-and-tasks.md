@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers `Async`/`AsyncTask`, `TFuture`/`TPromise`,
 `FNonAbandonableTask`/`FAutoDeleteAsyncTask`/`FAsyncTask`, and the modern UE Tasks System
-(`UE::Tasks::Launch`, `FTask`, `FPipe`, prerequisites, task events). Grounded in UE 5.7
+(`UE::Tasks::Launch`, `FTask`, `FPipe`, prerequisites, task events). Grounded in UE 5.8
 sources and the official
 [Tasks System](https://dev.epicgames.com/documentation/unreal-engine/tasks-systems-in-unreal-engine)
 doc.
@@ -58,7 +58,7 @@ Promise.SetValue(42);
 int32 Val = Future.Get();   // blocks until ready
 ```
 
-`TFuture` is **movable-only** (copy is deleted — verified: `Future.h`:413-416). Do not
+`TFuture` is **movable-only** (copy is deleted — verified: `Future.h`:400-402). Do not
 store a `TFuture` in a `UPROPERTY`; store plain data or use a `TSharedPtr` wrapper.
 
 `Async` wires the promise internally — callers usually only hold the returned `TFuture`.
@@ -69,7 +69,7 @@ Declared in `Runtime/Core/Public/Async/AsyncWork.h`.
 
 ### FNonAbandonableTask (base mixin)
 
-A stub base (lines 662-672) that implements `CanAbandon() { return false; }` and a no-op
+A stub base (lines 666-676) that implements `CanAbandon() { return false; }` and a no-op
 `Abandon()`. Derive your task class from it when the work must always run to completion
 (i.e. cannot be abandoned if the thread pool shuts down early).
 
@@ -103,7 +103,7 @@ class FBuildNavTask : public FNonAbandonableTask
 
 ### FAsyncTask (awaitable)
 
-`FAsyncTask<TTask>` (line 583) adds `IsDone()`, `EnsureCompletion()`, and `Cancel()`.
+`FAsyncTask<TTask>` (line 587) adds `IsDone()`, `EnsureCompletion()`, and `Cancel()`.
 You manage the lifetime (do not delete until the task is done):
 
 ```cpp
@@ -212,7 +212,7 @@ Gate.Trigger();   // releases Worker to run
 Busy-waiting was deprecated in UE 5.5. Calls to `Wait()` now use **oversubscription**
 (standby threads) instead of executing random unrelated tasks on the waiting thread. No
 code change required — the benefit is automatic. Do not call any removed busy-wait APIs
-in 5.7 code.
+in 5.8 code.
 
 ## Thread-safety summary
 

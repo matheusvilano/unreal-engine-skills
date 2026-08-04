@@ -1,7 +1,7 @@
 # Assertions — full reference
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers compile-flag mechanics, all macro variants,
-shipping behavior, `FDebug` helpers, and when each family is appropriate. Grounded in UE 5.7
+shipping behavior, `FDebug` helpers, and when each family is appropriate. Grounded in UE 5.8
 (`Engine/Source/Runtime/Core/Public/Misc/AssertionMacros.h`).
 
 ## Compile flags
@@ -17,7 +17,7 @@ Three independent flags control which assertion families are active:
 When `DO_CHECK` is 0, `check(expr)` expands to `{ CA_ASSUME(expr); }` — the expression is
 **not evaluated**, but the compiler is told it is true (enables optimizer hints).
 When `DO_CHECK` is 0, `verify(expr)` expands to evaluate the expression but not halt on
-failure (`AssertionMacros.h`:319).
+failure (`AssertionMacros.h`:324).
 
 ### Enabling checks in shipping
 
@@ -47,7 +47,7 @@ unimplemented();      // marks a pure-virtual override that was not overridden
 All expand to nothing (with `CA_ASSUME`) when `DO_CHECK` is 0. **Never put required
 side effects in a `check` expression** — they will not run in shipping.
 
-Implementation: `UE_CHECK_IMPL` (`AssertionMacros.h`:238) calls
+Implementation: `UE_CHECK_IMPL` (`AssertionMacros.h`:235) calls
 `FDebug::CheckVerifyFailedImpl2` on failure, which logs the callstack then calls
 `PLATFORM_BREAK()` to give the debugger a chance to attach before the crash.
 
@@ -92,7 +92,7 @@ ensureAlways(SomeCounterIsValid());
 ensureAlwaysMsgf(Index < Count, TEXT("Index %d >= Count %d"), Index, Count);
 ```
 
-Per-call-site deduplication (`AssertionMacros.h`:399) is implemented via a `static
+Per-call-site deduplication (`AssertionMacros.h`:404) is implemented via a `static
 std::atomic<uint8>` (`bGEnsureHasExecuted`) keyed by a compile-time hash of `__FILE__` and
 `__LINE__`. The first failure sets it; subsequent calls short-circuit.
 
@@ -121,7 +121,7 @@ logging system is ready:
 LowLevelFatalError(TEXT("Platform initialization failed: %s"), *ErrorMsg);
 ```
 
-This is a macro (`AssertionMacros.h`:554) that calls
+This is a macro (`AssertionMacros.h`:591) that calls
 `UE::Assert::Private::ProcessLowLevelFatalError`. The older function
 `LowLevelFatalErrorHandler` was deprecated in 5.7.
 

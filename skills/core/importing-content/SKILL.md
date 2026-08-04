@@ -11,7 +11,7 @@ description: Import external assets into Unreal using the Interchange framework 
   wrong scale/rotation/shading after import, scripting automated batch import, customising
   an import pipeline, or setting up a repeatable reimport workflow.
 metadata:
-  engine-version: "5.7"
+  engine-version: "5.8"
   category: content-assets
 ---
 
@@ -34,7 +34,7 @@ their import provenance so reimport stays predictable.
 
 ## Pipelines: Interchange vs legacy
 
-**Interchange** (default for glTF, GLB, OBJ, most images, audio; experimental opt-in for FBX)
+**Interchange** (default for FBX, glTF, GLB, OBJ, most images, audio)
 is the modern framework. Every import passes through three stages:
 
 1. **Translator** — reads the file into a format-neutral `UInterchangeBaseNodeContainer` (a
@@ -44,8 +44,8 @@ is the modern framework. Every import passes through three stages:
 3. **Factory** — a `UInterchangeFactoryBase` subclass that creates the final `UObject` asset
    (e.g. `UInterchangeStaticMeshFactory`, `UInterchangeTextureFactory`).
 
-The **legacy FBX importer** (`UFbxFactory` / `UnFbx::FFbxImporter`) handles FBX by default
-when Interchange FBX is not opted in. It has its own import dialog and options struct
+The **legacy FBX importer** (`UFbxFactory` / `UnFbx::FFbxImporter`) handles FBX only when
+Interchange FBX is disabled. It has its own import dialog and options struct
 (`UFbxImportUI`). Both paths record source file data in a `UAssetImportData`-derived object on
 the asset.
 
@@ -56,14 +56,14 @@ breakdown of all Interchange classes, module locations, and the factory six-step
 
 | Asset type | Interchange formats | Legacy/other |
 |---|---|---|
-| Static mesh | glTF, GLB, OBJ, FBX (experimental) | FBX (legacy) |
-| Skeletal mesh + animation | glTF, GLB, FBX (experimental) | FBX (legacy) |
+| Static mesh | FBX, glTF, GLB, OBJ | FBX (legacy) |
+| Skeletal mesh + animation | FBX, glTF, GLB | FBX (legacy) |
 | Texture | PNG, TGA, JPEG, EXR, HDR, DDS, IES, PSD, BMP | — |
 | Audio | WAV, AIF/AIFF, FLAC, OGG, OPUS, MP3 | — |
-| Scene / level import | glTF, GLB, FBX (experimental), MaterialX | FBX scene legacy |
+| Scene / level import | FBX, glTF, GLB, MaterialX | FBX scene legacy |
 
-FBX import via Interchange is experimental in 5.7; enable with the console variable
-`Interchange.FeatureFlags.Import.FBX 1` (and `.ToLevel 1` for scene import).
+FBX imports through Interchange by default in 5.8; revert to the legacy importer with the
+console variable `Interchange.FeatureFlags.Import.FBX 0` (and `.ToLevel 0` for scene import).
 
 ## Units, scale, and axes
 
@@ -85,10 +85,10 @@ These map to properties on `UInterchangeGenericMeshPipeline` (Interchange) or
 
 | Setting | Effect | Common mistake |
 |---|---|---|
-| **Combine Static Meshes** (`bCombineStaticMeshes`) | Merges all meshes in the file into one SM | Leave off when file has multiple independent assets |
+| **Combine Static Meshes** (`CombineStaticMeshesBehavior`) | Merges all meshes in the file into one SM (`All`/`VisibleOnly`/`DoNotCombine`) | Leave on `DoNotCombine` when file has multiple independent assets |
 | **Normals / Tangents** (`Build` > Recompute Normals/Tangents) | Trust DCC normals vs let UE recompute | Mismatch causes shading seams at UV splits |
 | **Generate Lightmap UVs** (`bGenerateLightmapUVs`) | Auto-generates a second UV channel for Lightmass | Needed for baked lighting; off for pure Lumen |
-| **Build Nanite** (`bBuildNanite`) | Enables Nanite on static meshes | On by default in 5.7 Interchange; disable for low-poly props |
+| **Build Nanite** (`bBuildNanite`) | Enables Nanite on static meshes | On by default in 5.8 Interchange; disable for low-poly props |
 | **LOD Group** | Assigns Epic's LOD reduction presets | Pick `SmallProp`, `LargeDetail`, etc. to match use case |
 | **Collision** (`bCollision`) | Imports/generates simple collision | Prefix meshes with `UCX_`, `UBX_`, `USP_`, `UCP_` for custom shapes |
 
@@ -233,12 +233,12 @@ Engine > Interchange** or pass it via `FImportAssetParameters::OverridePipelines
   for textures whose names follow conventions, but verify manually.
 - **Reimporting against a different skeleton** — animations bound to the old skeleton break;
   keep one skeleton per character rig.
-- **bCombineStaticMeshes** on for files with separate per-material meshes → single SM with
-  multiple material slots instead of independent assets.
+- **CombineStaticMeshesBehavior** set to combine for files with separate per-material meshes →
+  single SM with multiple material slots instead of independent assets.
 - **Missing lightmap UVs with baked lighting** → splotchy shadows; enable
   `bGenerateLightmapUVs` or author a dedicated UV channel.
-- **FBX via Interchange is experimental in 5.7** — if a project needs stable FBX, stay on the
-  legacy importer until opting in intentionally.
+- **Interchange handles FBX by default in 5.8** — if a project depends on legacy FBX importer
+  behavior, disable `Interchange.FeatureFlags.Import.FBX` intentionally.
 - **Runtime import without cooking the Interchange folder** → pipelines missing at runtime;
   add `/Engine/Plugins/Interchange/Runtime/Content` to packaging cook paths.
 - **Large batches saturate the task graph** — use `ImportAssetAsync` and throttle concurrent
@@ -247,28 +247,29 @@ Engine > Interchange** or pass it via `FImportAssetParameters::OverridePipelines
 ## Version notes
 
 - Interchange is the default importer for glTF/GLB and most textures since UE 5.0; it has
-  expanded each release. In 5.7 FBX support via Interchange is experimental (opt-in).
+  expanded each release. In 5.8 FBX imports through Interchange by default; the legacy
+  importer remains available by disabling `Interchange.FeatureFlags.Import.FBX`.
 - `UInterchangeAssetImportData` replaces per-format import data classes for Interchange-
   handled assets; legacy paths still produce `UFbxAssetImportData` etc.
-- `UInterchangeFbxTranslatorSettings::bUseUfbxParser` (experimental in 5.7) enables the
+- `UInterchangeFbxTranslatorSettings::bUseUfbxParser` (still experimental in 5.8) enables the
   ufbx SDK instead of the Autodesk FBX SDK — useful for open-source builds.
 
 ## References & source material
 
-Engine source (UE 5.7):
+Engine source (UE 5.8):
 
 Core Interchange (under `Engine/Source/Runtime/Interchange/`):
-- `Engine/Public/InterchangeManager.h` — `UInterchangeManager` singleton, `ImportAsset`:615,
-  `ImportAssetAsync`:649, `ReimportAsset`:678, `CreateSourceData`:771, `CanReimport`:601,
-  `GetTranslatorForSourceData`:802, `FImportAssetParameters`:382.
-- `Core/Public/InterchangeTranslatorBase.h` — `UInterchangeTranslatorBase`:67,
-  `Translate()`:102, `GetSupportedFormats()`:94, `CanImportSourceData()`:74.
-- `Core/Public/InterchangePipelineBase.h` — `UInterchangePipelineBase`:216,
-  `ExecutePipeline`:582, `ExecutePostFactoryPipeline`:591, `ExecutePostImportPipeline`:599,
-  `EInterchangePipelineContext`:43, `EInterchangePipelineTask`:34.
-- `Core/Public/InterchangeFactoryBase.h` — `UInterchangeFactoryBase`:67,
-  `BeginImportAsset_GameThread`:147, `ImportAsset_Async`:175, `EndImportAsset_GameThread`:191,
-  `SetupObject_GameThread`:291, `BuildObject_GameThread`:304, `FinalizeObject_GameThread`:320.
+- `Engine/Public/InterchangeManager.h` — `UInterchangeManager` singleton, `ImportAsset`:648,
+  `ImportAssetAsync`:682, `ReimportAsset`:711, `CreateSourceData`:804, `CanReimport`:634,
+  `GetTranslatorForSourceData`:835, `FImportAssetParameters`:407.
+- `Core/Public/InterchangeTranslatorBase.h` — `UInterchangeTranslatorBase`:63,
+  `Translate()`:98, `GetSupportedFormats()`:90, `CanImportSourceData()`:70.
+- `Core/Public/InterchangePipelineBase.h` — `UInterchangePipelineBase`:219,
+  `ExecutePipeline`:603, `ExecutePostFactoryPipeline`:612, `ExecutePostImportPipeline`:620,
+  `EInterchangePipelineContext`:46, `EInterchangePipelineTask`:37.
+- `Core/Public/InterchangeFactoryBase.h` — `UInterchangeFactoryBase`:70,
+  `BeginImportAsset_GameThread`:150, `ImportAsset_Async`:178, `EndImportAsset_GameThread`:194,
+  `SetupObject_GameThread`:289, `BuildObject_GameThread`:302, `FinalizeObject_GameThread`:318.
 - `Core/Public/InterchangeSourceData.h` — `UInterchangeSourceData`:22, `GetFilename()`,
   `SetFilename()`, `GetFileContentHash()`.
 - `Engine/Public/InterchangeAssetImportData.h` — `UInterchangeAssetImportData`:20,
@@ -277,12 +278,12 @@ Core Interchange (under `Engine/Source/Runtime/Interchange/`):
 - `Engine/Public/InterchangeProjectSettings.h` — `FInterchangePipelineStack`:31.
 
 Interchange plugin (under `Engine/Plugins/Interchange/Runtime/Source/`):
-- `Import/Public/Fbx/InterchangeFbxTranslator.h` — `UInterchangeFbxTranslator`:77,
+- `Import/Public/Fbx/InterchangeFbxTranslator.h` — `UInterchangeFbxTranslator`:81,
   `UInterchangeFbxTranslatorSettings`:34 (`bConvertScene`, `bConvertSceneUnit`,
   `bForceFrontXAxis`, `EInterchangeCoordinateSystemPolicy`).
 - `Import/Public/Gltf/InterchangeGltfTranslator.h` — `UInterchangeGLTFTranslator`:26.
-- `Pipelines/Public/InterchangeGenericMeshPipeline.h` — `UInterchangeGenericMeshPipeline`:32
-  (`bImportStaticMeshes`, `bCombineStaticMeshes`, `bBuildNanite`, `bGenerateLightmapUVs`,
+- `Pipelines/Public/InterchangeGenericMeshPipeline.h` — `UInterchangeGenericMeshPipeline`:53
+  (`bImportStaticMeshes`, `CombineStaticMeshesBehavior`, `bBuildNanite`, `bGenerateLightmapUVs`,
   `bCollision`, `bImportSkeletalMeshes`, `SkeletalMeshImportContentType`).
 - `Pipelines/Public/InterchangeGenericTexturePipeline.h` — `UInterchangeGenericTexturePipeline`:19
   (`bImportTextures`, `bDetectNormalMapTexture`, `bFlipNormalMapGreenChannel`, `bImportUDIMs`).
@@ -292,7 +293,7 @@ Interchange plugin (under `Engine/Plugins/Interchange/Runtime/Source/`):
 - `FactoryNodes/Public/InterchangeTextureFactoryNode.h` — `UInterchangeTextureFactoryNode`.
 
 Legacy FBX (under `Engine/Source/Editor/UnrealEd/Classes/Factories/`):
-- `Factory.h` — `UFactory`:45 (base class for all legacy import factories).
+- `Factory.h` — `UFactory`:46 (base class for all legacy import factories).
 - `FbxImportUI.h` — `UFbxImportUI`, `EFBXImportType`.
 - `FbxStaticMeshImportData.h`, `FbxSkeletalMeshImportData.h`, `FbxTextureImportData.h`
   — per-type legacy settings structs.
@@ -301,7 +302,7 @@ Runtime Engine:
 - `Engine/Classes/EditorFramework/AssetImportData.h` — `UAssetImportData`:71,
   `FAssetImportInfo::FSourceFile` (path, timestamp, MD5 hash).
 
-Official docs (UE 5.7, all fetched and verified):
+Official docs (UE 5.8, all fetched and verified):
 - Interchange Framework —
   <https://dev.epicgames.com/documentation/unreal-engine/interchange-framework-in-unreal-engine>
 - Importing Assets Using Interchange —

@@ -9,7 +9,7 @@ description: Write Unreal C++ that conforms to Epic's coding standard — type p
   C++, naming types or members, structuring headers, or making code consistent with the
   engine and surrounding project code.
 metadata:
-  engine-version: "5.7"
+  engine-version: "5.8"
   category: meta
 ---
 
@@ -34,14 +34,14 @@ UHT enforces prefixes for reflected types; mismatches are a compile error.
 
 | Prefix | Type | Engine example |
 |---|---|---|
-| `U` | UObject subclass (non-actor) | `UActorComponent` (`Components/ActorComponent.h`:151) |
-| `A` | AActor subclass | `AActor` (`GameFramework/Actor.h`:256) |
-| `F` | Plain struct or non-UObject class | `FAttachmentTransformRules` (`Engine/EngineTypes.h`:74) |
-| `E` | Enum / enum class | `EAttachmentRule` (`Engine/EngineTypes.h`:61) |
-| `I` | Abstract interface class | `IInterface_AssetUserData` (`Interfaces/Interface_AssetUserData.h`:19) |
-| `T` | Class template | `TArray` (`Containers/Array.h`:669) |
+| `U` | UObject subclass (non-actor) | `UActorComponent` (`Components/ActorComponent.h`:160) |
+| `A` | AActor subclass | `AActor` (`GameFramework/Actor.h`:282) |
+| `F` | Plain struct or non-UObject class | `FAttachmentTransformRules` (`Engine/EngineTypes.h`:75) |
+| `E` | Enum / enum class | `EAttachmentRule` (`Engine/EngineTypes.h`:62) |
+| `I` | Abstract interface class | `IInterface_AssetUserData` (`Interfaces/Interface_AssetUserData.h`:22) |
+| `T` | Class template | `TArray` (`Containers/Array.h`:767) |
 | `S` | Slate widget | `SWidget`, `SCompoundWidget` |
-| `b` | Boolean variable | `bReplicates` (`GameFramework/Actor.h`:556) |
+| `b` | Boolean variable | `bReplicates` (`GameFramework/Actor.h`:593) |
 
 The word after the prefix is PascalCase. The class name without its prefix must match the
 filename: `AMyPawn` → `MyPawn.h`. Typedefs take the prefix appropriate to their underlying type.
@@ -154,9 +154,9 @@ class MYGAME_API AMyActor : public AActor
 #include "Components/StaticMeshComponent.h"
 ```
 
-Engine evidence: `Actor.h` lines 5–28 use IWYU-style fine-grained includes ending with
-`"Actor.generated.h"` at line 28; `Character.h` lines 5–18 show `CoreMinimal.h` first and
-`"Character.generated.h"` at line 18.
+Engine evidence: `Actor.h` lines 5–32 use IWYU-style fine-grained includes ending with
+`"Actor.generated.h"` at line 32; `Character.h` lines 5–19 show `CoreMinimal.h` first and
+`"Character.generated.h"` at line 19.
 
 ## Reflection style
 
@@ -236,18 +236,18 @@ float MaxHealth = 100.f;
 
 ## References and source material
 
-Engine source (UE 5.7, under `Engine/Source/`):
-- `Runtime/Engine/Classes/GameFramework/Actor.h`:255–256, 262, 273, 556, 862, 990, 995
-- `Runtime/Engine/Classes/GameFramework/Character.h`:3, 5, 18, 240–241
-- `Runtime/Engine/Classes/Components/ActorComponent.h`:3, 23, 27–36, 150–153, 168, 331
-- `Runtime/Engine/Classes/Engine/EngineTypes.h`:61, 74
-- `Runtime/Engine/Classes/Interfaces/Interface_AssetUserData.h`:3, 13–19
-- `Runtime/CoreUObject/Public/UObject/Object.h`:93–96, 102, 125
-- `Runtime/Core/Public/Containers/Array.h`:669
-- `Runtime/Core/Public/Windows/WindowsPlatform.h`:213–214
-- `Runtime/Core/Public/HAL/Platform.h`:1006–1008
+Engine source (UE 5.8, under `Engine/Source/`):
+- `Runtime/Engine/Classes/GameFramework/Actor.h`:281–282, 288, 306, 593, 891, 1019, 1024
+- `Runtime/Engine/Classes/GameFramework/Character.h`:3, 5, 19, 337–338
+- `Runtime/Engine/Classes/Components/ActorComponent.h`:3, 23, 27–38, 159–162, 177, 340
+- `Runtime/Engine/Classes/Engine/EngineTypes.h`:62, 75
+- `Runtime/Engine/Classes/Interfaces/Interface_AssetUserData.h`:3, 16–22
+- `Runtime/CoreUObject/Public/UObject/Object.h`:97–100, 106, 129
+- `Runtime/Core/Public/Containers/Array.h`:767
+- `Runtime/Core/Public/Windows/WindowsPlatform.h`:209–210
+- `Runtime/Core/Public/HAL/Platform.h`:1063–1065
 
-Official docs (UE 5.7):
+Official docs (UE 5.8):
 - Epic C++ Coding Standard:
   <https://dev.epicgames.com/documentation/unreal-engine/epic-cplusplus-coding-standard-for-unreal-engine>
 

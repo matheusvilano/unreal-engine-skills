@@ -2,12 +2,12 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers runtime input parameters, output
 watching via `UMetasoundGeneratorHandle`, and the MetaSound Builder API for
-constructing or modifying graphs at runtime. Grounded in UE 5.7 engine source
+constructing or modifying graphs at runtime. Grounded in UE 5.8 engine source
 under `Engine/Plugins/Runtime/Metasound/`.
 
 ## UMetaSoundSource class
 
-`UMetaSoundSource` (declared `MetasoundSource.h`:88) extends `USoundWaveProcedural`
+`UMetaSoundSource` (declared `MetasoundSource.h`:89) extends `USoundWaveProcedural`
 and implements `FMetasoundAssetBase` and `IMetaSoundDocumentInterface`. It contains
 a `FMetasoundFrontendDocument` (`RootMetasoundDocument`) that describes the node
 graph. At play time, `CreateSoundGenerator` instantiates a
@@ -28,7 +28,7 @@ All parameter writes go through `ISoundParameterControllerInterface`
 | `SetStringParameter(FName, FString)` | String | Less common; for named variants |
 | `SetObjectParameter(FName, UObject*)` | Object | Arbitrary UObject inputs |
 
-All methods are declared `SoundParameterControllerInterface.h`:32–41.
+All methods are declared `SoundParameterControllerInterface.h`:32–42.
 
 ### Rules for parameter correctness
 
@@ -79,7 +79,7 @@ if (MS)
 }
 ```
 
-`GetGeneratorForAudioComponent` (`MetasoundSource.h`:296) returns a weak pointer —
+`GetGeneratorForAudioComponent` (`MetasoundSource.h`:326) returns a weak pointer —
 the generator is destroyed when the sound stops. Always `Pin()` and check validity.
 
 The `UMetasoundGeneratorHandle` Blueprint wrapper (`MetasoundGeneratorHandle.h`)
@@ -89,7 +89,7 @@ provides a simpler Blueprint-callable interface for the same purpose.
 
 The Builder API (`MetasoundBuilderSubsystem.h`) lets gameplay code create or
 modify MetaSound graphs at runtime or edit-time without the editor UI. It is a
-**Beta** feature as of UE 5.7; do not rely on it for shipped content without
+**Beta** feature as of UE 5.8; do not rely on it for shipped content without
 thorough testing.
 
 ### Entry point: UMetaSoundBuilderSubsystem
@@ -167,7 +167,7 @@ MetaSound graph to have multiple quality tiers selected per platform or device.
 Each page overrides a subset of graph parameters or nodes. Pages are authored in
 the editor and selected via `UMetaSoundSettings::GetQualityNames()`. In C++ the
 active quality page is chosen at `InitResources`/cook time via
-`UMetaSoundSource::QualitySetting` (`MetasoundSource.h`:150).
+`UMetaSoundSource::QualitySetting` (`MetasoundSource.h`:177).
 
 Official doc: <https://dev.epicgames.com/documentation/unreal-engine/metasound-pages-in-unreal-engine>
 
@@ -189,13 +189,13 @@ PrivateDependencyModuleNames.AddRange(new string[] {
 
 ## Version notes
 
-- The Builder API is Beta as of UE 5.7; API stability is not guaranteed between
+- The Builder API is Beta as of UE 5.8; API stability is not guaranteed between
   minor releases.
 - `OnGeneratorInstanceCreated` and `OnGeneratorInstanceDestroyed` are deprecated
-  in UE 5.6 (`MetasoundSource.h`:308–311). Use `OnGeneratorInstanceInfoCreated`
+  in UE 5.6 (`MetasoundSource.h`:338–341). Use `OnGeneratorInstanceInfoCreated`
   and `OnGeneratorInstanceInfoDestroyed` instead.
 - `UMetaSoundSource::EnableSubmixSendsOnPreview` is deprecated in UE 5.7
-  (`MetasoundSource.h`:287).
+  (`MetasoundSource.h`:317).
 - MetaSound Pages (`MetasoundPages` plugin) reached general availability in UE 5.4.
 - Output watching via `GetGeneratorForAudioComponent` was available from UE 5.0;
   the `UMetasoundGeneratorHandle` Blueprint wrapper was formalized in 5.4.

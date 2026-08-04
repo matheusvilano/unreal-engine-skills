@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the config file hierarchy, ini syntax,
 array operators, UPROPERTY(config) auto-binding, and reading/writing config values from
-C++. Grounded in UE 5.7 (`Engine/Source/Runtime/Core/Public/Misc/ConfigCacheIni.h`,
+C++. Grounded in UE 5.8 (`Engine/Source/Runtime/Core/Public/Misc/ConfigCacheIni.h`,
 `Engine/Source/Runtime/Core/Public/Misc/ConfigHierarchy.h`,
 `Engine/Source/Runtime/Core/Public/CoreGlobals.h`).
 

@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers `BeforeEach`/`AfterEach` scoping,
 parameterized tests, async execution, latent completion, the `Redefine` mechanism,
-and the lower-level `ADD_LATENT_AUTOMATION_COMMAND` API. Grounded in UE 5.7
+and the lower-level `ADD_LATENT_AUTOMATION_COMMAND` API. Grounded in UE 5.8
 (`Runtime/Core/Public/Misc/AutomationTest.h`).
 
 ## How `Define()` works
@@ -164,14 +164,14 @@ Key macros (all in `AutomationTest.h`):
 - `ADD_LATENT_AUTOMATION_COMMAND(Constructor)` — enqueues an instance.
 - `UE_RETURN_ON_ERROR(Condition, Message)` — record error and early-out from `RunTest`.
 
-## Source citations (UE 5.7)
+## Source citations (UE 5.8)
 
 `Runtime/Core/Public/Misc/AutomationTest.h`:
-- `FAutomationSpecBase`:2885 — spec base class.
-- `Describe`:2743, `xDescribe`:2737 — scope definition.
-- `BeforeEach`:2807, `AfterEach`:2812 — setup/teardown.
-- `It`:2775, `LatentIt` (overload at :3373, :3382, :3391).
-- `IAutomationLatentCommand`:524 — latent command base.
-- `DEFINE_LATENT_AUTOMATION_COMMAND`:3779.
-- `ADD_LATENT_AUTOMATION_COMMAND`:4070.
-- `UE_RETURN_ON_ERROR`:80.
+- `FAutomationSpecBase`:2899 — spec base class.
+- `Describe`:2757, `xDescribe`:2751 — scope definition.
+- `BeforeEach`:2821, `AfterEach`:2826 — setup/teardown.
+- `It`:2789, `LatentIt` (overload at :3417, :3426, :3435).
+- `IAutomationLatentCommand`:525 — latent command base.
+- `DEFINE_LATENT_AUTOMATION_COMMAND`:3796.
+- `ADD_LATENT_AUTOMATION_COMMAND`:4087.
+- `UE_RETURN_ON_ERROR`:81.

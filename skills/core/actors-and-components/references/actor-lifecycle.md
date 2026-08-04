@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the three creation paths, the component
 initialization sub-sequence, end-of-life, and garbage collection, with the matching
-`AActor`/`UObject` callbacks. Grounded in UE 5.7
+`AActor`/`UObject` callbacks. Grounded in UE 5.8
 (`Engine/Source/Runtime/Engine/Classes/GameFramework/Actor.h`) and the official
 [Actor Lifecycle](https://dev.epicgames.com/documentation/unreal-engine/unreal-engine-actor-lifecycle)
 doc.
@@ -55,7 +55,7 @@ Shared by all paths, run by `ULevel::RouteActorInitialize` / `PostActorConstruct
 
 1. `AActor::PreInitializeComponents` — called before any component is initialized.
 2. `UActorComponent::InitializeComponent` — once per component, **only if** that component set
-   `bWantsInitializeComponent = true` (`ActorComponent.h`:331). This is the component analog of an
+   `bWantsInitializeComponent = true` (`ActorComponent.h`:340). This is the component analog of an
    early init pass and runs before the actor's `BeginPlay`.
 3. `AActor::PostInitializeComponents` — after all components are initialized; components exist and
    are registered, so this is the safe place to wire components to each other.
@@ -67,16 +67,16 @@ Then `BeginPlay` runs on the actor, which in turn drives `BeginPlay` on its comp
 | Callback | When | Put here |
 |---|---|---|
 | Constructor | object construction, incl. CDO & editor | defaults, `CreateDefaultSubobject`, tick flags |
-| `PostInitProperties` (2346) | after UPROPERTYs initialized | rare native fixup |
-| `OnConstruction` (3448) | spawn + every editor property change | idempotent construction logic |
-| `PreInitializeComponents` (3123) | before component init | pre-init wiring |
+| `PostInitProperties` (2343) | after UPROPERTYs initialized | rare native fixup |
+| `OnConstruction` (3445) | spawn + every editor property change | idempotent construction logic |
+| `PreInitializeComponents` (3124) | before component init | pre-init wiring |
 | `InitializeComponent` (component) | per component, needs `bWantsInitializeComponent` | component self-init |
-| `PostInitializeComponents` (3126) | after component init | wire components together |
-| `BeginPlay` (2128) | gameplay start | gameplay init, timers, delegate binds, spawning |
-| `Tick` (3059) | per frame, if enabled | per-frame logic (avoid when possible) |
-| `EndPlay` (2135) | any exit reason | clean up timers/delegates/handles |
-| `Destroyed` (3568) | legacy destroy response | (prefer `EndPlay`) |
-| `BeginDestroy` (2357) | GC, off game thread concerns | free non-gameplay resources |
+| `PostInitializeComponents` (3127) | after component init | wire components together |
+| `BeginPlay` (2125) | gameplay start | gameplay init, timers, delegate binds, spawning |
+| `Tick` (3060) | per frame, if enabled | per-frame logic (avoid when possible) |
+| `EndPlay` (2132) | any exit reason | clean up timers/delegates/handles |
+| `Destroyed` (3569) | legacy destroy response | (prefer `EndPlay`) |
+| `BeginDestroy` (2369) | GC, off game thread concerns | free non-gameplay resources |
 
 ## End of an actor's life
 

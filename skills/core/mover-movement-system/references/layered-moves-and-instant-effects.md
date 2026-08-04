@@ -1,15 +1,15 @@
 # Mover: layered moves & instant movement effects
 
 Deep dive on temporary/procedural motion in the Mover plugin. Paths are
-relative to `Engine/Plugins/Experimental/Mover/Source/Mover/Public/` (UE 5.7).
+relative to `Engine/Plugins/Experimental/Mover/Source/Mover/Public/` (UE 5.8).
 
 ## Layered moves — concept
 
-`FLayeredMoveBase` (`LayeredMove.h:72`) = a struct that generates an
+`FLayeredMoveBase` (`LayeredMove.h:74`) = a struct that generates an
 `FProposedMove` alongside the active movement mode for some duration. They are
-stored in the sync state (`FLayeredMoveGroup`, `LayeredMove.h:169`), replicate
+stored in the sync state (`FLayeredMoveGroup`, `LayeredMove.h:191`), replicate
 to other clients, and are rewound/replayed during rollbacks — which is why they
-must be queued (`UMoverComponent::QueueLayeredMove`, `MoverComponent.h:288`)
+must be queued (`UMoverComponent::QueueLayeredMove`, `MoverComponent.h:314`)
 rather than applied immediately, and why they're cloned on queueing (configure
 fully *before* queueing).
 
@@ -17,20 +17,20 @@ Key fields on every layered move:
 
 | Field | Line | Meaning |
 |-------|------|---------|
-| `MixMode` | `LayeredMove.h:81` | `EMoveMixMode` (`MoveLibrary/MovementUtilsTypes.h:17`): `AdditiveVelocity`, `OverrideVelocity`, `OverrideAll`, `OverrideAllExceptVerticalVelocity` |
-| `Priority` | `:85` | conflict winner among overriding moves (higher wins) |
-| `DurationMs` | `:92` | `> 0` timed; `0` exactly one tick; `< 0` until `IsFinished()`/cancel |
-| `FinishVelocitySettings` | `:100` | what velocity remains when the move ends: keep, set, or clamp (`ELayeredMoveFinishVelocityMode`, `:19`) |
+| `MixMode` | `LayeredMove.h:83` | `EMoveMixMode` (`MoveLibrary/MovementUtilsTypes.h:17`): `AdditiveVelocity`, `OverrideVelocity`, `OverrideAll`, `OverrideAllExceptVerticalVelocity` |
+| `Priority` | `:87` | conflict winner among overriding moves (higher wins) |
+| `DurationMs` | `:94` | `> 0` timed; `0` exactly one tick; `< 0` until `IsFinished()`/cancel |
+| `FinishVelocitySettings` | `:102` | what velocity remains when the move ends: keep, set, or clamp (`ELayeredMoveFinishVelocityMode`, `:21`) |
 
 Mixing is performed by the component's `UMovementMixer`
-(`MoverComponent.h:225`; default `UDefaultMovementMixer`,
+(`MoverComponent.h:246`; default `UDefaultMovementMixer`,
 `MoveLibrary/MovementMixer.h`). Additive moves sum onto the mode's proposal;
 override moves replace it (per the mix mode), ties broken by `Priority`. The
 final proposed move can be inspected/adjusted via
-`BindProcessGeneratedMovement` (`MoverComponent.h:146`).
+`BindProcessGeneratedMovement` (`MoverComponent.h:172`).
 
 A layered move may set `FProposedMove::PreferredMode` — applied **only at the
-move's start**, not continuously (`LayeredMove.h:59-68`). E.g.
+move's start**, not continuously (`LayeredMove.h:60-70`). E.g.
 `FLayeredMove_JumpTo` switches the actor to Falling when it begins.
 
 ## Built-in layered moves
@@ -39,12 +39,12 @@ move's start**, not continuously (`LayeredMove.h:59-68`). E.g.
 
 | Type | Header:line | Purpose |
 |------|-------------|---------|
-| `FLayeredMove_LinearVelocity` | `BasicLayeredMoves.h:28` | constant/curve-scaled velocity for a duration — dashes, conveyance, knockback |
-| `FLayeredMove_JumpImpulseOverDuration` | `:78` | upward velocity applied across a window |
-| `FLayeredMove_JumpTo` | `:118` | parabolic jump to a target location |
-| `FLayeredMove_MoveTo` | `:184` | move to a static location over time |
-| `FLayeredMove_MoveToDynamic` | `:247` | `MoveTo` tracking a moving target/actor |
-| `FLayeredMove_RadialImpulse` | `:284` | explosion-style radial push |
+| `FLayeredMove_LinearVelocity` | `BasicLayeredMoves.h:29` | constant/curve-scaled velocity for a duration — dashes, conveyance, knockback |
+| `FLayeredMove_JumpImpulseOverDuration` | `:147` | upward velocity applied across a window |
+| `FLayeredMove_JumpTo` | `:187` | parabolic jump to a target location |
+| `FLayeredMove_MoveTo` | `:253` | move to a static location over time |
+| `FLayeredMove_MoveToDynamic` | `:316` | `MoveTo` tracking a moving target/actor |
+| `FLayeredMove_RadialImpulse` | `:353` | explosion-style radial push |
 | `FLayeredMove_AnimRootMotion` | `AnimRootMotionLayeredMove.h` | drives movement from a montage's root motion (the Mover path for root-motion abilities) |
 | `FLayeredMove_MultiJump` | `MultiJumpLayeredMove.h` | double/N-jump support |
 | Launch move | `LaunchMove.h` | launch helper used by physics transitions |
@@ -53,9 +53,9 @@ Query & cancel:
 
 ```cpp
 const FLayeredMove_LinearVelocity* ActiveDash =
-    MoverComp->FindActiveLayeredMoveByType<FLayeredMove_LinearVelocity>();  // MoverComponent.h:598
+    MoverComp->FindActiveLayeredMoveByType<FLayeredMove_LinearVelocity>();  // MoverComponent.h:657
 
-MoverComp->CancelFeaturesWithTag(Tag_Movement_Dash);   // MoverComponent.h:312
+MoverComp->CancelFeaturesWithTag(Tag_Movement_Dash);   // MoverComponent.h:364
 // (cancels layered moves & modifiers whose HasGameplayTag matches)
 ```
 
@@ -120,15 +120,15 @@ tag-based queries/cancellation). `_Async` variants exist for async simulations
 (no `MoverComp` access — blackboard only).
 
 From Blueprint: build the struct and call **Queue Layered Move**
-(`K2_QueueLayeredMove`, `MoverComponent.h:284` — a `CustomStructureParam`
+(`K2_QueueLayeredMove`, `MoverComponent.h:310` — a `CustomStructureParam`
 wildcard node that accepts any `FLayeredMoveBase` subtype).
 
-## Instanced layered moves (5.7: ULayeredMoveLogic)
+## Instanced layered moves (ULayeredMoveLogic, added in 5.7)
 
 `LayeredMoveBase.h` introduces a split design intended to supersede the struct
 flavor for BP-friendly moves:
 
-- **`ULayeredMoveLogic`** (`LayeredMoveBase.h:120`) — a stateless, Blueprintable
+- **`ULayeredMoveLogic`** (`LayeredMoveBase.h:133`) — a stateless, Blueprintable
   class holding the behavior (`OnStart`/`GenerateMove`/`IsFinished`/`OnEnd`
   BlueprintNativeEvents) plus defaults (`MixMode`, `Priority`,
   `DefaultDurationMs`, `InstancedDataStructType`).
@@ -140,11 +140,11 @@ flavor for BP-friendly moves:
 Usage:
 
 ```cpp
-MoverComp->RegisterMove<UMyDashLogic>();                    // MoverComponent.h:231
-MoverComp->QueueLayeredMoveActivation(UMyDashLogic::StaticClass());   // :277
+MoverComp->RegisterMove<UMyDashLogic>();                    // MoverComponent.h:257
+MoverComp->QueueLayeredMoveActivation(UMyDashLogic::StaticClass());   // :303
 // or with params:
 FMyDashActivationParams Params; Params.DurationMs = 300.0;
-MoverComp->QueueLayeredMoveActivationWithContext(Params, TSubclassOf<UMyDashLogic>()); // :256
+MoverComp->QueueLayeredMoveActivationWithContext(Params, TSubclassOf<UMyDashLogic>()); // :282
 ```
 
 One logic instance serves all simultaneous activations; only the instanced data
@@ -166,8 +166,8 @@ Built-ins (`DefaultMovementSet/InstantMovementEffects/BasicInstantMovementEffect
 | `FJumpImpulseEffect` | 67 | instantaneous upward velocity (what `UCharacterMoverComponent::Jump` queues) |
 | `FApplyVelocityEffect` | 96 | add/overwrite velocity, optionally forcing a mode (the `LaunchCharacter` analog) |
 
-Plus `PhysicsMover/InstantMovementEffects/ApplyVelocityPhysicsMovementEffect.h`
-for the physics backend.
+Plus `ChaosMover/Character/Effects/ChaosCharacterApplyVelocityEffect.h`
+(ChaosMover plugin) for the physics backend.
 
 Custom effect:
 
@@ -200,13 +200,13 @@ struct FSwapToModeAndStopEffect : public FInstantMovementEffect
 };
 ```
 
-Queue with `QueueInstantMovementEffect` (`MoverComponent.h:336`); it applies at
+Queue with `QueueInstantMovementEffect` (`MoverComponent.h:394`); it applies at
 the end of the current frame or start of the next subtick. In BP: **Queue
 Instant Movement Effect**.
 
 ### Scheduled effects (networked physics)
 
-`ScheduleInstantMovementEffect` (`MoverComponent.h:342`) delays application by
+`ScheduleInstantMovementEffect` (`MoverComponent.h:402`) delays application by
 `EventSchedulingMinDelaySeconds` (tunable via `UNetworkPhysicsSettingsComponent`)
 so all networked endpoints execute the effect on the **same simulation frame**
 — important for the physics backend where clients run ahead of the server.

@@ -12,7 +12,7 @@ description: Author and drive Unreal materials — UMaterial (the node graph ass
   setting global weather or world-state parameters, fixing material shader permutation count
   or translucency overdraw, or cross-referencing the material class hierarchy.
 metadata:
-  engine-version: "5.7"
+  engine-version: "5.8"
   category: content-assets
 ---
 
@@ -48,11 +48,11 @@ UObject
 
 Store and pass materials as `UMaterialInterface*` so any concrete type fits.
 
-Source locations (UE 5.7 `Engine/Source/Runtime/Engine/Public/Materials/`):
-- `MaterialInterface.h` — `UMaterialInterface`:295 (common interface, `GetMaterial`,
+Source locations (UE 5.8 `Engine/Source/Runtime/Engine/Public/Materials/`):
+- `MaterialInterface.h` — `UMaterialInterface`:351 (common interface, `GetMaterial`,
   `GetRenderProxy`, property getters).
-- `Material.h` — `UMaterial`:431 (`MaterialDomain`:465, `BlendMode`:469,
-  `ShadingModel`:494, `bUsedWithSkeletalMesh`:685, `GetDefaultMaterial`:1388).
+- `Material.h` — `UMaterial`:448 (`MaterialDomain`:482, `BlendMode`:486,
+  `ShadingModel`:511, `bUsedWithSkeletalMesh`:703, `GetDefaultMaterial`:1455).
 - `MaterialInstance.h` — `UMaterialInstance`:626 (shared parameter storage and
   hierarchy traversal).
 - `MaterialInstanceConstant.h` — `UMaterialInstanceConstant`:20 (editor-only setters;
@@ -78,7 +78,7 @@ for a full parameter-type breakdown and a worked C++ example.
 | `MD_UI` | UMG/Slate widgets |
 | `MD_Volume` | volumetric materials (Heterogeneous Volumes) |
 
-### Blend mode (`EBlendMode`, `Engine/Classes/Engine/EngineTypes.h`:244)
+### Blend mode (`EBlendMode`, `Engine/Classes/Engine/EngineTypes.h`:245)
 
 | Enum value | Cost | Notes |
 |---|---|---|
@@ -91,7 +91,7 @@ for a full parameter-type breakdown and a worked C++ example.
 Prefer `BLEND_Masked` over `BLEND_Translucent` for foliage and fences. Use
 translucency only where physically required.
 
-### Shading model (`EMaterialShadingModel`, `EngineTypes.h`:704)
+### Shading model (`EMaterialShadingModel`, `EngineTypes.h`:707)
 
 `MSM_DefaultLit`, `MSM_Unlit`, `MSM_Subsurface`, `MSM_SubsurfaceProfile`,
 `MSM_ClearCoat`, `MSM_TwoSidedFoliage`, `MSM_Hair`, `MSM_Cloth`, `MSM_Eye`,
@@ -119,7 +119,7 @@ attributes, static switches, and custom HLSL nodes.
 ## Runtime parameters (MID) in C++
 
 ```cpp
-// PrimitiveComponent.h:1546 — creates a MID from SourceMaterial and assigns it
+// PrimitiveComponent.h:1629 — creates a MID from SourceMaterial and assigns it
 // to slot ElementIndex; returns the new MID.
 UMaterialInstanceDynamic* MID =
     MeshComp->CreateDynamicMaterialInstance(0, BaseMaterial);
@@ -216,7 +216,7 @@ Enable only what the content actually uses; extra usages silently grow compile t
 
 ## Version notes — Substrate materials
 
-UE 5.7 ships with the **Substrate** material framework (opt-in project setting).
+UE 5.8 ships with the **Substrate** material framework (opt-in project setting).
 Substrate replaces the single shading model and blend mode selectors with a layered
 slab-based authoring model. The C++ instance API (`UMaterialInstanceDynamic`,
 `Set*ParameterValue`) is unchanged. Some `EMaterialShadingModel` enum values
@@ -236,10 +236,10 @@ for a Substrate overview.
 
 ## References & source material
 
-Engine source (UE 5.7, `Engine/Source/Runtime/Engine/`):
-- `Public/Materials/MaterialInterface.h` — `UMaterialInterface`:295.
-- `Public/Materials/Material.h` — `UMaterial`:431; `MaterialDomain`:465;
-  `BlendMode`:469; `ShadingModel`:494; usage flags from :685.
+Engine source (UE 5.8, `Engine/Source/Runtime/Engine/`):
+- `Public/Materials/MaterialInterface.h` — `UMaterialInterface`:351.
+- `Public/Materials/Material.h` — `UMaterial`:448; `MaterialDomain`:482;
+  `BlendMode`:486; `ShadingModel`:511; usage flags from :703.
 - `Public/Materials/MaterialInstance.h` — `UMaterialInstance`:626.
 - `Public/Materials/MaterialInstanceConstant.h` — `UMaterialInstanceConstant`:20.
 - `Public/Materials/MaterialInstanceDynamic.h` — `UMaterialInstanceDynamic`:14;
@@ -247,13 +247,13 @@ Engine source (UE 5.7, `Engine/Source/Runtime/Engine/`):
   `SetTextureParameterValue`:65.
 - `Public/Materials/MaterialParameterCollection.h` — `UMaterialParameterCollection`:78.
 - `Public/MaterialDomain.h` — `EMaterialDomain`:12 (all domain enum values).
-- `Classes/Engine/EngineTypes.h` — `EBlendMode`:244; `EMaterialShadingModel`:704.
+- `Classes/Engine/EngineTypes.h` — `EBlendMode`:245; `EMaterialShadingModel`:707.
 - `Classes/Kismet/KismetMaterialLibrary.h` — `UKismetMaterialLibrary`:22;
   `SetScalarParameterValue`:30; `SetVectorParameterValue`:34.
-- `Classes/Components/PrimitiveComponent.h` — `SetMaterial`:1517;
-  `CreateDynamicMaterialInstance`:1546.
+- `Classes/Components/PrimitiveComponent.h` — `SetMaterial`:1600;
+  `CreateDynamicMaterialInstance`:1629.
 
-Official docs (UE 5.7):
+Official docs (UE 5.8):
 - Materials overview —
   <https://dev.epicgames.com/documentation/unreal-engine/unreal-engine-materials>
 - Material Properties (domain, blend mode, shading model) —

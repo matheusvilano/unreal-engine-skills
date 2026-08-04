@@ -8,7 +8,7 @@ description: Understand Blueprints as Unreal's visual scripting and asset-class 
   designing a class hierarchy that spans both, explaining how Blueprint logic maps onto the
   underlying C++/UObject model, or debugging Blueprint compilation and class-relationship issues.
 metadata:
-  engine-version: "5.7"
+  engine-version: "5.8"
   category: blueprints
 ---
 
@@ -34,7 +34,7 @@ Every Blueprint has two cooperating objects:
 | Object | Header | Role |
 |---|---|---|
 | `UBlueprint` | `Engine/Blueprint.h`:402 | Editor-only asset; holds graphs, variable metadata, component templates, compile options |
-| `UBlueprintGeneratedClass` | `Engine/BlueprintGeneratedClass.h`:432 | Runtime `UClass`; contains `FProperty`s, `UFunction`s, timelines, SCS tree |
+| `UBlueprintGeneratedClass` | `Engine/BlueprintGeneratedClass.h`:429 | Runtime `UClass`; contains `FProperty`s, `UFunction`s, timelines, SCS tree |
 
 `UBlueprint` derives from `UBlueprintCore` (`Engine/BlueprintCore.h`:13), which stores:
 
@@ -101,24 +101,24 @@ duration of that function call.
 ## Components in a Blueprint
 
 The Components panel in the Blueprint editor corresponds to a `USimpleConstructionScript` (SCS)
-tree. On actor construction, `USimpleConstructionScript::ExecuteScriptOnActor` (`SimpleConstructionScript.h`:46)
+tree. On actor construction, `USimpleConstructionScript::ExecuteScriptOnActor` (`SimpleConstructionScript.h`:47)
 instantiates each component template and attaches it per the authored hierarchy. Native C++
 components (created in the actor's C++ constructor) are already present when the SCS runs; SCS
 components can parent to them.
 
 Component templates live on both `UBlueprint` (editor templates) and `UBlueprintGeneratedClass`
 (runtime templates). Timeline nodes in the Event Graph compile to
-`UBlueprintGeneratedClass::Timelines` (`BlueprintGeneratedClass.h`:473) and become
+`UBlueprintGeneratedClass::Timelines` (`BlueprintGeneratedClass.h`:478) and become
 `UTimelineComponent`s on instances.
 
 ## The Construction Script
 
-The Construction Script maps to `AActor::OnConstruction(Transform)` (`Actor.h`:3448), called
-by `ExecuteConstruction` (`Actor.h`:3442). It runs on:
+The Construction Script maps to `AActor::OnConstruction(Transform)` (`Actor.h`:3445), called
+by `ExecuteConstruction` (`Actor.h`:3439). It runs on:
 
 - Every **actor spawn** (including PIE).
 - Every **property edit** on a placed instance in the editor.
-- Every editor **drag** (if `bRunConstructionScriptOnDrag`, `Blueprint.h`:448).
+- Every editor **drag** (if `bRunConstructionScriptOnDrag`, `Blueprint.h`:453).
 
 Design it to be **idempotent** — it can run many times without accumulating state. Never assume
 it runs only once. Expensive world queries or asset loads in the CS slow down property editing.
@@ -218,22 +218,22 @@ harder to debug, and slower. Move complex logic to C++ and expose a clean surfac
 
 ## References & source material
 
-Engine source (UE 5.7, under `Engine/Source/`):
+Engine source (UE 5.8, under `Engine/Source/`):
 - `Runtime/Engine/Classes/Engine/BlueprintCore.h`:13 — `UBlueprintCore`; `SkeletonGeneratedClass`:21,
   `GeneratedClass`:25.
 - `Runtime/Engine/Classes/Engine/Blueprint.h`:402 — `UBlueprint`; `EBlueprintType`:61,
-  `ParentClass`:412, `UbergraphPages`:539, `FunctionGraphs`:543, `MacroGraphs`:551,
-  `SimpleConstructionScript`:534, `bRunConstructionScriptOnDrag`:448.
-- `Runtime/Engine/Classes/Engine/BlueprintGeneratedClass.h`:432 — `UBlueprintGeneratedClass`;
-  `Timelines`:473, `SimpleConstructionScript`:487, `UberGraphFunction`:496.
-- `Runtime/Engine/Classes/Engine/SimpleConstructionScript.h`:17 — `USimpleConstructionScript`;
-  `ExecuteScriptOnActor`:46.
-- `Runtime/Engine/Classes/GameFramework/Actor.h`:3448 — `OnConstruction(Transform)`;
-  `ExecuteConstruction`:3442.
-- `Runtime/CoreUObject/Public/UObject/ObjectMacros.h`:950 — `BlueprintImplementableEvent`,
-  `BlueprintNativeEvent`:955, `BlueprintPure`:984, `BlueprintCallable`:987.
+  `ParentClass`:412, `UbergraphPages`:543, `FunctionGraphs`:547, `MacroGraphs`:555,
+  `SimpleConstructionScript`:538, `bRunConstructionScriptOnDrag`:453.
+- `Runtime/Engine/Classes/Engine/BlueprintGeneratedClass.h`:429 — `UBlueprintGeneratedClass`;
+  `Timelines`:478, `SimpleConstructionScript`:492, `UberGraphFunction`:501.
+- `Runtime/Engine/Classes/Engine/SimpleConstructionScript.h`:18 — `USimpleConstructionScript`;
+  `ExecuteScriptOnActor`:47.
+- `Runtime/Engine/Classes/GameFramework/Actor.h`:3445 — `OnConstruction(Transform)`;
+  `ExecuteConstruction`:3439.
+- `Runtime/CoreUObject/Public/UObject/ObjectMacros.h`:992 — `BlueprintImplementableEvent`,
+  `BlueprintNativeEvent`:997, `BlueprintPure`:1026, `BlueprintCallable`:1029.
 
-Official docs (UE 5.7):
+Official docs (UE 5.8):
 - Blueprints Visual Scripting — <https://dev.epicgames.com/documentation/unreal-engine/blueprints-visual-scripting-in-unreal-engine>
 - Types of Blueprints — <https://dev.epicgames.com/documentation/unreal-engine/types-of-blueprints-in-unreal-engine>
 - Construction Script — <https://dev.epicgames.com/documentation/unreal-engine/construction-script-in-unreal-engine>

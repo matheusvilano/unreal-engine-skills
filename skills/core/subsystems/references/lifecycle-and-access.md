@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the initialization sequence, dependency
 ordering, collection internals, and how to access subsystems from C++ and Blueprints. Grounded
-in UE 5.7 (`Engine/Source/Runtime/Engine/Public/Subsystems/SubsystemCollection.h`,
+in UE 5.8 (`Engine/Source/Runtime/Engine/Public/Subsystems/SubsystemCollection.h`,
 `Subsystem.h`, `GameInstanceSubsystem.h`, `WorldSubsystem.h`) and the official
 [Programming Subsystems](https://dev.epicgames.com/documentation/unreal-engine/programming-subsystems-in-unreal-engine) doc.
 
@@ -34,7 +34,7 @@ void UMySubsystem::Initialize(FSubsystemCollectionBase& Collection)
 }
 ```
 
-`InitializeDependency` (`SubsystemCollection.h`:33, template form :40) initializes the named
+`InitializeDependency` (`SubsystemCollection.h`:35, template form :42) initializes the named
 class immediately if not already done, then returns its pointer. It only works within the same
 collection — world and game-instance subsystems cannot declare dependencies on each other.
 Circular dependency cycles are detected at runtime and result in an assertion failure.
@@ -63,7 +63,7 @@ manager actor's `BeginPlay`.
 
 ## Collection internals
 
-`FSubsystemCollectionBase` (`SubsystemCollection.h`:14) is the generic collection host. It
+`FSubsystemCollectionBase` (`SubsystemCollection.h`:16) is the generic collection host. It
 holds a `TMap<UClass*, USubsystem*>` internally. Each owner type (`UGameInstance`, `UWorld`,
 `ULocalPlayer`, `UEngine`) owns one typed `FSubsystemCollection<TBaseType>` or
 `FObjectSubsystemCollection<TBaseType>` member.
@@ -85,17 +85,17 @@ TSubsystem* S = GI->GetSubsystem<TSubsystem>();                           // Gam
 TSubsystem* S = UGameInstance::GetSubsystem<TSubsystem>(GI);             // :450 (null-safe static)
 
 // World:
-TSubsystem* S = World->GetSubsystem<TSubsystem>();                        // World.h:4196
-TSubsystem& S = *World->GetSubsystemChecked<TSubsystem>();                // :4205 (asserts on null)
-TSubsystem* S = UWorld::GetSubsystem<TSubsystem>(World);                  // :4215 (null-safe static)
+TSubsystem* S = World->GetSubsystem<TSubsystem>();                        // World.h:4312
+TSubsystem& S = *World->GetSubsystemChecked<TSubsystem>();                // :4321 (asserts on null)
+TSubsystem* S = UWorld::GetSubsystem<TSubsystem>(World);                  // :4331 (null-safe static)
 
 // Local player:
-TSubsystem* S = LP->GetSubsystem<TSubsystem>();                           // LocalPlayer.h:355
-TSubsystem* S = ULocalPlayer::GetSubsystem<TSubsystem>(LP);              // :365 (null-safe static)
-TSubsystem* S = ULocalPlayer::GetSubsystemFromController<TSubsystem>(PC);// :379
+TSubsystem* S = LP->GetSubsystem<TSubsystem>();                           // LocalPlayer.h:365
+TSubsystem* S = ULocalPlayer::GetSubsystem<TSubsystem>(LP);              // :375 (null-safe static)
+TSubsystem* S = ULocalPlayer::GetSubsystemFromController<TSubsystem>(PC);// :389
 
 // Engine:
-TSubsystem* S = GEngine->GetEngineSubsystem<TSubsystem>();                // Engine.h:3779
+TSubsystem* S = GEngine->GetEngineSubsystem<TSubsystem>();                // Engine.h:3847
 ```
 
 ### Multiple implementations (interface pattern)
@@ -111,7 +111,7 @@ This is niche; the common case is a single concrete class per slot.
 
 ### Blueprint access
 
-`USubsystemBlueprintLibrary` (`SubsystemBlueprintLibrary.h`:14) provides Blueprint-internal
+`USubsystemBlueprintLibrary` (`SubsystemBlueprintLibrary.h`:15) provides Blueprint-internal
 getters that power the auto-context getter nodes in the Blueprint graph. You never call these
 directly from C++; they are the backing implementation for the Blueprint nodes. Mark subsystem
 functions `UFUNCTION(BlueprintCallable)` to expose them; no extra registration is needed.
@@ -142,7 +142,7 @@ Always null-check the result unless you have made the subsystem unconditionally 
 
 - `GetSubsystemChecked` (returns `TNotNull<T*>`) is available in UE 5.x; it was not present in
   UE 4. In UE 4, use the regular accessor with a manual `check()`.
-- `UWorldSubsystem::UpdateStreamingState` was deprecated in UE 5.5 (see `WorldSubsystem.h`:57);
+- `UWorldSubsystem::UpdateStreamingState` was deprecated in UE 5.5 and removed in 5.8;
   use `IStreamingWorldSubsystemInterface` for streaming callbacks.
 - The `ForEachSubsystem` / `ForEachSubsystemOfClass` iteration API on
   `FSubsystemCollectionBase` was added in UE 5.x; not available in UE 4.

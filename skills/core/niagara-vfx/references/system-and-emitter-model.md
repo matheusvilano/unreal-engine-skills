@@ -1,7 +1,7 @@
 # Niagara system/emitter model — full reference
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the asset hierarchy, stack groups, namespaces,
-execution order, emitter inheritance, and module authoring concepts. Grounded in UE 5.7
+execution order, emitter inheritance, and module authoring concepts. Grounded in UE 5.8
 (`Engine/Plugins/FX/Niagara/Source/Niagara/Classes/NiagaraSystem.h`,
 `Classes/NiagaraEmitterHandle.h`) and the official
 [Niagara Key Concepts](https://dev.epicgames.com/documentation/unreal-engine/key-concepts-in-niagara-effects-for-unreal-engine)
@@ -72,7 +72,7 @@ From C++ you can toggle individual emitters within a running system:
 
 ```cpp
 // Enable or disable a named emitter (e.g. to turn off sparks at end of game):
-FX->SetEmitterEnable(TEXT("Sparks"), false);   // NiagaraComponent.h:75
+FX->SetEmitterEnable(TEXT("Sparks"), false);   // NiagaraComponent.h:78
 ```
 
 The string is the emitter's name as set in the Niagara Editor.
@@ -81,7 +81,7 @@ The string is the emitter's name as set in the Niagara Editor.
 
 Lightweight Emitters are a stripped-down emitter type optimized for simple single-burst effects
 (impacts, hit sparks) where the full stack overhead is unnecessary. They have reduced memory and
-CPU overhead. In 5.7, Lightweight Emitters support a subset of modules; see the
+CPU overhead. In 5.8, Lightweight Emitters support a subset of modules; see the
 [Niagara Lightweight Emitters](https://dev.epicgames.com/documentation/unreal-engine/niagara-lightweight-emitters)
 doc for current feature coverage.
 

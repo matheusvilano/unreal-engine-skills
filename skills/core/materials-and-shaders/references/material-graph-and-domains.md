@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the material graph structure,
 PBR input slots, material functions, static switches, material attributes, the
-Custom (HLSL) node, layered materials, and a note on Substrate. Grounded in UE 5.7
+Custom (HLSL) node, layered materials, and a note on Substrate. Grounded in UE 5.8
 (`Engine/Source/Runtime/Engine/Public/Materials/Material.h`,
 `MaterialFunctionInterface.h`, `MaterialDomain.h`) and the official
 [Material Properties](https://dev.epicgames.com/documentation/unreal-engine/unreal-engine-material-properties)
@@ -41,7 +41,7 @@ material is evaluated for:
 - **`MD_Surface`** — the default. Evaluated per-pixel on meshes via the G-buffer
   (deferred) or directly (forward). All PBR inputs apply.
 - **`MD_DeferredDecal`** — projected onto surfaces. Blend mode is controlled by
-  `DecalBlendMode` (`Material.h`:472), not `BlendMode`. Decals can write to
+  `DecalBlendMode` (`Material.h`:489), not `BlendMode`. Decals can write to
   specific G-buffer channels.
 - **`MD_LightFunction`** — multiplied into a light's output. Only `Emissive Color`
   is used. Attach to a `ULightComponent` as a light function.
@@ -124,13 +124,13 @@ Syntax errors produce a compile failure at shader compile time, not at save.
 Avoid using Custom nodes for trivial math — node-graph equivalents are better
 optimized by the material translator.
 
-## Layered materials and Substrate (UE 5.7)
+## Layered materials and Substrate (UE 5.8)
 
 **Material Layers** (non-Substrate path) allow stacking multiple material
 functions, each providing a full attribute set, blended by a Layer Blend function.
 This is the predecessor to Substrate.
 
-**Substrate** (opt-in project setting in UE 5.7) replaces the shading model and
+**Substrate** (opt-in project setting in UE 5.8) replaces the shading model and
 blend mode selectors with a physically-based **slab** model. Each slab node
 describes one material layer with its own scattering and transmittance properties.
 Slabs are combined with operators (over, add, mix). The C++ runtime parameter
@@ -164,6 +164,6 @@ usage flags × target platform) is one shader permutation. The permutation count
 multiplies across all dimensions — the biggest practical source of long compile
 times.
 
-The **PSO Precache** system (UE 5.4+, present in 5.7) precompiles Pipeline State
+The **PSO Precache** system (UE 5.4+, present in 5.8) precompiles Pipeline State
 Objects at load time instead of on first draw, eliminating in-game hitches.
 Materials can opt into precaching via `PSOPrecacheMaterial.h`.

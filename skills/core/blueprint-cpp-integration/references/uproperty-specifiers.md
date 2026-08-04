@@ -1,9 +1,9 @@
 # UPROPERTY specifiers — full reference
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the edit/visibility axis, Blueprint access axis,
-replication, delegates, and property meta tags with exact locations in the UE 5.7 source.
+replication, delegates, and property meta tags with exact locations in the UE 5.8 source.
 Grounded in `Engine/Source/Runtime/CoreUObject/Public/UObject/ObjectMacros.h` (namespace `UP`,
-lines ~1080–1200) and the official
+lines ~1086–1214) and the official
 [UProperties](https://dev.epicgames.com/documentation/unreal-engine/unreal-engine-uproperties)
 doc.
 
@@ -95,20 +95,20 @@ Metadata is editor-only — never write game logic that depends on it.
 - `GetByRef` — the BP Get node returns a `const` reference instead of a copy (Sparse Class Data
   only).
 
-## Source locations (UE 5.7)
+## Source locations (UE 5.8)
 
 All specifiers below are in `Runtime/CoreUObject/Public/UObject/ObjectMacros.h`:
 
-- `UP` namespace (UPROPERTY enum), lines ~1080–1165:
-  `BlueprintAssignable`:1104, `EditAnywhere`:1116, `EditInstanceOnly`:1119,
-  `EditDefaultsOnly`:1122, `VisibleAnywhere`:1125, `VisibleInstanceOnly`:1128,
-  `VisibleDefaultsOnly`:1131, `BlueprintReadOnly`:1134, `BlueprintGetter`:1137,
-  `BlueprintReadWrite`:1140, `BlueprintSetter`:1143, `BlueprintCallable` (delegate):1155.
+- `UP` namespace (UPROPERTY enum), lines ~1086–1214:
+  `BlueprintAssignable`:1146, `EditAnywhere`:1158, `EditInstanceOnly`:1161,
+  `EditDefaultsOnly`:1164, `VisibleAnywhere`:1167, `VisibleInstanceOnly`:1170,
+  `VisibleDefaultsOnly`:1173, `BlueprintReadOnly`:1176, `BlueprintGetter`:1179,
+  `BlueprintReadWrite`:1182, `BlueprintSetter`:1185, `BlueprintCallable` (delegate):1197.
 
-- Property meta tags (`EM::PropertyMetaData` enum, lines ~1290–1420):
-  `AllowPrivateAccess`:1309, `ExposeOnSpawn`:1382, `ClampMin`/`ClampMax`,
+- Property meta tags (`UM` namespace, "Metadata usable in UPROPERTY" enum, lines ~1335–1626):
+  `AllowPrivateAccess`:1351, `ExposeOnSpawn`:1434, `ClampMin`/`ClampMax`,
   `UIMin`/`UIMax`, `EditCondition`, `DisplayName`, `DisplayAfter`, `DisplayPriority`,
   `AllowedClasses`, `AllowAbstract`, `BlueprintBaseOnly`, `MakeEditWidget`.
 
-- CPF flags (property flags used at runtime), lines ~400–480:
-  `CPF_BlueprintReadOnly`:423, `CPF_BlueprintCallable`:463, `CPF_ExposeOnSpawn`:467.
+- CPF flags (property flags used at runtime, `EPropertyFlags`), lines ~430–495:
+  `CPF_BlueprintReadOnly`:438, `CPF_BlueprintCallable`:478, `CPF_ExposeOnSpawn`:482.

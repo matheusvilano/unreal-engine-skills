@@ -1,15 +1,15 @@
 # UFUNCTION specifiers — full reference
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers all Blueprint-relevant `UFUNCTION` specifiers and
-function `meta=(...)` tags with their exact locations in the UE 5.7 source.
+function `meta=(...)` tags with their exact locations in the UE 5.8 source.
 Grounded in `Engine/Source/Runtime/CoreUObject/Public/UObject/ObjectMacros.h` (namespace `UF`,
-lines 943–1004) and the official
+lines 985–1084) and the official
 [UFunctions](https://dev.epicgames.com/documentation/unreal-engine/ufunctions-in-unreal-engine)
 doc.
 
 ## The four Blueprint event specifiers
 
-### BlueprintCallable (`ObjectMacros.h`:987)
+### BlueprintCallable (`ObjectMacros.h`:1029)
 
 Adds exec-in and exec-out pins to the node. Use for any function that:
 - modifies state (side effects),
@@ -18,7 +18,7 @@ Adds exec-in and exec-out pins to the node. Use for any function that:
 
 Non-`const` functions default to `BlueprintCallable` behavior when combined with `BlueprintPure=false`.
 
-### BlueprintPure (`ObjectMacros.h`:984)
+### BlueprintPure (`ObjectMacros.h`:1026)
 
 Removes exec pins. The node is a data source evaluated on demand. Rules:
 - Use for stateless getters and math helpers that have no side effects.
@@ -29,7 +29,7 @@ Removes exec pins. The node is a data source evaluated on demand. Rules:
   if the node is called multiple times.
 - Avoid returning arrays from pure functions — each read of the output pin copies the array.
 
-### BlueprintImplementableEvent (`ObjectMacros.h`:950)
+### BlueprintImplementableEvent (`ObjectMacros.h`:992)
 
 UHT generates a thunk that dispatches into Blueprint. C++ rules:
 - **No C++ body** — providing one is a compile error.
@@ -39,7 +39,7 @@ UHT generates a thunk that dispatches into Blueprint. C++ rules:
 - In Blueprint the function appears as an **Event** node (if void, no return) or a **function**
   node (if it has a return value or you add `meta=(ForceAsFunction)`).
 
-### BlueprintNativeEvent (`ObjectMacros.h`:955)
+### BlueprintNativeEvent (`ObjectMacros.h`:997)
 
 Provides a C++ default plus an optional Blueprint override. Pattern:
 
@@ -99,17 +99,17 @@ All metadata lives only in the editor build; never query it from gameplay code.
 | `UnsafeDuringActorConstruction` | Marks a function not safe to call in the construction script |
 | `Latent` + `LatentInfo="Param"` | Marks the function as a latent (async) action |
 
-## Source locations (UE 5.7)
+## Source locations (UE 5.8)
 
 All specifiers below are in `Runtime/CoreUObject/Public/UObject/ObjectMacros.h`:
 
-- `UF` namespace (UFUNCTION enum), lines 943–1004:
-  `BlueprintImplementableEvent`:950, `BlueprintNativeEvent`:955, `BlueprintPure`:984,
-  `BlueprintCallable`:987, `BlueprintGetter`:990, `BlueprintSetter`:993,
-  `BlueprintAuthorityOnly`:996, `BlueprintCosmetic`:999, `BlueprintInternalUseOnly`:1002,
-  `CallInEditor`:1005.
+- `UF` namespace (UFUNCTION enum), lines 985–1084:
+  `BlueprintImplementableEvent`:992, `BlueprintNativeEvent`:997, `BlueprintPure`:1026,
+  `BlueprintCallable`:1029, `BlueprintGetter`:1032, `BlueprintSetter`:1035,
+  `BlueprintAuthorityOnly`:1038, `BlueprintCosmetic`:1041, `BlueprintInternalUseOnly`:1044,
+  `CallInEditor`:1047.
 
-- Function meta tags (`EM::FunctionMetaData` enum, lines ~1606–1735):
+- Function meta tags (`UM` namespace, "Metadata usable in UFUNCTION" enum, lines ~1656–1848):
   `DisplayName`, `Keywords`, `ToolTip`, `CompactNodeTitle`, `ExpandEnumAsExecs`,
   `AdvancedDisplay`, `AutoCreateRefTerm`, `DefaultToSelf`, `HidePin`, `HideSelfPin`,
   `WorldContext`, `CallableWithoutWorldContext`, `BlueprintProtected`,

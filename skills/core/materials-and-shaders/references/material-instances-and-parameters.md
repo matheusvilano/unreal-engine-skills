@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the MIC vs MID distinction in
 detail, every parameter type, the C++ creation and assignment API, and the
-index-cache optimization. Grounded in UE 5.7
+index-cache optimization. Grounded in UE 5.8
 (`Engine/Source/Runtime/Engine/Public/Materials/MaterialInstanceDynamic.h`,
 `MaterialInstanceConstant.h`, `MaterialInstance.h`) and the official
 [Instanced Materials](https://dev.epicgames.com/documentation/unreal-engine/instanced-materials-in-unreal-engine)

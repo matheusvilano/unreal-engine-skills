@@ -1,6 +1,6 @@
 # Mesh and texture import settings reference
 
-Grounded in UE 5.7 engine source under
+Grounded in UE 5.8 engine source under
 `Engine/Plugins/Interchange/Runtime/Source/Pipelines/`
 and `Engine/Source/Editor/UnrealEd/Classes/Factories/`.
 See [../SKILL.md](../SKILL.md) for the mental model and gotchas.
@@ -14,7 +14,7 @@ Source: `Engine/Plugins/Interchange/Runtime/Source/Pipelines/Public/InterchangeG
 | Property | Type | Default | Notes |
 |---|---|---|---|
 | `bImportStaticMeshes` | bool | true | Master toggle for SM import |
-| `bCombineStaticMeshes` | bool | false | Merge all SM nodes into one asset |
+| `CombineStaticMeshesBehavior` | EInterchangeCombineStaticMeshesBehavior | DoNotCombine | `All` / `VisibleOnly` / `DoNotCombine`; replaces `bCombineStaticMeshes` (deprecated in 5.8) |
 | `LodGroup` | FName | NAME_None | Epic LOD presets: SmallProp, LargeProp, Vista, etc. |
 | `bAutoComputeLODScreenSizes` | bool | true | Auto-derive LOD screen-size thresholds |
 | `bCollision` | bool | true | Import or generate simple collision |
@@ -95,7 +95,7 @@ Source: `Engine/Plugins/Interchange/Runtime/Source/Import/Public/Fbx/Interchange
 | `bUseUfbxParser` | false | Use ufbx SDK instead of Autodesk FBX SDK (experimental) |
 
 For glTF the translator uses the glTF 2.0 spec coordinate system (Y-up, right-handed) and
-converts to Unreal automatically. No separate settings struct exposes these options in 5.7.
+converts to Unreal automatically. No separate settings struct exposes these options in 5.8.
 
 ## Texture pipeline (`UInterchangeGenericTexturePipeline`)
 

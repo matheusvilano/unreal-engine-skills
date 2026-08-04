@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers PCG graph authoring, custom node
 implementation, landscape data queries, runtime generation, and partitioned generation.
-Grounded in UE 5.7 (`Engine/Plugins/PCG/Source/PCG/Public/`) and the official
+Grounded in UE 5.8 (`Engine/Plugins/PCG/Source/PCG/Public/`) and the official
 [PCG Framework](https://dev.epicgames.com/documentation/unreal-engine/procedural-content-generation-framework-in-unreal-engine)
 and [PCG Overview](https://dev.epicgames.com/documentation/unreal-engine/procedural-content-generation-overview)
 docs.
@@ -24,10 +24,10 @@ an `FPCGContext` (containing input `UPCGData` collections) and produces outputs.
 
 | Type | Path | Notes |
 |---|---|---|
-| `UPCGComponent` | `PCGComponent.h`:150 | Runs a graph; attached to any actor |
-| `UPCGGraph` | `PCGGraph.h`:266 | Editable graph asset (nodes + edges) |
-| `UPCGGraphInterface` | `PCGGraph.h`:107 | Abstract; `UPCGGraph` and `UPCGGraphInstance` both implement |
-| `UPCGGraphInstance` | `PCGGraph.h`:674 | Graph + local parameter overrides |
+| `UPCGComponent` | `PCGComponent.h`:112 | Runs a graph; attached to any actor |
+| `UPCGGraph` | `PCGGraph.h`:332 | Editable graph asset (nodes + edges) |
+| `UPCGGraphInterface` | `PCGGraph.h`:159 | Abstract; `UPCGGraph` and `UPCGGraphInstance` both implement |
+| `UPCGGraphInstance` | `PCGGraph.h`:879 | Graph + local parameter overrides |
 | `UPCGNode` | `PCGNode.h` | A node in the graph; has a `UPCGSettings` |
 | `UPCGSettings` | `PCGSettings.h` | Defines node type, properties, pin descriptors |
 | `UPCGElement` | `PCGElement.h` | Stateless executor; `Execute(FPCGContext*)` produces outputs |
@@ -50,11 +50,11 @@ UPCGComponent::CancelGeneration()         — abort in-progress generation
 **Delegates for completion:**
 ```cpp
 // Registered before calling Generate():
-PCGComp->OnGraphGeneratedExternal.AddDynamic(this, &AMyActor::OnPCGGenerated);
-PCGComp->OnGraphCleanedExternal.AddDynamic(this, &AMyActor::OnPCGCleaned);
+PCGComp->OnPCGGraphGeneratedExternal.AddDynamic(this, &AMyActor::OnPCGGenerated);
+PCGComp->OnPCGGraphCleanedExternal.AddDynamic(this, &AMyActor::OnPCGCleaned);
 ```
 
-**Generation trigger** (`EPCGComponentGenerationTrigger`, `PCGComponent.h`:71):
+**Generation trigger** (`EPCGComponentGenerationTrigger`, `PCGComponent.h`:77):
 
 | Enum | When generation runs |
 |---|---|
@@ -187,14 +187,14 @@ managed resources to a new standalone actor.
 - **PCG in packaged builds** — confirm the PCG plugin is added to `.uproject` with
   `"Enabled": true`; it is a shipped plugin but not enabled by default in all templates.
 
-## Key source paths (UE 5.7)
+## Key source paths (UE 5.8)
 
 All under `Engine/Plugins/PCG/Source/PCG/Public/`:
-- `PCGComponent.h`:150 — `UPCGComponent`; `Generate`:246, `Cleanup`:247,
-  `GenerateLocal`:251, `CleanupLocal`:262, `NotifyPropertiesChangedFromBlueprint`:294,
-  `GenerationTrigger`:349, `bIsComponentPartitioned`:346,
-  `OnGraphGeneratedExternal`:57, `OnGraphCleanedExternal`:58.
-- `PCGGraph.h`:266 — `UPCGGraph`; `:107` — `UPCGGraphInterface`; `:674` — `UPCGGraphInstance`.
+- `PCGComponent.h`:112 — `UPCGComponent`; `Generate`:253, `Cleanup`:257,
+  `GenerateLocal`:221, `CleanupLocal`:232, `NotifyPropertiesChangedFromBlueprint`:264,
+  `GenerationTrigger`:327, `bIsComponentPartitioned`:324,
+  `OnPCGGraphGeneratedExternal`:393, `OnPCGGraphCleanedExternal`:396.
+- `PCGGraph.h`:332 — `UPCGGraph`; `:159` — `UPCGGraphInterface`; `:879` — `UPCGGraphInstance`.
 - `PCGSettings.h` — `UPCGSettings` (node settings base).
 - `PCGElement.h` — `UPCGElement`, `FSimplePCGElement`.
 - `PCGContext.h` — `FPCGContext` (input/output data collections).

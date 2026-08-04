@@ -2,14 +2,14 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers all `COND_*` values, the Push Model opt-in,
 `DOREPLIFETIME_WITH_PARAMS_FAST`, dynamic/custom conditions, and the Iris replication system.
-Grounded in UE 5.7
+Grounded in UE 5.8
 (`Runtime/CoreUObject/Public/UObject/CoreNetTypes.h`,
 `Runtime/Engine/Public/Net/UnrealNetwork.h`,
 `Runtime/Net/Core/Public/Net/Core/PushModel/PushModel.h`).
 
 ## ELifetimeCondition — all COND_* values
 
-Defined in `Runtime/CoreUObject/Public/UObject/CoreNetTypes.h`:19.
+Defined in `Runtime/CoreUObject/Public/UObject/CoreNetTypes.h`:16.
 
 | Value | Replicates to… |
 |---|---|
@@ -156,13 +156,13 @@ COMPARE_ASSIGN_AND_MARK_PROPERTY_DIRTY(AMyActor, MyHealth, NewHealth, this);
 
 Defined in `PushModel.h`:466. Best for scalar types; avoid for large structs (memcmp cost).
 
-## Iris replication system (UE 5.7)
+## Iris replication system (UE 5.8)
 
-Iris is the new default replication system in 5.7. It coexists with the existing `DOREPLIFETIME`
-+ RPC model:
+Iris remains beta and opt-in in 5.8 (`net.Iris.UseIrisReplication`, default off). It coexists
+with the existing `DOREPLIFETIME` + RPC model:
 - Existing `DOREPLIFETIME*` macros, `OnRep_X` callbacks, and RPCs continue to work.
-- `OnReplicationStarted` is deprecated in 5.7; override `OnReplicationStartedForIris` instead
-  (`Actor.h`:3479).
+- `OnReplicationStarted` is deprecated since 5.7; override `OnReplicationStartedForIris` instead
+  (`Actor.h`:3478).
 - Push Model with Iris: use `DOREPLIFETIME_WITH_PARAMS_FAST` + `bIsPushBased = true`. Iris
   provides the `FIrisMarkPropertyDirty` delegate hook for internal coordination
   (`PushModel.h`:414).
@@ -173,12 +173,12 @@ For migration details see the
 [Iris Replication System](https://dev.epicgames.com/documentation/unreal-engine/iris-replication-system-in-unreal-engine)
 docs.
 
-## Source references (UE 5.7)
+## Source references (UE 5.8)
 
-- `Runtime/CoreUObject/Public/UObject/CoreNetTypes.h`:19–38 — `ELifetimeCondition` enum.
+- `Runtime/CoreUObject/Public/UObject/CoreNetTypes.h`:16–34 — `ELifetimeCondition` enum.
 - `Runtime/Engine/Public/Net/UnrealNetwork.h`:134,231,250,259,277,286,295,311 —
   `FDoRepLifetimeParams`, `DOREPLIFETIME*` macros, `DOREPLIFETIME_ACTIVE_OVERRIDE`.
 - `Runtime/Net/Core/Public/Net/Core/PushModel/PushModel.h`:454,460,466 —
   `MARK_PROPERTY_DIRTY_FROM_NAME`, `COMPARE_ASSIGN_AND_MARK_PROPERTY_DIRTY`.
 - `Runtime/Net/Core/Public/Net/Core/PushModel/PushModelMacros.h`:5 — `WITH_PUSH_MODEL`.
-- `Runtime/Engine/Classes/GameFramework/Actor.h`:3479 — `OnReplicationStartedForIris`.
+- `Runtime/Engine/Classes/GameFramework/Actor.h`:3478 — `OnReplicationStartedForIris`.

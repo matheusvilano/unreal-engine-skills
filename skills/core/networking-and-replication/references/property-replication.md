@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the complete property replication workflow,
 the `DOREPLIFETIME` macro family, RepNotify parameter overloads, the `NotReplicated` specifier,
-and object-reference replication. Grounded in UE 5.7
+and object-reference replication. Grounded in UE 5.8
 (`Engine/Source/Runtime/Engine/Public/Net/UnrealNetwork.h`).
 
 ## How property replication works
@@ -117,11 +117,11 @@ must be network-addressable — either a replicated actor or a stably-named obje
 on both server and client with the same name, e.g. loaded from a level package or a default
 subobject created in a C++ constructor).
 
-## Source references (UE 5.7)
+## Source references (UE 5.8)
 
 - `Runtime/Engine/Public/Net/UnrealNetwork.h` — `DOREPLIFETIME` :259, `DOREPLIFETIME_WITH_PARAMS`
   :250, `DOREPLIFETIME_WITH_PARAMS_FAST` :231, `DOREPLIFETIME_CONDITION` :277,
   `DOREPLIFETIME_CONDITION_NOTIFY` :286, `DISABLE_REPLICATED_PROPERTY` :407,
   `RESET_REPLIFETIME_CONDITION` :455, `FDoRepLifetimeParams` :134.
 - `Runtime/CoreUObject/Public/UObject/CoreNet.h` — `FLifetimeProperty` :299,
-  `ELifetimeRepNotifyCondition` (via `CoreNetTypes.h`) :42.
+  `ELifetimeRepNotifyCondition` (via `CoreNetTypes.h`) :39.

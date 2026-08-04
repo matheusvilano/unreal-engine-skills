@@ -1,6 +1,6 @@
 # Reimport and import asset data
 
-Grounded in UE 5.7 engine source under
+Grounded in UE 5.8 engine source under
 `Engine/Source/Runtime/Interchange/Engine/Public/` and
 `Engine/Source/Runtime/Engine/Classes/EditorFramework/`.
 See [../SKILL.md](../SKILL.md) for the mental model and import API overview.

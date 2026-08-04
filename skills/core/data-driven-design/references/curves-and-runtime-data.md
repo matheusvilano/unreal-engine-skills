@@ -1,7 +1,7 @@
 # Curves and Runtime Data — deep reference
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers `UCurveFloat`, `UCurveTable`,
-`FRuntimeFloatCurve`, and `FCurveTableRowHandle`. Grounded in UE 5.7
+`FRuntimeFloatCurve`, and `FCurveTableRowHandle`. Grounded in UE 5.8
 (`Engine/Source/Runtime/Engine/Classes/Curves/CurveFloat.h`,
 `Engine/Source/Runtime/Engine/Classes/Engine/CurveTable.h`).
 
@@ -45,9 +45,9 @@ float GetWeaponDamage(FName WeaponName, float Range) const
 ```
 
 API:
-- `FindCurve(RowName, Context)`:129 — returns `FRealCurve*` (common base; works for both modes).
-- `FindRichCurve(RowName, Context)`:148 — asserts if the table is in `SimpleCurves` mode.
-- `FindSimpleCurve(RowName, Context)`:159 — asserts if the table is in `RichCurves` mode.
+- `FindCurve(RowName, Context)`:131 — returns `FRealCurve*` (common base; works for both modes).
+- `FindRichCurve(RowName, Context)`:150 — asserts if the table is in `SimpleCurves` mode.
+- `FindSimpleCurve(RowName, Context)`:161 — asserts if the table is in `RichCurves` mode.
 - `GetCurveTableMode()`:57 — returns `ECurveTableMode` (`Empty`, `SimpleCurves`, `RichCurves`).
 
 `SimpleCurves` mode only supports two keyframes (linear interpolation between two points), so
@@ -55,7 +55,7 @@ use `RichCurves` mode (the default) when you need tangent control.
 
 ## FCurveTableRowHandle
 
-`FCurveTableRowHandle` (`CurveTable.h`:260) is the picker equivalent of `FDataTableRowHandle`
+`FCurveTableRowHandle` (`CurveTable.h`:262) is the picker equivalent of `FDataTableRowHandle`
 for curves. Expose it in `UPROPERTY` so designers can select the table and curve name:
 
 ```cpp
@@ -68,8 +68,8 @@ float GetDamage(float Distance) const
 }
 ```
 
-`Eval(XValue, Context)`:303 returns 0.f if the handle points to nothing; `IsNull()`:283 checks
-for an unset handle; `GetRichCurve(Context)`:293 returns the `FRichCurve*` for advanced use.
+`Eval(XValue, Context)`:305 returns 0.f if the handle points to nothing; `IsNull()`:286 checks
+for an unset handle; `GetRichCurve(Context)`:295 returns the `FRichCurve*` for advanced use.
 
 ## FRuntimeFloatCurve
 

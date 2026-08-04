@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the component type hierarchy, registration and its
 events, render state, physics state, ticking, `InitializeComponent` vs `BeginPlay`, and
-editor-only visualization components. Grounded in UE 5.7
+editor-only visualization components. Grounded in UE 5.8
 (`Engine/Source/Runtime/Engine/Classes/Components/ActorComponent.h`,
 `Components/SceneComponent.h`, `Components/PrimitiveComponent.h`) and the official
 [Components](https://dev.epicgames.com/documentation/unreal-engine/components-in-unreal-engine) doc.
@@ -35,10 +35,10 @@ during the owning actor's spawn. For components created during play you must cal
 ```cpp
 UStaticMeshComponent* C = NewObject<UStaticMeshComponent>(this);
 C->SetupAttachment(GetRootComponent());
-C->RegisterComponent();      // ActorComponent.h:1305 — required for runtime components
+C->RegisterComponent();      // ActorComponent.h:1322 — required for runtime components
 // ...
-C->UnregisterComponent();    // ActorComponent.h:1308 — remove from update/render/physics
-C->DestroyComponent();       // ActorComponent.h:1311 — unregister and tear down
+C->UnregisterComponent();    // ActorComponent.h:1325 — remove from update/render/physics
+C->DestroyComponent();       // ActorComponent.h:1328 — unregister and tear down
 ```
 
 Registering during play has a cost; do it only when necessary. The component must be associated
@@ -50,17 +50,17 @@ While registering, the engine runs (override these to hook in):
 
 | Function | Role | Cite |
 |---|---|---|
-| `OnRegister` | general per-register hook | `ActorComponent.h`:816 |
+| `OnRegister` | general per-register hook | `ActorComponent.h`:830 |
 | `CreateRenderState` | initialize render state | — |
 | `OnCreatePhysicsState` | initialize physics state | — |
 
-While unregistering, the mirror set runs: `OnUnregister` (`ActorComponent.h`:821),
+While unregistering, the mirror set runs: `OnUnregister` (`ActorComponent.h`:835),
 `DestroyRenderState`, `OnDestroyPhysicsState`.
 
 ## Render state
 
 To draw, a component needs a **render state**, which also tells the engine when render data changed.
-When something changes, mark it "dirty" with `MarkRenderStateDirty()` (`ActorComponent.h`:1114); at
+When something changes, mark it "dirty" with `MarkRenderStateDirty()` (`ActorComponent.h`:1128); at
 end of frame all dirty components update their render data. Scene and primitive components create
 render states by default; plain actor components do not (nothing to draw).
 
@@ -68,7 +68,7 @@ render states by default; plain actor components do not (nothing to draw).
 
 To take part in physics simulation/collision, a component needs a **physics state**, which updates
 immediately (no dirty-marker / frame-behind issues). Only primitive components create one by
-default. Override `ShouldCreatePhysicsState()` (`ActorComponent.h`:864) to decide per class — don't
+default. Override `ShouldCreatePhysicsState()` (`ActorComponent.h`:878) to decide per class — don't
 blindly return `true`; respect the cases (e.g. during destruction) where the `UPrimitiveComponent`
 version returns `false`, and prefer returning `Super::ShouldCreatePhysicsState()` where you'd
 otherwise return `true`.
@@ -79,14 +79,14 @@ By default components do **not** tick. To enable:
 
 ```cpp
 // In the component constructor:
-PrimaryComponentTick.bCanEverTick = true;                 // ActorComponent.h:168
+PrimaryComponentTick.bCanEverTick = true;                 // ActorComponent.h:177
 // Then, in the constructor or later:
-PrimaryComponentTick.SetTickFunctionEnable(true);         // EngineBaseTypes.h:338
+PrimaryComponentTick.SetTickFunctionEnable(true);         // EngineBaseTypes.h:364
 // ...later, to pause:
 PrimaryComponentTick.SetTickFunctionEnable(false);
 
 virtual void TickComponent(float DeltaTime, ELevelTick TickType,
-                           FActorComponentTickFunction* ThisTickFunction) override;  // :962
+                           FActorComponentTickFunction* ThisTickFunction) override;  // :976
 ```
 
 If a component never needs per-frame work, leave `bCanEverTick = false` for a small perf win, or
@@ -94,13 +94,13 @@ drive it manually from the owning actor. See `timers-and-async` for event/timer 
 
 ## `InitializeComponent` vs `BeginPlay`
 
-- `InitializeComponent` (`ActorComponent.h`:905) runs during the actor's component-init
+- `InitializeComponent` (`ActorComponent.h`:919) runs during the actor's component-init
   sub-sequence (before `BeginPlay`) — **only if** the component sets
-  `bWantsInitializeComponent = true` (`:331`) in its constructor. Use it for self-contained setup
+  `bWantsInitializeComponent = true` (`:340`) in its constructor. Use it for self-contained setup
   that must exist before any actor's `BeginPlay`.
-- `UActorComponent::BeginPlay` (`:922`) runs when gameplay starts, after the owning actor's
+- `UActorComponent::BeginPlay` (`:936`) runs when gameplay starts, after the owning actor's
   `BeginPlay`. Bind delegates and start gameplay interactions here. The mirror cleanup is
-  `EndPlay` (`:935`); `UninitializeComponent` (`:941`) mirrors `InitializeComponent`.
+  `EndPlay` (`:949`); `UninitializeComponent` (`:955`) mirrors `InitializeComponent`.
 
 Practical rule: bind delegates in `BeginPlay` and react via the observer pattern, so you don't have
 to reason about init order across components.
@@ -109,7 +109,7 @@ to reason about init order across components.
 
 Some components/actors have no visual representation, making them hard to select or debug.
 **Visualization components** are ordinary components that exist only in the editor: create the
-component, call `SetIsVisualizationComponent(true)` (`ActorComponent.h`:706), and guard all
+component, call `SetIsVisualizationComponent(true)` (`ActorComponent.h`:723), and guard all
 references behind `WITH_EDITORONLY_DATA` / `WITH_EDITOR` so packaged builds never reference them.
 The Camera Component uses this pattern to draw its view frustum in-editor. Such components do not
 appear during Play-in-Editor or in packaged builds.
@@ -117,7 +117,7 @@ appear during Play-in-Editor or in packaged builds.
 ## Finding components on an actor
 
 ```cpp
-UStaticMeshComponent* M = GetComponentByClass<UStaticMeshComponent>();  // Actor.h:3791, first match
+UStaticMeshComponent* M = GetComponentByClass<UStaticMeshComponent>();  // Actor.h:3796, first match
 TArray<UActorComponent*> All;
 GetComponents<UActorComponent>(All);                                    // all matching
 ```

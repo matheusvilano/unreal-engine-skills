@@ -1,7 +1,7 @@
 # Remote procedure calls — full reference
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers all RPC types, the execution matrix, reliability,
-`WithValidation`, parameter types, Blueprint RPCs, and the `Remote` RPC type. Grounded in UE 5.7
+`WithValidation`, parameter types, Blueprint RPCs, and the `Remote` RPC type. Grounded in UE 5.8
 (`Engine/Source/Runtime/Engine/Classes/GameFramework/Actor.h`) and the official
 [Remote Procedure Calls](https://dev.epicgames.com/documentation/unreal-engine/remote-procedure-calls-in-unreal-engine)
 doc.
@@ -120,7 +120,7 @@ In Blueprint, add a **Custom Event**, then in its Details panel set **Replicates
 system generates the equivalent of `UFUNCTION(Server, Reliable)` etc.
 
 Blueprint RepNotify `Set` calls on a replicated property automatically invoke the RepNotify if one
-is defined for that property. This does *not* apply to `ActorComponent` blueprints in 5.7.
+is defined for that property. This does *not* apply to `ActorComponent` blueprints in 5.8.
 
 `Remote` RPC is not exposed to Blueprint.
 
@@ -136,9 +136,9 @@ spawned with `Params.Owner = PlayerController`.
 Calling a Server RPC on an unowned actor is silently dropped — no error, no log at default
 verbosity. Enable `net.RPC.Debug 1` to see drops.
 
-## Source references (UE 5.7)
+## Source references (UE 5.8)
 
-- `Runtime/Engine/Classes/GameFramework/Actor.h` — `HasAuthority` :1941, `GetLocalRole` :739,
-  `GetRemoteRole` :743, `bReplicates` :556.
+- `Runtime/Engine/Classes/GameFramework/Actor.h` — `HasAuthority` :1938, `GetLocalRole` :776,
+  `GetRemoteRole` :780, `bReplicates` :593.
 - Official doc — Remote Procedure Calls:
   <https://dev.epicgames.com/documentation/unreal-engine/remote-procedure-calls-in-unreal-engine>

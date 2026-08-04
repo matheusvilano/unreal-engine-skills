@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers component/section dimension math, material
 layer setup, edit layers, landscape splines, Nanite landscape, and runtime C++ queries.
-Grounded in UE 5.7 (`Engine/Source/Runtime/Landscape/Classes/`) and the official
+Grounded in UE 5.8 (`Engine/Source/Runtime/Landscape/Classes/`) and the official
 [Landscape Outdoor Terrain](https://dev.epicgames.com/documentation/unreal-engine/landscape-outdoor-terrain-in-unreal-engine)
 and [Landscape Technical Guide](https://dev.epicgames.com/documentation/unreal-engine/landscape-technical-guide-in-unreal-engine)
 docs.
@@ -37,7 +37,7 @@ grayscale PNG, `.r8`, `.r16`, or `.raw` with companion JSON (width/height/bpp).
 ALandscape : ALandscapeProxy : APartitionActor
 ```
 
-`ALandscapeProxy` (abstract, `LandscapeProxy.h`:417) is the runtime class. All streaming
+`ALandscapeProxy` (abstract, `LandscapeProxy.h`:450) is the runtime class. All streaming
 landscape cells are `ALandscapeStreamingProxy` instances pointing back to their parent
 `ALandscape` via `LandscapeGuid`. The proxy holds:
 
@@ -49,7 +49,7 @@ landscape cells are `ALandscapeStreamingProxy` instances pointing back to their 
   runtime; required if you modify landscape material parameters from code.
 - `bUsedForNavigation` — opt out for distant/background landscapes to avoid navmesh cost.
 
-`ULandscapeComponent` (`LandscapeComponent.h`:413) extends `UPrimitiveComponent`. It owns
+`ULandscapeComponent` (`LandscapeComponent.h`:431) extends `UPrimitiveComponent`. It owns
 the heightmap texture and weightmap textures for its tile of terrain, drives the LOD
 selection per-component, and contributes to the landscape's collision.
 
@@ -140,12 +140,12 @@ For pure runtime slope/height queries (without editor-only APIs), trace against 
 landscape's collision (a `ULandscapeHeightfieldCollisionComponent`) using
 `GetWorld()->LineTraceSingleByChannel`.
 
-## Key source paths (UE 5.7)
+## Key source paths (UE 5.8)
 
 All under `Engine/Source/Runtime/Landscape/Classes/`:
 - `Landscape.h` — `ALandscape`:276
-- `LandscapeProxy.h` — `ALandscapeProxy`:417; key fields at lines 458, 574, 663, 898–904
-- `LandscapeComponent.h` — `ULandscapeComponent`:413
+- `LandscapeProxy.h` — `ALandscapeProxy`:450; key fields at lines 491, 604, 682, 924–930
+- `LandscapeComponent.h` — `ULandscapeComponent`:431
 - `LandscapeLayerInfoObject.h` — `ULandscapeLayerInfoObject`:59
 - `LandscapeSplineActor.h` — `ALandscapeSplineActor`:14
 - `LandscapeInfo.h` — `ULandscapeInfo`

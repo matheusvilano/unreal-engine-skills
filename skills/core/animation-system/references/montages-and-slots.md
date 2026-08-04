@@ -1,7 +1,7 @@
 # Montages & slots — full reference
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers montage anatomy, sections, slot blending,
-root motion, blend settings, completion delegates, and authoring patterns. Grounded in UE 5.7
+root motion, blend settings, completion delegates, and authoring patterns. Grounded in UE 5.8
 (`Runtime/Engine/Classes/Animation/AnimMontage.h`,
 `Runtime/Engine/Classes/Animation/AnimInstance.h`,
 `Runtime/Engine/Classes/GameFramework/Character.h`).
@@ -10,12 +10,12 @@ root motion, blend settings, completion delegates, and authoring patterns. Groun
 
 A `UAnimMontage` is a container asset that holds:
 
-- **Slot tracks** (`SlotAnimTracks`: `AnimMontage.h`:688) — each slot track maps a named
+- **Slot tracks** (`SlotAnimTracks`: `AnimMontage.h`:701) — each slot track maps a named
   AnimGraph slot to a sequence of animation segments. A montage can have multiple slot
   tracks to drive upper and lower body independently through different slots.
-- **Composite sections** (`CompositeSections`: `AnimMontage.h`:684) — named playback
+- **Composite sections** (`CompositeSections`: `AnimMontage.h`:697) — named playback
   regions on the montage timeline. Code can jump between sections or loop within one.
-- **Blend in / blend out** (`BlendIn`:637, `BlendOut`:646) — smooth entry and exit using
+- **Blend in / blend out** (`BlendIn`:650, `BlendOut`:659) — smooth entry and exit using
   `FAlphaBlend` settings (time, curve type). `BlendOutTriggerTime` controls when blend-out
   starts relative to the end.
 - **Notify tracks** — anim notifies and notify states placed on the montage timeline.
@@ -48,7 +48,7 @@ CustomBlend.BlendTime = 0.1f;
 AI->Montage_PlayWithBlendIn(AttackMontage, CustomBlend, 1.f);
 
 // ACharacter convenience — jumps straight to a named section
-PlayAnimMontage(AttackMontage, 1.f, FName("Combo1"));  // Character.h:773
+PlayAnimMontage(AttackMontage, 1.f, FName("Combo1"));  // Character.h:890
 ```
 
 `Montage_Play` stops all other montages by default (`bStopAllMontages = true`). Pass `false`
@@ -62,8 +62,8 @@ AI->Montage_JumpToSection(FName("Combo2"), AttackMontage);
 // Jump to the end of a section (useful for looping out of a section early)
 AI->Montage_JumpToSectionsEnd(FName("Loop"), AttackMontage);
 // Query current position
-float Pos = AI->Montage_GetPosition(AttackMontage);   // AnimInstance.h:687
-bool  bActive = AI->Montage_IsActive(AttackMontage);  // AnimInstance.h:674
+float Pos = AI->Montage_GetPosition(AttackMontage);   // AnimInstance.h:700
+bool  bActive = AI->Montage_IsActive(AttackMontage);  // AnimInstance.h:687
 ```
 
 Sections are ordered in the editor and can be linked to loop or chain automatically without
@@ -75,7 +75,7 @@ code — use code jumps only for dynamic branching (combo logic, interrupt recov
 // Per-instance delegate (preferred for one-shot actions)
 FOnMontageEnded EndDelegate;
 EndDelegate.BindUObject(this, &AMyChar::HandleMontageEnded);
-AI->Montage_SetEndDelegate(EndDelegate, AttackMontage);   // AnimInstance.h:771
+AI->Montage_SetEndDelegate(EndDelegate, AttackMontage);   // AnimInstance.h:784
 
 // Multicast delegate — all montages
 AI->OnMontageEnded.AddDynamic(this, &AMyChar::HandleAnyMontageEnded);
@@ -90,7 +90,7 @@ Unbind delegates in `EndPlay` / destructor if the listener might outlive the mes
 
 ```cpp
 AI->Montage_Stop(0.25f, AttackMontage);              // blend-out over 0.25 s
-StopAnimMontage(AttackMontage);                      // Character.h:777 (uses montage's default blend-out)
+StopAnimMontage(AttackMontage);                      // Character.h:894 (uses montage's default blend-out)
 AI->Montage_Stop(0.f, nullptr);                      // stop ALL montages immediately
 ```
 
@@ -133,11 +133,11 @@ when the DCC artist already authored the split.
 
 ## Related
 
-- `AnimMontage.h`: `UAnimMontage`:621, `FCompositeSection`:37, `FSlotAnimationTrack`:83,
-  `BlendIn`:637, `BlendOut`:646, `CompositeSections`:684, `SlotAnimTracks`:688.
-- `AnimInstance.h`: `Montage_Play`:613, `Montage_Stop`:626, `Montage_JumpToSection`:650,
-  `Montage_IsActive`:674, `Montage_GetPosition`:687, `OnMontageEnded`:757,
-  `Montage_SetEndDelegate`:771.
-- `Character.h`: `PlayAnimMontage`:773, `StopAnimMontage`:777.
+- `AnimMontage.h`: `UAnimMontage`:635, `FCompositeSection`:37, `FSlotAnimationTrack`:83,
+  `BlendIn`:650, `BlendOut`:659, `CompositeSections`:697, `SlotAnimTracks`:701.
+- `AnimInstance.h`: `Montage_Play`:626, `Montage_Stop`:639, `Montage_JumpToSection`:663,
+  `Montage_IsActive`:687, `Montage_GetPosition`:700, `OnMontageEnded`:770,
+  `Montage_SetEndDelegate`:784.
+- `Character.h`: `PlayAnimMontage`:890, `StopAnimMontage`:894.
 - Official doc: [Animation Montage](https://dev.epicgames.com/documentation/unreal-engine/animation-montage-in-unreal-engine)
 - Official doc: [Animation Slots](https://dev.epicgames.com/documentation/unreal-engine/animation-slots-in-unreal-engine)

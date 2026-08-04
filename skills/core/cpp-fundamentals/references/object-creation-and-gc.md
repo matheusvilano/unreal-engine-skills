@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers `NewObject` vs `CreateDefaultSubobject`, object
 flags, GC root set, keeping objects alive in non-UPROPERTY contexts (`FGCObject`, `TStrongObjectPtr`,
-`AddToRoot`), and the ownership patterns you'll encounter in real Unreal code. Grounded in UE 5.7
+`AddToRoot`), and the ownership patterns you'll encounter in real Unreal code. Grounded in UE 5.8
 (`Engine/Source/Runtime/CoreUObject/Public/UObject/UObjectGlobals.h`,
 `Engine/Source/Runtime/CoreUObject/Public/UObject/GarbageCollection.h`).
 
@@ -16,16 +16,16 @@ Three key overloads (`UObjectGlobals.h`):
 
 ```cpp
 // Simplest: auto-generated name, transient package as outer
-T* NewObject<T>(UObject* Outer = GetTransientPackageAsObject())   // line 1919
+T* NewObject<T>(UObject* Outer = GetTransientPackageAsObject())   // line 1959
 
 // Explicit class (useful when the class is chosen at runtime)
 T* NewObject<T>(UObject* Outer, const UClass* Class,
                 FName Name = NAME_None, EObjectFlags Flags = RF_NoFlags,
-                UObject* Template = nullptr, ...)                  // line 1891
+                UObject* Template = nullptr, ...)                  // line 1931
 
 // Named, with flags
 T* NewObject<T>(UObject* Outer, FName Name,
-                EObjectFlags Flags = RF_NoFlags, ...)              // line 1934
+                EObjectFlags Flags = RF_NoFlags, ...)              // line 1974
 ```
 
 **Outer**: sets the object's position in the outer chain (its logical parent/package). Use `this`
@@ -49,7 +49,7 @@ Most runtime-created objects should use `RF_NoFlags` (the default) and be kept a
 
 ## CreateDefaultSubobject — constructor-only subobjects
 
-`CreateDefaultSubobject<T>(FName)` (`Object.h`:147) is exclusively for constructors. It:
+`CreateDefaultSubobject<T>(FName)` (`Object.h`:151) is exclusively for constructors. It:
 - Creates the subobject as a default subobject of the class being constructed.
 - Registers the subobject's CDO under the outer class's CDO.
 - Ensures every spawned instance of the outer gets its own copy.
@@ -65,7 +65,7 @@ AMyActor::AMyActor()
 }
 ```
 
-Using `NewObject` inside a constructor fires the assertion at `UObjectGlobals.h`:1896. Using
+Using `NewObject` inside a constructor fires the assertion at `UObjectGlobals.h`:1936. Using
 `CreateDefaultSubobject` outside a constructor is also undefined behavior.
 
 ## Keeping UObjects alive outside UPROPERTY
@@ -136,8 +136,9 @@ garbage flag; the pointer is not automatically nulled. Always call `.IsValid()` 
 ## GC reachability and clustering
 
 The GC performs a **mark phase** (trace all reachable objects from the root set through UPROPERTY
-chains) followed by a **sweep phase** (collect unreachable objects). In UE 5.7 this is
-**incremental** by default (work is spread across frames via Project Settings → Garbage Collection).
+chains) followed by a **sweep phase** (collect unreachable objects). In UE 5.8 incremental
+reachability analysis (work spread across frames) is available but opt-in via
+`gc.AllowIncrementalReachability` / Project Settings → Garbage Collection.
 
 **GC clusters**: a group of objects treated as one unit during reachability. If any object in the
 cluster is reachable, the entire cluster is kept. Clusters are used for Blueprint generated classes
@@ -169,7 +170,8 @@ before GC and in a well-defined order relative to gameplay. See `actors-and-comp
 ## Version notes
 
 - `TStrongObjectPtr` was added in UE 4.23.
-- Incremental GC (chunked reachability) became the default in UE 5.3.
+- Incremental GC (chunked reachability) was introduced in UE 5.3; it remains opt-in
+  (`gc.AllowIncrementalReachability`) through 5.8.
 - The `EObjectFlags` table is defined in `ObjectMacros.h` and has been stable across UE4/5. The
   `RF_PendingKill` flag (`0x8000`) is still present in the enum for compatibility, but with
   `gc.PendingKillEnabled=false` it has no effect.

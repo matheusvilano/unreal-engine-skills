@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers material slot mechanics, LOD
 configuration, `UBodySetup` collision geometry, and `ECollisionTraceFlag` in detail.
-Grounded in UE 5.7
+Grounded in UE 5.8
 (`Engine/Source/Runtime/Engine/Classes/Components/MeshComponent.h`,
 `Engine/Source/Runtime/PhysicsCore/Public/BodySetupCore.h`,
 `Engine/Source/Runtime/PhysicsCore/Public/BodySetupEnums.h`,
@@ -11,7 +11,7 @@ Grounded in UE 5.7
 ## Material slots in depth
 
 Every `UMeshComponent` subclass inherits `SetMaterial` / `GetMaterial` from
-`UMeshComponent` (lines 114-116):
+`UMeshComponent` (lines 118-122):
 
 ```cpp
 virtual UMaterialInterface* GetMaterial(int32 ElementIndex) const;
@@ -174,8 +174,8 @@ event setup.
 
 ## Version notes
 
-- `GetMaterialRelevance(ERHIFeatureLevel::Type)` is deprecated in 5.7; use
-  `GetMaterialRelevance(EShaderPlatform)` instead.
+- `GetMaterialRelevance(ERHIFeatureLevel::Type)` is deprecated since 5.7 (still
+  deprecated in 5.8); use `GetMaterialRelevance(EShaderPlatform)` instead.
 - Chaos (the physics engine since 5.0) evaluates `CTF_UseComplexAsSimple` differently
   from the legacy PhysX path; test collision complexity settings after migrating from
   UE4.

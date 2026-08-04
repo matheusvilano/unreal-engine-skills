@@ -9,7 +9,7 @@ description: Implement player/AI characters in Unreal C++ with ACharacter and
   custom movement mode (PhysCustom), adding root motion, or debugging network
   smoothing and prediction on a character.
 metadata:
-  engine-version: "5.7"
+  engine-version: "5.8"
   category: gameplay-framework
 ---
 
@@ -32,7 +32,7 @@ NPCs; use a plain `APawn` or `UFloatingPawnMovement` for vehicles/drones.
 
 ## What ACharacter gives you
 
-Built-in components declared in `Character.h:252-263` (`ACharacter : public APawn`):
+Built-in components declared in `Character.h:350-360` (`ACharacter : public APawn`):
 
 - **`UCapsuleComponent`** — root collision capsule; CMC assumes vertical alignment.
   Access via `GetCapsuleComponent()`.
@@ -44,7 +44,7 @@ Built-in components declared in `Character.h:252-263` (`ACharacter : public APaw
 The class hierarchy for movement is:
 `UMovementComponent` → `UNavMovementComponent` → `UPawnMovementComponent` →
 `UCharacterMovementComponent`. `UPawnMovementComponent` owns `AddInputVector`/
-`ConsumeInputVector`; `APawn::AddMovementInput` (`Pawn.h:484`) accumulates
+`ConsumeInputVector`; `APawn::AddMovementInput` (`Pawn.h:499`) accumulates
 input for CMC to consume each tick.
 
 ## Typical third-person character
@@ -80,11 +80,11 @@ AMyCharacter::AMyCharacter()
 
     // Third-person: face movement direction, ignore controller yaw on actor
     bUseControllerRotationYaw   = false;
-    GetCharacterMovement()->bOrientRotationToMovement = true;   // CMC.h:445
-    GetCharacterMovement()->RotationRate = FRotator(0.f, 540.f, 0.f); // CMC.h:409
-    GetCharacterMovement()->MaxWalkSpeed = 500.f;               // CMC.h:274
-    GetCharacterMovement()->JumpZVelocity = 450.f;              // CMC.h:163
-    GetCharacterMovement()->GravityScale  = 1.0f;               // CMC.h:155
+    GetCharacterMovement()->bOrientRotationToMovement = true;   // CMC.h:446
+    GetCharacterMovement()->RotationRate = FRotator(0.f, 540.f, 0.f); // CMC.h:410
+    GetCharacterMovement()->MaxWalkSpeed = 500.f;               // CMC.h:275
+    GetCharacterMovement()->JumpZVelocity = 450.f;              // CMC.h:164
+    GetCharacterMovement()->GravityScale  = 1.0f;               // CMC.h:156
 }
 ```
 
@@ -111,7 +111,7 @@ void AMyCharacter::Look(const FInputActionValue& Value)
 }
 ```
 
-`AddMovementInput` (`Pawn.h:484`) accumulates a pending vector that CMC
+`AddMovementInput` (`Pawn.h:499`) accumulates a pending vector that CMC
 reads and clears each tick via `ConsumeInputVector` (`PawnMovementComponent.h:86`).
 Never bypass this with `SetActorLocation` on a networked character — it breaks
 prediction.
@@ -123,48 +123,48 @@ drives movement via `AddMovementInput` internally.
 
 ```cpp
 // In SetupPlayerInputComponent or IA_ binding:
-Jump();       // ACharacter::Jump() — Character.h:711; sets bPressedJump
-StopJumping(); // Character.h:720; clears hold force
+Jump();       // ACharacter::Jump() — Character.h:828; sets bPressedJump
+StopJumping(); // Character.h:837; clears hold force
 
 // Multi-jump: set on the character
-JumpMaxCount = 2;        // Character.h:630 — double-jump
-JumpMaxHoldTime = 0.3f;  // Character.h:621 — hold for extra height
+JumpMaxCount = 2;        // Character.h:740 — double-jump
+JumpMaxHoldTime = 0.3f;  // Character.h:731 — hold for extra height
 ```
 
 Crouch requires one flag before calling `Crouch()`:
 ```cpp
 // In constructor or BeginPlay:
 GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
-// NavigationTypes.h:393 (FNavAgentProperties::bCanCrouch)
+// NavigationTypes.h:386 (FNavAgentProperties::bCanCrouch)
 
 // Then in input binding:
-Crouch();    // Character.h:871
-UnCrouch();  // Character.h:880
+Crouch();    // Character.h:988
+UnCrouch();  // Character.h:997
 ```
 
 Without `bCanCrouch = true`, `Crouch()` does nothing silently.
 
 ## Movement modes
 
-CMC tracks state in `MovementMode` (`CMC.h:229`, `TEnumAsByte<EMovementMode>`):
+CMC tracks state in `MovementMode` (`CMC.h:230`, `TEnumAsByte<EMovementMode>`):
 
 | Mode | Enum | Physics function |
 |------|------|-----------------|
-| Walking | `MOVE_Walking` | `PhysWalking` (`CMC.h:1956`) |
-| Falling | `MOVE_Falling` | `PhysFalling` (`CMC.h:1627`) |
-| Swimming | `MOVE_Swimming` | `PhysSwimming` (`CMC.h:1965`) |
-| Flying | `MOVE_Flying` | `PhysFlying` (`CMC.h:1962`) |
-| Custom | `MOVE_Custom` | `PhysCustom` (`CMC.h:1968`) — override this |
+| Walking | `MOVE_Walking` | `PhysWalking` (`CMC.h:1995`) |
+| Falling | `MOVE_Falling` | `PhysFalling` (`CMC.h:1663`) |
+| Swimming | `MOVE_Swimming` | `PhysSwimming` (`CMC.h:2004`) |
+| Flying | `MOVE_Flying` | `PhysFlying` (`CMC.h:2001`) |
+| Custom | `MOVE_Custom` | `PhysCustom` (`CMC.h:2007`) — override this |
 
 Switch modes at runtime:
 ```cpp
-GetCharacterMovement()->SetMovementMode(MOVE_Flying);  // CMC.h:1257
+GetCharacterMovement()->SetMovementMode(MOVE_Flying);  // CMC.h:1276
 // Revert to default land/water mode:
-GetCharacterMovement()->SetDefaultMovementMode();      // CMC.h:1834
+GetCharacterMovement()->SetDefaultMovementMode();      // CMC.h:1873
 ```
 
-`OnMovementModeChanged` fires on both the CMC (`CMC.h:1279`) and the Character
-(`Character.h:924`) — override either to react (e.g. turn on `bNotifyApex` when
+`OnMovementModeChanged` fires on both the CMC (`CMC.h:1298`) and the Character
+(`Character.h:1041`) — override either to react (e.g. turn on `bNotifyApex` when
 entering `MOVE_Falling`).
 
 ### Custom movement mode
@@ -200,9 +200,9 @@ Three mutually exclusive intents — pick exactly one:
 
 | Property | Owner | Behavior |
 |----------|-------|----------|
-| `bOrientRotationToMovement` (`CMC.h:445`) | CMC | Rotate actor toward velocity direction. Typical third-person. |
+| `bOrientRotationToMovement` (`CMC.h:446`) | CMC | Rotate actor toward velocity direction. Typical third-person. |
 | `bUseControllerRotationYaw` (APawn) | Character | Actor yaw tracks controller yaw. Typical first-person/strafe. |
-| `bUseControllerDesiredRotation` (`CMC.h:438`) | CMC | Smooth-rotate toward controller rotation; overridden by Orient. |
+| `bUseControllerDesiredRotation` (`CMC.h:439`) | CMC | Smooth-rotate toward controller rotation; overridden by Orient. |
 
 Setting both `bOrientRotationToMovement` and `bUseControllerRotationYaw` causes
 the actor to fight itself every frame — a common bug.
@@ -222,12 +222,12 @@ JumpSource->InstanceName    = FName("MyArcJump");
 JumpSource->Duration        = 0.6f;
 JumpSource->Height          = 200.f;
 JumpSource->bDisableTimeout = false;
-GetCharacterMovement()->ApplyRootMotionSource(JumpSource); // CMC.h:2739
+GetCharacterMovement()->ApplyRootMotionSource(JumpSource); // CMC.h:2807
 ```
 
 Remove by name when done:
 ```cpp
-GetCharacterMovement()->RemoveRootMotionSource(FName("MyArcJump")); // CMC.h:2751
+GetCharacterMovement()->RemoveRootMotionSource(FName("MyArcJump")); // CMC.h:2819
 ```
 
 See [references/root-motion-and-launch.md](references/root-motion-and-launch.md)
@@ -236,17 +236,17 @@ for the full `FRootMotionSource` type catalogue and network considerations.
 ## Networking (free, but mind authority)
 
 CMC implements the full client-prediction + server-reconciliation loop via
-`PerformMovement` (`CMC.h:2252`) and `FSavedMove_Character` (`CMC.h:2912`).
+`PerformMovement` (`CMC.h:2291`) and `FSavedMove_Character` (`CMC.h:2980`).
 Key rules:
 
 - Drive all movement through `AddMovementInput`/`Jump`/`LaunchCharacter` so
   moves are saved and replayed correctly.
 - Adding custom state to prediction requires subclassing `FSavedMove_Character`
   and overriding `GetCompressedFlags`/`SetMoveFor`/`PrepMoveFor`.
-- `NetworkMaxSmoothUpdateDistance` (`CMC.h:838`) controls when CMC teleports vs.
+- `NetworkMaxSmoothUpdateDistance` (`CMC.h:839`) controls when CMC teleports vs.
   interpolates to a correction; increase it if you see snap-corrections on
   simulated proxies.
-- `ReplicatedMovementMode` (`Character.h:593`) replicates the enum to simulated
+- `ReplicatedMovementMode` (`Character.h:703`) replicates the enum to simulated
   proxies so they can transition physics locally.
 
 See [references/networked-movement.md](references/networked-movement.md) for the
@@ -256,15 +256,15 @@ full prediction loop, custom move flags, and RPC flow.
 
 | Property | Line | Purpose |
 |----------|------|---------|
-| `MaxWalkSpeed` | 274 | Top speed on ground |
-| `MaxWalkSpeedCrouched` | 278 | Top speed while crouched |
-| `MaxAcceleration` | 294 | Rate of velocity build-up |
-| `GroundFriction` | 254 | Deceleration friction while grounded |
+| `MaxWalkSpeed` | 275 | Top speed on ground |
+| `MaxWalkSpeedCrouched` | 279 | Top speed while crouched |
+| `MaxAcceleration` | 295 | Rate of velocity build-up |
+| `GroundFriction` | 255 | Deceleration friction while grounded |
 | `BrakingDecelerationWalking` | (see `BrakingDeceleration*`) | Deceleration when no input |
-| `GravityScale` | 155 | Multiplies world gravity |
-| `JumpZVelocity` | 163 | Initial vertical impulse |
-| `AirControl` | 359 | Lateral control while airborne (0–1) |
-| `RotationRate` | 409 | Degrees/sec for orientation modes |
+| `GravityScale` | 156 | Multiplies world gravity |
+| `JumpZVelocity` | 164 | Initial vertical impulse |
+| `AirControl` | 360 | Lateral control while airborne (0–1) |
+| `RotationRate` | 410 | Degrees/sec for orientation modes |
 | `bConstrainToPlane` | (MovementComponent.h:155) | Lock motion to a plane (2-D games) |
 
 All lines above refer to `CharacterMovementComponent.h` unless noted.
@@ -283,7 +283,7 @@ the long-term replacement for CMC. Key differences versus CMC:
 - APIs, data formats, and properties are still subject to breaking changes.
 
 Epic states CMC will remain supported "for the foreseeable future" after Mover
-reaches production status. For new projects targeting UE 5.7+, evaluate Mover
+reaches production status. For new projects targeting UE 5.8+, evaluate Mover
 only if you need its modular architecture or non-capsule shapes and can accept
 experimental status. See `references/networked-movement.md` for the CMC vs.
 Mover replication model comparison, and the dedicated `mover-movement-system`
@@ -316,43 +316,43 @@ skill for full Mover setup, modes, layered moves, and backends.
 - `TObjectPtr<T>` for `UPROPERTY` members is the UE5+ idiom; legacy code uses
   raw `T*`, which still compiles.
 - Custom gravity direction (`GravityDirection`, added in UE 5.x) is a
-  `VisibleAnywhere BlueprintReadOnly` property (`CMC.h:199`) — useful for
-  wall-walking. Replicated via `Character.h:474` (`ReplicatedGravityDirection`).
+  `VisibleAnywhere BlueprintReadOnly` property (`CMC.h:201`) — useful for
+  wall-walking. Replicated via `Character.h:575` (`ReplicatedGravityDirection`).
 - `CharacterMovementConstants::AsyncCharacterMovement` CVar enables async CMC
-  updates (`CMC.h:44`); experimental in 5.7 — test with it off first.
+  updates (`CMC.h:45`); experimental in 5.8 — test with it off first.
 - Line numbers in engine headers drift across patch releases; header paths and
   class/function names are stable.
 
 ## References & source material
 
-Engine source (UE 5.7, `Engine/Source/Runtime/Engine/Classes/`):
-- `GameFramework/Character.h` — `ACharacter:241`, `Jump:711`, `StopJumping:720`,
-  `Crouch:871`, `UnCrouch:880`, `JumpMaxCount:630`, `JumpMaxHoldTime:621`,
-  `OnMovementModeChanged:924`, `ReplicatedMovementMode:593`,
-  `ReplicatedGravityDirection:474`.
-- `GameFramework/CharacterMovementComponent.h` — `MovementMode:229`,
-  `CustomMovementMode:237`, `GravityScale:155`, `JumpZVelocity:163`,
-  `GroundFriction:254`, `MaxWalkSpeed:274`, `MaxWalkSpeedCrouched:278`,
-  `MaxAcceleration:294`, `AirControl:359`, `RotationRate:409`,
-  `bUseControllerDesiredRotation:438`, `bOrientRotationToMovement:445`,
-  `NetworkMaxSmoothUpdateDistance:838`, `SetMovementMode:1257`,
-  `OnMovementModeChanged:1279`, `PhysFalling:1627`, `PhysWalking:1956`,
-  `PhysFlying:1962`, `PhysSwimming:1965`, `PhysCustom:1968`,
-  `PerformMovement:2252`, `FSavedMove_Character:2912`,
-  `ApplyRootMotionSource:2739`, `RemoveRootMotionSource:2751`.
-- `GameFramework/Pawn.h` — `AddMovementInput:484`.
+Engine source (UE 5.8, `Engine/Source/Runtime/Engine/Classes/`):
+- `GameFramework/Character.h` — `ACharacter:338`, `Jump:828`, `StopJumping:837`,
+  `Crouch:988`, `UnCrouch:997`, `JumpMaxCount:740`, `JumpMaxHoldTime:731`,
+  `OnMovementModeChanged:1041`, `ReplicatedMovementMode:703`,
+  `ReplicatedGravityDirection:575`.
+- `GameFramework/CharacterMovementComponent.h` — `MovementMode:230`,
+  `CustomMovementMode:238`, `GravityScale:156`, `JumpZVelocity:164`,
+  `GroundFriction:255`, `MaxWalkSpeed:275`, `MaxWalkSpeedCrouched:279`,
+  `MaxAcceleration:295`, `AirControl:360`, `RotationRate:410`,
+  `bUseControllerDesiredRotation:439`, `bOrientRotationToMovement:446`,
+  `NetworkMaxSmoothUpdateDistance:839`, `SetMovementMode:1276`,
+  `OnMovementModeChanged:1298`, `PhysFalling:1663`, `PhysWalking:1995`,
+  `PhysFlying:2001`, `PhysSwimming:2004`, `PhysCustom:2007`,
+  `PerformMovement:2291`, `FSavedMove_Character:2980`,
+  `ApplyRootMotionSource:2807`, `RemoveRootMotionSource:2819`.
+- `GameFramework/Pawn.h` — `AddMovementInput:499`.
 - `GameFramework/PawnMovementComponent.h` — `GetPendingInputVector:69`,
   `ConsumeInputVector:86`.
 - `GameFramework/NavMovementComponent.h` — `NavAgentProps:61`.
-- `AI/Navigation/NavigationTypes.h` — `FNavAgentProperties::bCanCrouch:393`.
+- `AI/Navigation/NavigationTypes.h` — `FNavAgentProperties::bCanCrouch:386`.
 - `GameFramework/MovementComponent.h` — `bConstrainToPlane:155`.
 - `GameFramework/RootMotionSource.h` — `FRootMotionSource`, `FRootMotionSource_JumpForce`.
 
-Plugin source (UE 5.7):
+Plugin source (UE 5.8):
 - `Engine/Plugins/Experimental/Mover/Source/Mover/Public/MoverComponent.h`
 - `Engine/Plugins/Experimental/Mover/Source/Mover/Public/DefaultMovementSet/CharacterMoverComponent.h`
 
-Official docs (UE 5.7):
+Official docs (UE 5.8):
 - Characters — <https://dev.epicgames.com/documentation/unreal-engine/characters-in-unreal-engine>
 - Gameplay Framework — <https://dev.epicgames.com/documentation/unreal-engine/gameplay-framework-in-unreal-engine>
 - Mover — <https://dev.epicgames.com/documentation/unreal-engine/mover-in-unreal-engine>

@@ -1,14 +1,14 @@
 # State machines, sync groups & blending — full reference
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers AnimGraph state machines, sync groups,
-inertialization, layered bone blending, and blend spaces. Grounded in UE 5.7
+inertialization, layered bone blending, and blend spaces. Grounded in UE 5.8
 (`Runtime/Engine/Classes/Animation/AnimNode_StateMachine.h`,
 `Runtime/Engine/Classes/Animation/AnimStateMachineTypes.h`,
 `Runtime/AnimGraphRuntime/Public/AnimNodes/AnimNode_LayeredBoneBlend.h`).
 
 ## State machine structure
 
-An AnimGraph state machine (`FAnimNode_StateMachine`, `AnimNode_StateMachine.h`:122) is a
+An AnimGraph state machine (`FAnimNode_StateMachine`, `AnimNode_StateMachine.h`:119) is a
 graph of **states** and **transitions**. Each state holds its own sub-graph (a blend space,
 a sequence player, or another state machine). Transitions carry a **rule** (a Boolean
 expression or a time condition) evaluated each frame.
@@ -18,11 +18,11 @@ From C++, query the active state (useful for debugging or post-processing):
 ```cpp
 // Get the state machine node from the AnimBP's generated class
 // (Typically done in NativeUpdateAnimation or post-evaluate)
-FAnimNode_StateMachine* SM = GetStateMachineInstanceFromName(FName("Locomotion"));
+const FAnimNode_StateMachine* SM = GetStateMachineInstanceFromName(FName("Locomotion"));
 if (SM)
 {
-    FName CurrentState = SM->GetCurrentStateName();   // AnimNode_StateMachine.h:178
-    float Weight = SM->GetStateWeight(0);             // index of "Idle" state:258
+    FName CurrentState = SM->GetCurrentStateName();   // AnimNode_StateMachine.h:175
+    float Weight = SM->GetStateWeight(0);             // index of "Idle" state:255
 }
 ```
 
@@ -129,9 +129,9 @@ For large numbers of background characters, use the **Animation Sharing** plugin
 
 ## Related
 
-- `AnimNode_StateMachine.h`: `FAnimNode_StateMachine`:122, `GetCurrentStateName`:178,
-  `GetStateWeight`:258.
-- `AnimStateMachineTypes.h`: `UAnimStateMachineTypes`:412.
+- `AnimNode_StateMachine.h`: `FAnimNode_StateMachine`:119, `GetCurrentStateName`:175,
+  `GetStateWeight`:255.
+- `AnimStateMachineTypes.h`: `UAnimStateMachineTypes`:417.
 - `AnimNode_LayeredBoneBlend.h`: `FAnimNode_LayeredBoneBlend`:21, `BlendMode`:36.
 - Official doc: [State Machines](https://dev.epicgames.com/documentation/unreal-engine/state-machines-in-unreal-engine)
 - Official doc: [Sync Groups](https://dev.epicgames.com/documentation/unreal-engine/animation-sync-groups-in-unreal-engine)

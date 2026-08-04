@@ -8,7 +8,7 @@ description: Expose C++ classes, functions, and properties to Blueprint in Unrea
   specifiers to put on C++ members or functions, designing a designer-facing API, calling between
   C++ and Blueprint, or debugging missing nodes/properties/events in the Blueprint graph.
 metadata:
-  engine-version: "5.7"
+  engine-version: "5.8"
   category: blueprints
 ---
 
@@ -261,18 +261,18 @@ FOnHealthDepleted OnHealthDepleted;
 
 ## References & source material
 
-Engine source (UE 5.7, under `Engine/Source/`):
-- `Runtime/CoreUObject/Public/UObject/ObjectMacros.h` — `UF::BlueprintImplementableEvent`:950,
-  `UF::BlueprintNativeEvent`:955, `UF::BlueprintPure`:984, `UF::BlueprintCallable`:987;
-  `UP::EditAnywhere`:1116, `UP::EditDefaultsOnly`:1122, `UP::BlueprintReadOnly`:1134,
-  `UP::BlueprintReadWrite`:1140, `UP::BlueprintAssignable`:1104;
-  meta `AllowPrivateAccess`:1309, `ExposeOnSpawn`:1382;
-  `UC::Blueprintable`:808, `UC::BlueprintType`:802.
+Engine source (UE 5.8, under `Engine/Source/`):
+- `Runtime/CoreUObject/Public/UObject/ObjectMacros.h` — `UF::BlueprintImplementableEvent`:992,
+  `UF::BlueprintNativeEvent`:997, `UF::BlueprintPure`:1026, `UF::BlueprintCallable`:1029;
+  `UP::EditAnywhere`:1158, `UP::EditDefaultsOnly`:1164, `UP::BlueprintReadOnly`:1176,
+  `UP::BlueprintReadWrite`:1182, `UP::BlueprintAssignable`:1146;
+  meta `AllowPrivateAccess`:1351, `ExposeOnSpawn`:1434;
+  `UC::Blueprintable`:850, `UC::BlueprintType`:844.
 - `Runtime/Engine/Classes/Kismet/BlueprintFunctionLibrary.h` — `UBlueprintFunctionLibrary`:15.
 - `Runtime/Engine/Classes/Kismet/GameplayStatics.h` — canonical large BP function library.
 - `Runtime/CoreUObject/Public/UObject/Interface.h` — `UInterface`:18, `IInterface`:24.
 
-Official docs (UE 5.7):
+Official docs (UE 5.8):
 - UFunctions — <https://dev.epicgames.com/documentation/unreal-engine/ufunctions-in-unreal-engine>
 - UProperties — <https://dev.epicgames.com/documentation/unreal-engine/unreal-engine-uproperties>
 - Metadata Specifiers — <https://dev.epicgames.com/documentation/unreal-engine/metadata-specifiers-in-unreal-engine>

@@ -8,7 +8,7 @@ description: Build and compose gameplay objects from Actors and Components in Un
   components, spawning actors, registering runtime components, or debugging lifecycle/ticking/
   attachment/overlap issues.
 metadata:
-  engine-version: "5.7"
+  engine-version: "5.8"
   category: gameplay-framework
 ---
 
@@ -74,9 +74,9 @@ There are three distinct **creation paths** that converge before `BeginPlay`: lo
 including deferred spawn and the GC sequence, is in
 [references/actor-lifecycle.md](references/actor-lifecycle.md).
 
-Verified in 5.7 (`GameFramework/Actor.h`): `BeginPlay()`:2128, `EndPlay()`:2135,
-`PostInitProperties()`:2346, `Tick(float)`:3059, `PreInitializeComponents()`:3123,
-`PostInitializeComponents()`:3126, `OnConstruction()`:3448, `Destroyed()`:3568.
+Verified in 5.8 (`GameFramework/Actor.h`): `BeginPlay()`:2125, `EndPlay()`:2132,
+`PostInitProperties()`:2343, `Tick(float)`:3060, `PreInitializeComponents()`:3124,
+`PostInitializeComponents()`:3127, `OnConstruction()`:3445, `Destroyed()`:3569.
 
 **Constructor vs BeginPlay:** the constructor runs on the CDO and in the editor, with no world.
 Never do gameplay logic (spawning, world queries, timers, delegate binding) there — use `BeginPlay`.
@@ -249,23 +249,23 @@ GetComponents<USceneComponent>(All);                                     // all 
 
 ## References & source material
 
-Engine source (UE 5.7, under `Engine/Source/Runtime/`):
-- `Engine/Classes/GameFramework/Actor.h` — `AActor` lifecycle, `RootComponent`:995,
-  `PrimaryActorTick`:285, `SetRootComponent`:2486, `AttachToActor`:2032, `FinishSpawning`:3116,
-  `GetComponentByClass`:3791.
-- `Engine/Classes/Components/ActorComponent.h` — `UActorComponent`, `RegisterComponent`:1305,
-  `OnRegister`:816, `InitializeComponent`:905, `BeginPlay`:922, `TickComponent`:962,
-  `PrimaryComponentTick`:168, `bWantsInitializeComponent`:331.
-- `Engine/Classes/Components/SceneComponent.h` — transforms, `SetupAttachment`:729,
-  `AttachToComponent`:747, `DetachFromComponent`:781, `Mobility`:298.
-- `Engine/Classes/Components/PrimitiveComponent.h` — rendering/collision, `OnComponentBeginOverlap`:1409,
-  `SetGenerateOverlapEvents`:373, `SetCollisionEnabled`:1943.
-- `Engine/Classes/Engine/World.h` — `SpawnActor`/`SpawnActorDeferred`:3735, `FActorSpawnParameters`:418.
-- `Engine/Classes/Engine/EngineTypes.h` — `FAttachmentTransformRules`:74, `EEndPlayReason`:3428,
-  `ESpawnActorCollisionHandlingMethod`:4169.
-- `CoreUObject/Public/UObject/Object.h` — `CreateDefaultSubobject`:147.
+Engine source (UE 5.8, under `Engine/Source/Runtime/`):
+- `Engine/Classes/GameFramework/Actor.h` — `AActor` lifecycle, `RootComponent`:1024,
+  `PrimaryActorTick`:318, `SetRootComponent`:2493, `AttachToActor`:2029, `FinishSpawning`:3117,
+  `GetComponentByClass`:3796.
+- `Engine/Classes/Components/ActorComponent.h` — `UActorComponent`, `RegisterComponent`:1322,
+  `OnRegister`:830, `InitializeComponent`:919, `BeginPlay`:936, `TickComponent`:976,
+  `PrimaryComponentTick`:177, `bWantsInitializeComponent`:340.
+- `Engine/Classes/Components/SceneComponent.h` — transforms, `SetupAttachment`:734,
+  `AttachToComponent`:752, `DetachFromComponent`:786, `Mobility`:303.
+- `Engine/Classes/Components/PrimitiveComponent.h` — rendering/collision, `OnComponentBeginOverlap`:1468,
+  `SetGenerateOverlapEvents`:418, `SetCollisionEnabled`:2026.
+- `Engine/Classes/Engine/World.h` — `SpawnActor`/`SpawnActorDeferred`:3851, `FActorSpawnParameters`:420.
+- `Engine/Classes/Engine/EngineTypes.h` — `FAttachmentTransformRules`:75, `EEndPlayReason`:3670,
+  `ESpawnActorCollisionHandlingMethod`:4411.
+- `CoreUObject/Public/UObject/Object.h` — `CreateDefaultSubobject`:151.
 
-Official docs (UE 5.7):
+Official docs (UE 5.8):
 - Actor Lifecycle — <https://dev.epicgames.com/documentation/unreal-engine/unreal-engine-actor-lifecycle>
 - Components — <https://dev.epicgames.com/documentation/unreal-engine/components-in-unreal-engine>
 - Actors — <https://dev.epicgames.com/documentation/unreal-engine/actors-in-unreal-engine>

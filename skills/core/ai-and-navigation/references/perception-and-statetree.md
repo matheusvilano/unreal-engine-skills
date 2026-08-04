@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers all AI Perception senses, forget behavior,
 the stimuli source component, debugging, and StateTree for AI: task authoring, schema,
-`UStateTreeAIComponent`, and the BT-vs-StateTree decision guide. Grounded in UE 5.7
+`UStateTreeAIComponent`, and the BT-vs-StateTree decision guide. Grounded in UE 5.8
 (`Engine/Source/Runtime/AIModule/Classes/Perception/` and
 `Engine/Plugins/Runtime/StateTree/` + `Engine/Plugins/Runtime/GameplayStateTree/`).
 
@@ -150,7 +150,7 @@ mirror BT composites. It is data-oriented: task state lives in typed structs, no
 ### UStateTreeAIComponent
 
 Declared at
-`Plugins/Runtime/GameplayStateTree/Source/GameplayStateTreeModule/Public/Components/StateTreeAIComponent.h`:15.
+`Plugins/Runtime/GameplayStateTree/Source/GameplayStateTreeModule/Public/Components/StateTreeAIComponent.h`:16.
 Subclasses `UStateTreeComponent`, which is a `UBrainComponent` — the same interface that
 `UBehaviorTreeComponent` implements. Adding it to an `AAIController` replaces the BT brain
 with a StateTree brain.

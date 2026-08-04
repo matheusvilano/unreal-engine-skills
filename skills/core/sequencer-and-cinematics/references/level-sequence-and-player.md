@@ -1,7 +1,7 @@
 # Level Sequence & Player — full reference
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the full `ULevelSequencePlayer` API,
-playback settings, completion modes, the Director class, and event tracks. Grounded in UE 5.7
+playback settings, completion modes, the Director class, and event tracks. Grounded in UE 5.8
 (`Engine/Source/Runtime/LevelSequence/Public/` and `Engine/Source/Runtime/MovieScene/Public/`).
 
 ## ULevelSequence
@@ -96,7 +96,7 @@ bool IsPaused() const;
 
 ### Playback params
 
-`FMovieSceneSequencePlaybackParams` (`MovieSceneSequencePlayer.h`:91) can address a position
+`FMovieSceneSequencePlaybackParams` (`MovieSceneSequencePlayer.h`:92) can address a position
 by frame number, seconds, marked-frame name, or SMPTE timecode:
 
 ```cpp

@@ -1,7 +1,7 @@
 # Low-level tests (LLT) & CQTest — deep reference
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers Catch2-based Low-Level Tests (LLTs),
-CQTest fixtures, build target setup, and build/run invocation. Grounded in UE 5.7
+CQTest fixtures, build target setup, and build/run invocation. Grounded in UE 5.8
 (`Developer/LowLevelTestsRunner/`, `Developer/CQTest/`).
 
 ## Why low-level tests
@@ -154,7 +154,7 @@ across platforms. See Epic's build infrastructure samples for reference.
 | Blueprint-visible | no | no |
 | Ground Truth Data | no | via functional test |
 
-## Source citations (UE 5.7)
+## Source citations (UE 5.8)
 
 - `Developer/LowLevelTestsRunner/Public/TestHarness.h` — Catch2 bridge, `std::ostream`
   adapters for UE types.

@@ -1,19 +1,19 @@
 # Strings & text — deep reference
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers `FString`, `FName`, `FText`,
-`TStringBuilder`, `FStringView`, and the conversion matrix. Grounded in UE 5.7
+`TStringBuilder`, `FStringView`, and the conversion matrix. Grounded in UE 5.8
 (`Runtime/Core/Public/`).
 
 ## FString
 
 `FString` is the engine's mutable, heap-allocated wide string (`Containers/UnrealString.h`,
-class defined in `UnrealString.h.inl`:54). It is the right choice when you need to build,
+class defined in `UnrealString.h.inl`:58). It is the right choice when you need to build,
 parse, or modify text at runtime that is not user-facing.
 
 ```cpp
 // Building
-FString Path = FString::Printf(TEXT("/Game/Maps/%s"), *MapName); // Printf:1423
-FString Joined = FString::Format(TEXT("{A} beats {B}"),          // Format:1465
+FString Path = FString::Printf(TEXT("/Game/Maps/%s"), *MapName); // Printf:1376
+FString Joined = FString::Format(TEXT("{A} beats {B}"),          // Format:1418
     { { TEXT("A"), FStringFormatArg(TeamA) },
       { TEXT("B"), FStringFormatArg(TeamB) } });
 
@@ -30,7 +30,7 @@ float  F   = FCString::Atof(*S);
 FString SF = FString::SanitizeFloat(3.14f);
 ```
 
-`TStringBuilder<N>` (`Misc/StringBuilder.h`:78, alias defined in `Containers/StringFwd.h`:30)
+`TStringBuilder<N>` (`Misc/StringBuilder.h`:78, alias defined in `Containers/StringFwd.h`:32)
 is a stack-backed string builder that avoids allocations for short outputs and is strongly
 preferred over repeated `FString` concatenation in hot paths.
 
@@ -47,7 +47,7 @@ The old `TWriteToString<N>` is deprecated as of UE 5.3; use `TStringBuilder<N>`.
 
 ## FName
 
-`FName` (`UObject/NameTypes.h`:616) is an interned, case-insensitive identifier. The engine
+`FName` (`UObject/NameTypes.h`:631) is an interned, case-insensitive identifier. The engine
 maintains a global name table; each `FName` stores an index and instance number rather than
 character data. Comparison is O(1).
 
@@ -72,7 +72,7 @@ FName FromStr(*SomeFString);            // FString → FName
 
 ## FText
 
-`FText` (`Internationalization/Text.h`:384) is the localization-aware display string. Any
+`FText` (`Internationalization/Text.h`:406) is the localization-aware display string. Any
 text a player sees must go through `FText`. It supports plural forms, number/date formatting
 per culture, and string tables.
 
@@ -81,16 +81,16 @@ per culture, and string tables.
 FText Title = NSLOCTEXT("UI", "MainMenu_Title", "Main Menu");
 
 // Dynamic formatting — always use FText::Format, not FString
-FText HpDisplay = FText::Format(                     // Format:647
+FText HpDisplay = FText::Format(                     // Format:675
     NSLOCTEXT("UI", "HpFmt", "HP: {0}/{1}"),
     FText::AsNumber(CurrentHp),
     FText::AsNumber(MaxHp));
 
 // Culture-invariant text (for debug/API names, not for localization)
-FText Debug = FText::FromString(SomeNonLocalizedString); // FromString:497
+FText Debug = FText::FromString(SomeNonLocalizedString); // FromString:520
 
 // Equality — do NOT use operator== for FText
-bool Same = TextA.EqualTo(TextB);                    // EqualTo:571
+bool Same = TextA.EqualTo(TextB);                    // EqualTo:599
 ```
 
 **`NSLOCTEXT` vs `LOCTEXT`:**
@@ -101,7 +101,7 @@ bool Same = TextA.EqualTo(TextB);                    // EqualTo:571
 ### String tables
 
 Prefer external string tables for large games. Reference a key with
-`FText::FromStringTable(TableId, KEY)` (`Text.h`:483). This separates all translatable text
+`FText::FromStringTable(TableId, KEY)` (`Text.h`:510). This separates all translatable text
 from code.
 
 ---

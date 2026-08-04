@@ -9,7 +9,7 @@ description: Debug Unreal C++ and gameplay code — native debugger usage (VS/Ri
   world, reproducing intermittent or AI bugs with timeline replay, stepping through a crash, or
   adding in-game debug overlays to a custom system.
 metadata:
-  engine-version: "5.7"
+  engine-version: "5.8"
   category: tooling
 ---
 
@@ -51,8 +51,8 @@ check(GetWorld() != nullptr);
 checkf(Health >= 0.f, TEXT("Health underflowed to %.1f on %s"), Health, *GetName());
 ```
 
-Source: `Runtime/Core/Public/Misc/AssertionMacros.h` — `check`:232, `checkf`:258, `ensure`
-block begins at line 363 with `DO_ENSURE` guard; `ensure` fires once per call-site per session,
+Source: `Runtime/Core/Public/Misc/AssertionMacros.h` — `check`:229, `checkf`:259, `ensure`
+block begins at line 368 with `DO_ENSURE` guard; `ensure` fires once per call-site per session,
 `ensureAlways` fires every time.
 
 ## Debug drawing (visualize in the world)
@@ -126,9 +126,9 @@ Use `Key` values unique per message so they overwrite rather than stack. `INDEX_
 appends a new line every call — useful for single-shot notifications, noisy if called every tick.
 `GEngine->ClearOnScreenDebugMessages()` removes all messages at once.
 
-Source: `Runtime/Engine/Classes/Engine/Engine.h` — `AddOnScreenDebugMessage` (uint64 key):2138,
-`AddOnScreenDebugMessage` (int32 key):2141, `ClearOnScreenDebugMessages`:2147,
-`RemoveOnScreenDebugMessage`:2150.
+Source: `Runtime/Engine/Classes/Engine/Engine.h` — `AddOnScreenDebugMessage` (uint64 key):2197,
+`AddOnScreenDebugMessage` (int32 key):2200, `ClearOnScreenDebugMessages`:2206,
+`RemoveOnScreenDebugMessage`:2209.
 
 ## Visual Logger (events over time)
 
@@ -165,9 +165,9 @@ builds). The macros short-circuit on `FVisualLogger::IsRecording()` so there is 
 when the Visual Logger is inactive. `UE_VLOG_UELOG` emits to both the Visual Logger and the
 standard output log simultaneously.
 
-Source: `Runtime/Engine/Public/VisualLogger/VisualLogger.h` — macro block starts at line 30;
-`FVisualLogger` class at line 232; `SetIsRecording`:801, `IsRecording` (static inline):803,
-`SetIsRecordingToFile`:806, `FVisualLogger::Get()`:746.
+Source: `Runtime/Engine/Public/VisualLogger/VisualLogger.h` — macro block starts at line 43;
+`FVisualLogger` class at line 223; `SetIsRecording`:581, `IsRecording` (static inline):575,
+`SetIsRecordingToFile`:693, `FVisualLogger::Get()`:567.
 
 Full macro catalog, redirection, and file recording:
 [references/visual-logger.md](references/visual-logger.md).
@@ -306,7 +306,7 @@ void ToggleMyDebugVis()
 ```
 
 Source: `Runtime/Engine/Classes/GameFramework/CheatManager.h` — `UCheatManager`:98,
-`UFUNCTION(exec)` cheat examples: `FreezeFrame`:158, `Fly`:171, `God`:183, `Slomo`:187.
+`UFUNCTION(exec)` cheat examples: `FreezeFrame`:160, `Fly`:172, `God`:184, `Slomo`:188.
 
 Full stat commands, cvar authoring, and `displayall`:
 [references/draw-debug-and-console.md](references/draw-debug-and-console.md).
@@ -346,27 +346,27 @@ Perf regression (fps/ms)        → profiling-and-optimization
 
 ## References & source material
 
-Engine source (UE 5.7, under `Engine/Source/`):
+Engine source (UE 5.8, under `Engine/Source/`):
 - `Runtime/Engine/Public/DrawDebugHelpers.h` — `DrawDebugLine`:22, `DrawDebugPoint`:24,
   `DrawDebugSphere`:45, `DrawDebugBox`:28, `DrawDebugCapsule`:57, `DrawDebugString`:52,
   `DrawDebugDirectionalArrow`:26, `DrawDebugCone`:49, `DrawDebugSolidBox`:68;
   `ENABLE_DRAW_DEBUG` macro:14.
-- `Runtime/Engine/Classes/Engine/Engine.h` — `AddOnScreenDebugMessage` (uint64):2138,
-  `AddOnScreenDebugMessage` (int32):2141, `ClearOnScreenDebugMessages`:2147,
-  `RemoveOnScreenDebugMessage`:2150.
-- `Runtime/Engine/Public/VisualLogger/VisualLogger.h` — `UE_VLOG` macro:30,
-  `UE_VLOG_LOCATION`:45, `UE_VLOG_SEGMENT`:39, `UE_VLOG_SPHERE`:48, `UE_VLOG_UELOG`:33;
-  `FVisualLogger`:232, `SetIsRecording`:801, `IsRecording`:803, `FVisualLogger::Get()`:746.
+- `Runtime/Engine/Classes/Engine/Engine.h` — `AddOnScreenDebugMessage` (uint64):2197,
+  `AddOnScreenDebugMessage` (int32):2200, `ClearOnScreenDebugMessages`:2206,
+  `RemoveOnScreenDebugMessage`:2209.
+- `Runtime/Engine/Public/VisualLogger/VisualLogger.h` — `UE_VLOG` macro:43,
+  `UE_VLOG_LOCATION`:55, `UE_VLOG_SEGMENT`:49, `UE_VLOG_SPHERE`:58, `UE_VLOG_UELOG`:46;
+  `FVisualLogger`:223, `SetIsRecording`:581, `IsRecording`:575, `FVisualLogger::Get()`:567.
 - `Runtime/GameplayDebugger/Public/GameplayDebugger.h` — `IGameplayDebugger`:50,
   `RegisterCategory`:78, `UnregisterCategory`:79, `NotifyCategoriesChanged`:80.
 - `Runtime/GameplayDebugger/Public/GameplayDebuggerCategory.h` — `FGameplayDebuggerCategory`:48,
   `CollectData`:56, `DrawData`:59, `AddTextLine`:68, `AddShape`:71.
-- `Runtime/Core/Public/Misc/AssertionMacros.h` — `check`:232, `checkf`:258,
-  `ensure` block:363 (see also `logging-and-assertions`).
+- `Runtime/Core/Public/Misc/AssertionMacros.h` — `check`:229, `checkf`:259,
+  `ensure` block:368 (see also `logging-and-assertions`).
 - `Runtime/Engine/Classes/GameFramework/CheatManager.h` — `UCheatManager`:98,
-  example `UFUNCTION(exec)` cheat bodies:158–215.
+  example `UFUNCTION(exec)` cheat bodies:160–217.
 
-Official docs (UE 5.7):
+Official docs (UE 5.8):
 - Visual Logger — <https://dev.epicgames.com/documentation/unreal-engine/visual-logger-in-unreal-engine>
 - Gameplay Debugger — <https://dev.epicgames.com/documentation/unreal-engine/using-the-gameplay-debugger-in-unreal-engine>
 - Console Variables — <https://dev.epicgames.com/documentation/unreal-engine/console-variables-cplusplus-in-unreal-engine>

@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers graph types (Event Graph, Functions, Construction
 Script, Macros), variable storage and flags, the component model inside a Blueprint, and the
-Construction Script's relationship to `OnConstruction`. Grounded in UE 5.7
+Construction Script's relationship to `OnConstruction`. Grounded in UE 5.8
 (`Engine/Source/Runtime/Engine/Classes/Engine/Blueprint.h`,
 `Engine/Source/Runtime/Engine/Classes/Engine/SimpleConstructionScript.h`,
 `Engine/Source/Runtime/Engine/Classes/GameFramework/Actor.h`).
@@ -13,19 +13,19 @@ A Blueprint can contain multiple graph types. Each type compiles differently.
 
 ### Event Graph (Uber-graph)
 
-The Event Graph is a collection of pages (`UBlueprint::UbergraphPages`, `Blueprint.h`:539) that
+The Event Graph is a collection of pages (`UBlueprint::UbergraphPages`, `Blueprint.h`:543) that
 the compiler merges into a single `UFunction` called the **uber-graph** stored in
 `UBlueprintGeneratedClass::UberGraphFunction`. All events — `BeginPlay`, `Tick`, input events,
 custom events, and component-bound events — share this merged function, dispatched by a jump
 table at the top. The persistent frame that holds local variables across latent calls
-(`FPointerToUberGraphFrame`, `BlueprintGeneratedClass.h`:85) lives on each instance.
+(`FPointerToUberGraphFrame`, `BlueprintGeneratedClass.h`:86) lives on each instance.
 
 Execution flow travels along white exec wires. The runtime evaluates pure nodes (no exec pins)
 on demand as their outputs are consumed, rather than in a fixed linear order.
 
 ### Functions
 
-Function graphs live in `UBlueprint::FunctionGraphs` (`Blueprint.h`:543). Each compiles to a
+Function graphs live in `UBlueprint::FunctionGraphs` (`Blueprint.h`:547). Each compiles to a
 separate `UFunction` with its own call frame. Functions:
 
 - Can have inputs (parameters) and outputs (return values).
@@ -38,13 +38,13 @@ separate `UFunction` with its own call frame. Functions:
 
 ### Construction Script
 
-The Construction Script (`UBlueprint::SimpleConstructionScript`, `Blueprint.h`:534) runs during
-`AActor::ExecuteConstruction` (`Actor.h`:3442), which calls `OnConstruction(Transform)`
-(`Actor.h`:3448). It runs:
+The Construction Script (`UBlueprint::SimpleConstructionScript`, `Blueprint.h`:538) runs during
+`AActor::ExecuteConstruction` (`Actor.h`:3439), which calls `OnConstruction(Transform)`
+(`Actor.h`:3445). It runs:
 
 - Whenever the actor is **spawned** (including in PIE).
 - Whenever a **property is changed** on a placed instance in the editor.
-- When the actor is **dragged** in the editor (if `bRunConstructionScriptOnDrag` is set, `Blueprint.h`:448).
+- When the actor is **dragged** in the editor (if `bRunConstructionScriptOnDrag` is set, `Blueprint.h`:453).
 
 This makes the Construction Script the right place for procedural setup that depends on
 properties — layout-sensitive component configuration, runtime parameter setup, spawning child
@@ -52,13 +52,13 @@ actors. It must be **idempotent** because it can run many times (each property e
 re-run). Never rely on persistent state accumulated across multiple Construction Script runs.
 
 The SCS is executed via `USimpleConstructionScript::ExecuteScriptOnActor`
-(`SimpleConstructionScript.h`:46), which instantiates component templates in the SCS tree and
+(`SimpleConstructionScript.h`:47), which instantiates component templates in the SCS tree and
 attaches them. Native (C++) components created in the actor's C++ constructor are already present
 when the SCS runs; the SCS components are parented to them per the authored hierarchy.
 
 ### Macros
 
-Macro graphs live in `UBlueprint::MacroGraphs` (`Blueprint.h`:551). Unlike functions, macros
+Macro graphs live in `UBlueprint::MacroGraphs` (`Blueprint.h`:555). Unlike functions, macros
 are **inlined** at the call site at compile time — the macro graph's nodes are copy-pasted into
 the calling graph. Consequences:
 
@@ -100,7 +100,7 @@ Common flag → specifier mappings:
 | Replicated | `Replicated` | `CPF_Net` |
 | Transient | `Transient` | `CPF_Transient` |
 
-Variable **categories** (`FBPVariableDescription::Category`, `Blueprint.h`:219) organize
+Variable **categories** (`FBPVariableDescription::Category`, `Blueprint.h`:223) organize
 variables in the Details panel and Blueprint editor. There is no enforcement of category names;
 they are purely organizational. The category is serialized and survives Blueprint recompile.
 
@@ -130,13 +130,13 @@ Important nuances:
   `FBlueprintCookedComponentInstancingData` (one entry per SCS node) for a fast binary instancing
   path that avoids full archetype serialization.
 - **Timeline nodes** in the Event Graph compile to `UTimelineTemplate` objects stored in
-  `UBlueprintGeneratedClass::Timelines` (`BlueprintGeneratedClass.h`:473). At runtime, each
+  `UBlueprintGeneratedClass::Timelines` (`BlueprintGeneratedClass.h`:478). At runtime, each
   timeline becomes a `UTimelineComponent` on the actor.
 
 ## Version notes
 
 - The SCS model (`USimpleConstructionScript` / `USCS_Node`) is stable across UE5.
-- `bRunConstructionScriptInSequencer` (`Blueprint.h`:453) was added in UE4 and controls CS
-  execution during Sequencer playback; it is present and stable in UE 5.7.
-- Line numbers cited above are from the UE 5.7 headers; verify with a Grep if a patch release
+- `bRunConstructionScriptInSequencer` (`Blueprint.h`:457) was added in UE4 and controls CS
+  execution during Sequencer playback; it is present and stable in UE 5.8.
+- Line numbers cited above are from the UE 5.8 headers; verify with a Grep if a patch release
   shifts them.

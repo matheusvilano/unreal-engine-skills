@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the full `UAudioComponent` API,
 the playback state machine, delegates, Quartz beat-quantized playback, and tips
-for managed vs. fire-and-forget audio. Grounded in UE 5.7
+for managed vs. fire-and-forget audio. Grounded in UE 5.8
 (`Engine/Source/Runtime/Engine/Classes/Components/AudioComponent.h`).
 
 ## UAudioComponent class hierarchy
@@ -45,7 +45,7 @@ EngineAudio->OnAudioFinishedNative.AddUObject(this, &AMyActor::HandleAudioDone);
 `OnAudioVirtualizationChanged` fires when the sound becomes virtualized (evicted
 from a hardware voice) or realized (resumes on a voice).
 
-All delegates are declared in `AudioComponent.h`:61–107.
+All delegates are declared in `AudioComponent.h`:61–106.
 
 ## Per-component property overrides
 
@@ -81,7 +81,7 @@ AC->SetAudioBusSendPostEffect(MasterAudioBus, 1.0f);
 
 These calls are forwarded to the active sound; if no sound is playing they take
 effect on next play. Methods: `SetSubmixSend`:644, `SetSourceBusSendPreEffect`:653,
-`SetAudioBusSendPostEffect`:677.
+`SetAudioBusSendPostEffect`:687.
 
 ## Sound-swap without stopping
 
@@ -96,7 +96,7 @@ AC->Play();
 
 ## bAutoManageAttachment
 
-`bAutoManageAttachment` (declared `AudioComponent.h`:296) lets an audio component
+`bAutoManageAttachment` (declared `AudioComponent.h`:297) lets an audio component
 automatically attach to `AutoAttachParent` when `Play()` is called and detach when
 playback completes. Useful for sounds that should follow an actor while playing but
 not remain attached otherwise. The relative transform from activation time is
@@ -144,7 +144,7 @@ Components created via `SpawnSound2D` optionally persist across level transition
 ## Version notes
 
 - `FAudioComponentParam` (the old USTRUCT-based parameter system) was deprecated in
-  UE 5.0 with `UE_DEPRECATED(5.0, ...)` in `AudioComponent.h`:132. Use
+  UE 5.0 with `UE_DEPRECATED(5.0, ...)` in `AudioComponent.h`:133. Use
   `FAudioParameter` / the `SetXParameter` family instead.
 - `PlayQuantized` was added in UE 5.0 alongside the Quartz system.
 - `SetHighPassFilterEnabled` / `SetHighPassFilterFrequency` require the Audio Mixer

@@ -2,29 +2,29 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the CMC prediction loop,
 `FSavedMove_Character`, custom move flags, network smoothing, and a comparison
-with the experimental Mover plugin replication model. Grounded in UE 5.7
+with the experimental Mover plugin replication model. Grounded in UE 5.8
 (`Engine/Source/Runtime/Engine/Classes/GameFramework/CharacterMovementComponent.h`
 and `Character.h`).
 
 ## How CMC prediction works
 
-CMC implements `INetworkPredictionInterface` (`CMC.h:135`). Every tick on the
+CMC implements `INetworkPredictionInterface` (`CMC.h:136`). Every tick on the
 **autonomous proxy** (locally controlled client):
 
 1. `TickComponent` gathers input and calls `ReplicateMoveToServer`.
-2. `ReplicateMoveToServer` calls `PerformMovement` (`CMC.h:2252`) locally,
-   saves the result into a `FSavedMove_Character` (`CMC.h:2912`), then sends
-   the move to the server via `ServerMovePacked` RPC (`Character.h:280`).
+2. `ReplicateMoveToServer` calls `PerformMovement` (`CMC.h:2291`) locally,
+   saves the result into a `FSavedMove_Character` (`CMC.h:2980`), then sends
+   the move to the server via `ServerMovePacked` RPC (`Character.h:377`).
 3. The **server** receives the RPC, runs `PerformMovement` with the same input,
    and compares its resulting position to the client's reported position.
 4. If the positions agree within tolerance, the server acknowledges. If not, it
-   sends a correction (`ClientMoveResponsePacked` `Character.h:289`).
+   sends a correction (`ClientMoveResponsePacked` `Character.h:386`).
 5. On correction, the **client** calls `ClientUpdatePosition`, replays all
    unacknowledged saved moves from the saved-moves buffer, and re-simulates
    forward from the correction point.
 
 **Simulated proxies** receive replicated position/velocity/movement-mode updates
-and use `NetworkMaxSmoothUpdateDistance` (`CMC.h:838`) to decide whether to
+and use `NetworkMaxSmoothUpdateDistance` (`CMC.h:839`) to decide whether to
 interpolate (smooth) or teleport (snap) to the replicated state. Reduce this
 threshold to snap more aggressively; increase it to smooth jitter over longer
 distances.
@@ -125,11 +125,11 @@ back in `UpdateFromCompressedFlags` so the server can reproduce the same state.
 
 ## ReplicatedMovementMode
 
-`ACharacter::ReplicatedMovementMode` (`Character.h:593`, `UPROPERTY(Replicated)`,
+`ACharacter::ReplicatedMovementMode` (`Character.h:703`, `UPROPERTY(Replicated)`,
 `uint8`) carries a packed representation of `EMovementMode` and
 `CustomMovementMode` down to simulated proxies. It lets them switch their local
 physics without receiving an RPC. It is packed/unpacked via
-`PackNetworkMovementMode` / `UnpackNetworkMovementMode` (`CMC.h:1283-1284`).
+`PackNetworkMovementMode` / `UnpackNetworkMovementMode` (`CMC.h:1302-1303`).
 
 ## Network smoothing
 
@@ -139,7 +139,7 @@ Relevant properties:
 
 | Property | CMC.h line | Effect |
 |----------|-----------|--------|
-| `NetworkMaxSmoothUpdateDistance` | 838 | Max distance to smooth. Beyond this → teleport. |
+| `NetworkMaxSmoothUpdateDistance` | 839 | Max distance to smooth. Beyond this → teleport. |
 | `NetworkSimulatedSmoothLocationTime` | (see header) | Seconds to smooth location corrections. |
 | `NetworkSimulatedSmoothRotationTime` | (see header) | Seconds to smooth rotation corrections. |
 
@@ -183,7 +183,7 @@ complexity in input handling.
 
 - The prediction RPC pair changed from `ServerMove`/`ClientAdjustPosition` to
   `ServerMovePacked`/`ClientMoveResponsePacked` for bandwidth efficiency. The old
-  names are `DEPRECATED_CHARACTER_MOVEMENT_RPC`-marked in 5.7 (`CMC.h:2572`).
+  names are `DEPRECATED_CHARACTER_MOVEMENT_RPC`-marked in 5.8 (`CMC.h:2635`).
   Existing code using the old names still compiles but should migrate.
 - Mover's networked physics backend (Chaos) is separate from the Network
   Prediction Plugin backend; choose at plugin configuration time.

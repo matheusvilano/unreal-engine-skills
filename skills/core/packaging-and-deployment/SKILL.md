@@ -11,7 +11,7 @@ description: Cook, package, and ship an Unreal project — the cook process (by-
   when producing a runnable build, automating cook/package in CI, diagnosing packaging failures,
   configuring what ships, or setting up chunked DLC delivery.
 metadata:
-  engine-version: "5.7"
+  engine-version: "5.8"
   category: tooling
 ---
 
@@ -43,7 +43,7 @@ independently; diagnosing a failure means identifying which stage it belongs to.
 | `Server` | Headless game server, no client rendering | Dedicated server for multiplayer |
 | `Program` | Standalone program (e.g. ShaderCompileWorker) | Engine tooling |
 
-Source: `TargetType` enum — `Engine/Source/Programs/UnrealBuildTool/Configuration/TargetRules.cs`:21.
+Source: `TargetType` enum — `Engine/Source/Programs/UnrealBuildTool/Configuration/Rules/TargetRules.cs`:21.
 
 **Build configurations** — controls optimization and what debugging/logging facilities are
 compiled in:
@@ -57,7 +57,7 @@ compiled in:
 | `Shipping` | Max | No | Minimal | Release builds |
 
 Source: `UnrealTargetConfiguration` enum —
-`Engine/Source/Programs/UnrealBuildTool/Configuration/UEBuildTarget.cs`:1066.
+`Engine/Source/Programs/UnrealBuildTool/Configuration/UEBuildTarget.cs`:1147.
 
 The packaging UI (`EProjectPackagingBuildConfigurations`) mirrors these five values as
 `PPBC_Debug … PPBC_Shipping` — see `ProjectPackagingSettings.h`:18.
@@ -234,24 +234,24 @@ compiles out of runtime targets. See `logging-and-assertions` for `verify` vs `c
 
 ## References & source material
 
-Engine source (UE 5.7):
+Engine source (UE 5.8):
 - `UProjectPackagingSettings` (properties, enums, cook rules) —
   `Engine/Source/Developer/DeveloperToolSettings/Classes/Settings/ProjectPackagingSettings.h`:179.
-  `EProjectPackagingBuildConfigurations`:18, `EAssetRegistryWritebackMethod`:105,
-  `bUseIoStore`:270, `bGenerateChunks`:285, `bCompressed`:343, `DirectoriesToAlwaysCook`:588.
-- `TargetType` enum — `Engine/Source/Programs/UnrealBuildTool/Configuration/TargetRules.cs`:21.
+  `EProjectPackagingBuildConfigurations`:18, `EAssetRegistryWritebackMethod`:106,
+  `bUseIoStore`:250, `bGenerateChunks`:265, `bCompressed`:323, `DirectoriesToAlwaysCook`:568.
+- `TargetType` enum — `Engine/Source/Programs/UnrealBuildTool/Configuration/Rules/TargetRules.cs`:21.
 - `UnrealTargetConfiguration` enum (Debug…Shipping) —
-  `Engine/Source/Programs/UnrealBuildTool/Configuration/UEBuildTarget.cs`:1066.
+  `Engine/Source/Programs/UnrealBuildTool/Configuration/UEBuildTarget.cs`:1147.
 - `BuildCookRun` UAT command class —
   `Engine/Source/Programs/AutomationTool/Scripts/BuildCookRun.Automation.cs`:24.
 - IoStore container format (`EIoStoreTocVersion`, `FIoStoreTocHeader`) —
   `Engine/Source/Runtime/Core/Internal/IO/IoStore.h`:25.
-- IoStore On-Demand (`IOnDemandIoStore`, `FOnDemandRequest`) —
-  `Engine/Source/Runtime/Experimental/IoStore/OnDemandCore/Public/IO/IoStoreOnDemand.h`:36.
+- IoStore On-Demand (`IOnDemandIoStore`:647, `FOnDemandRequest`:46) —
+  `Engine/Source/Runtime/Experimental/IoStore/OnDemandCore/Public/IO/IoStoreOnDemand.h`.
 - `WITH_EDITOR`, `WITH_EDITORONLY_DATA` preprocessor guards —
   `Engine/Source/Runtime/Core/Public/Misc/Build.h`:66.
 
-Official docs (UE 5.7, all fetched and confirmed live):
+Official docs (UE 5.8, all fetched and confirmed live):
 - Build Configurations Reference —
   <https://dev.epicgames.com/documentation/unreal-engine/build-configurations-reference-for-unreal-engine>
 - Build Operations: Cook, Package, Deploy, and Run —

@@ -3,7 +3,7 @@
 Deep dive for [../SKILL.md](../SKILL.md). Covers the C++ specifiers that control what is visible
 and callable from Blueprint, the `BlueprintNativeEvent` / `BlueprintImplementableEvent` call
 dispatch, `UCLASS` specifiers that govern Blueprint subclassing, and practical patterns for a
-clean C++ base + Blueprint-subclass architecture. Grounded in UE 5.7
+clean C++ base + Blueprint-subclass architecture. Grounded in UE 5.8
 (`Engine/Source/Runtime/CoreUObject/Public/UObject/ObjectMacros.h`).
 
 See also `blueprint-cpp-integration` for the full specifier reference.
@@ -142,8 +142,8 @@ people editing the same BP simultaneously will require manual merge or one perso
 
 ## Version notes
 
-- `ObjectMacros.h` enumerates `BlueprintImplementableEvent` at line 950, `BlueprintNativeEvent`
-  at 955, `BlueprintPure` at 984, `BlueprintCallable` at 987 (UE 5.7).
+- `ObjectMacros.h` enumerates `BlueprintImplementableEvent` at line 992, `BlueprintNativeEvent`
+  at 997, `BlueprintPure` at 1026, `BlueprintCallable` at 1029 (UE 5.8).
 - The `_Implementation` naming convention and UHT-generated thunks are stable across UE4/UE5.
 - `TObjectPtr<T>` replaced raw `T*` for UPROPERTY member declarations in UE5; raw `T*` still
   compiles but won't get the added access tracking. See `memory-and-gc`.

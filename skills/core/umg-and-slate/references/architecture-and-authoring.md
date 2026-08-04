@@ -3,7 +3,7 @@
 Deep dive for [../SKILL.md](../SKILL.md). Covers screen architecture with CommonUI
 activatable layer stacks (the Lyra pattern), decoupling widgets from gameplay code, the
 MVVM Viewmodel plugin, DPI scaling and resolution independence, safe zones, and
-texture/authoring rules. Grounded in UE 5.7 engine and plugin source plus Epic's UMG
+texture/authoring rules. Grounded in UE 5.8 engine and plugin source plus Epic's UMG
 best-practices docs (links at the end).
 
 ## Screen architecture: layer stacks (the Lyra pattern)
@@ -124,8 +124,8 @@ Best practices:
 - Plain `TArray` fields don't notify on element changes — wrap mutations in viewmodel
   functions that broadcast, or model list entries as child viewmodels.
 - When to use: data-rich screens (inventory, settings, stats). For a two-field HUD,
-  plain push setters are less machinery. The plugin is Beta in 5.7 — solid, but expect
-  editor-UX rough edges.
+  plain push setters are less machinery. The plugin is still Beta in 5.8 — solid, but
+  expect editor-UX rough edges.
 
 ## DPI scaling & resolution independence
 
@@ -190,7 +190,7 @@ per-platform layout variants when a simple inset isn't enough.
 
 ## Version notes
 
-- MVVM (`ModelViewViewModel` plugin) introduced 5.1, Beta through 5.7; binding panel UX
+- MVVM (`ModelViewViewModel` plugin) introduced 5.1, Beta through 5.8; binding panel UX
   improved substantially in 5.3+.
 - `FieldNotify` specifier on `UPROPERTY`/`UFUNCTION` requires 5.1+.
 - CommonUI activatable containers stable since 5.0; Lyra (5.0+) is the canonical
@@ -201,7 +201,7 @@ per-platform layout variants when a simple inset isn't enough.
 
 ## Sources
 
-Engine source (UE 5.7, under `Engine/Source/` and `Engine/Plugins/`):
+Engine source (UE 5.8, under `Engine/Source/` and `Engine/Plugins/`):
 - `Engine/Plugins/Runtime/CommonUI/Source/CommonUI/Public/Widgets/CommonActivatableWidgetContainer.h`
   — `UCommonActivatableWidgetContainerBase`:24, `AddWidget`:33, `RemoveWidget`:70,
   `UCommonActivatableWidgetStack`:202, `UCommonActivatableWidgetQueue`:235.

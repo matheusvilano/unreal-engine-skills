@@ -1,8 +1,8 @@
 # UObject pointer types — depth reference
 
-Deep dive for [../SKILL.md](../SKILL.md). Covers all UObject pointer types available in UE 5.7,
+Deep dive for [../SKILL.md](../SKILL.md). Covers all UObject pointer types available in UE 5.8,
 their GC semantics, serialization support, and correct usage patterns.
-Grounded in UE 5.7 (`Engine/Source/Runtime/CoreUObject/`).
+Grounded in UE 5.8 (`Engine/Source/Runtime/CoreUObject/`).
 
 ## Summary table
 
@@ -137,7 +137,8 @@ class UMySystem : public UObject
 ## Version notes
 
 - `TObjectPtr` was introduced in UE5 as the modern default. UE4 codebases use raw `T* UPROPERTY`;
-  both compile in 5.7 but `TObjectPtr` is required for incremental GC write barriers.
-- `TLazyObjectPtr` is deprecated in 5.7 (marked for future removal); migrate to `TSoftObjectPtr`.
+  both compile in 5.8 but `TObjectPtr` is required for incremental GC write barriers.
+- `TLazyObjectPtr` is slated for deprecation (see the note in `LazyObjectPtr.h`); migrate to
+  `TSoftObjectPtr`.
 - `TWeakObjectPtr` zero-initialization semantics changed in 5.6 (`UE_WEAKOBJECTPTR_ZEROINIT_FIX`);
   default construction now correctly yields a null pointer.

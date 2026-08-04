@@ -3,7 +3,7 @@
 Deep dive for [../SKILL.md](../SKILL.md). Covers `TSharedPtr`, `TSharedRef`, `TWeakPtr`,
 `TUniquePtr`, `MakeShared`, `TSharedFromThis`, thread-safety modes, and how to choose between
 these types and GC-based ownership (`FGCObject` / `TStrongObjectPtr`).
-Grounded in UE 5.7 (`Engine/Source/Runtime/Core/Public/Templates/`).
+Grounded in UE 5.8 (`Engine/Source/Runtime/Core/Public/Templates/`).
 
 ## The fundamental rule
 

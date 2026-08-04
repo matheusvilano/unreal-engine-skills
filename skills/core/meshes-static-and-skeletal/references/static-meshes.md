@@ -1,7 +1,7 @@
 # Static meshes — full reference
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers `UStaticMesh` asset structure, mesh
-sections, LOD internals, static sockets, and Nanite settings. Grounded in UE 5.7
+sections, LOD internals, static sockets, and Nanite settings. Grounded in UE 5.8
 (`Engine/Source/Runtime/Engine/Classes/Engine/StaticMesh.h`,
 `Engine/Source/Runtime/Engine/Classes/Components/StaticMeshComponent.h`,
 `Engine/Source/Runtime/Engine/Classes/Engine/StaticMeshSocket.h`).
@@ -71,7 +71,7 @@ Key properties (`Engine/Classes/Engine/StaticMeshSocket.h`):
 Retrieve the socket's current world-space transform at runtime:
 
 ```cpp
-UStaticMeshSocket const* S = Mesh->GetSocketByName(TEXT("MuzzleFlash")); // line 892
+UStaticMeshSocket const* S = Mesh->GetSocketByName(TEXT("MuzzleFlash")); // line 921
 if (S)
 {
     FTransform WT = Mesh->GetSocketTransform(TEXT("MuzzleFlash"));
@@ -84,7 +84,7 @@ the `UStaticMesh` asset and are shared across all component instances.
 
 ## Nanite settings
 
-`FMeshNaniteSettings` (declared `Engine/Classes/Engine/EngineTypes.h`:3039):
+`FMeshNaniteSettings` (declared `Engine/Classes/Engine/EngineTypes.h`:3280):
 
 | Field | Type | Meaning |
 |---|---|---|
@@ -94,18 +94,18 @@ the `UStaticMesh` asset and are shared across all component instances.
 | `TrimRelativeError` | `float` | Minimum relative error at which to stop reducing |
 | `PositionPrecision` | `int32` | Step size = 2^(-PositionPrecision) cm; `MIN_int32` = auto |
 
-In 5.7, direct member access is deprecated (`UE_DEPRECATED(5.7, ...)`). Use:
+Since 5.7, direct member access is deprecated (`UE_DEPRECATED(5.7, ...)`). Use:
 
 ```cpp
-FMeshNaniteSettings NS = MyMesh->GetNaniteSettings();   // line 836
+FMeshNaniteSettings NS = MyMesh->GetNaniteSettings();   // line 855
 NS.bEnabled = true;
-MyMesh->SetNaniteSettings(NS);                          // line 845
+MyMesh->SetNaniteSettings(NS);                          // line 864
 // Call PostEditChange / MarkPackageDirty to trigger rebuild in-editor.
 ```
 
 Nanite meshes bypass traditional draw calls entirely. On platforms that support Nanite
 (DX12 SM6+), the fallback mesh is used for ray tracing unless `r.RayTracing.Nanite.Mode 1`
-is set (experimental native Nanite ray tracing in 5.7).
+is set (experimental native Nanite ray tracing, still opt-in in 5.8).
 
 ## Collision on static meshes
 

@@ -1,7 +1,7 @@
 # Attachment and transforms — full reference
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the attachment APIs, transform rules, sockets,
-mobility, and relative-vs-world transforms. Grounded in UE 5.7
+mobility, and relative-vs-world transforms. Grounded in UE 5.8
 (`Engine/Source/Runtime/Engine/Classes/Components/SceneComponent.h`,
 `GameFramework/Actor.h`, `Engine/Classes/Engine/EngineTypes.h`) and the official
 [Components → Attachment](https://dev.epicgames.com/documentation/unreal-engine/components-in-unreal-engine#attachment)
@@ -18,9 +18,9 @@ the root component of actor B to a component of actor A effectively attaches act
 
 | API | When to use | Cite |
 |---|---|---|
-| `SetupAttachment(Parent, Socket)` | constructor / components not yet registered | `SceneComponent.h`:729 |
-| `AttachToComponent(Parent, Rules, Socket)` | runtime; attaches immediately | `SceneComponent.h`:747 |
-| `AttachToActor(Actor, Rules, Socket)` | runtime; attach this actor's root to another | `Actor.h`:2032 |
+| `SetupAttachment(Parent, Socket)` | constructor / components not yet registered | `SceneComponent.h`:734 |
+| `AttachToComponent(Parent, Rules, Socket)` | runtime; attaches immediately | `SceneComponent.h`:752 |
+| `AttachToActor(Actor, Rules, Socket)` | runtime; attach this actor's root to another | `Actor.h`:2029 |
 
 ```cpp
 // Constructor — defer the actual attach until registration:
@@ -29,18 +29,18 @@ Mesh->SetupAttachment(RootComponent, TEXT("HandSocket"));   // optional socket
 
 // Runtime — attach/detach now:
 Mesh->AttachToComponent(Target, FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("HandSocket"));
-Mesh->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);     // SceneComponent.h:781
+Mesh->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);     // SceneComponent.h:786
 
 // Whole actor:
 AttachToActor(VehicleActor, FAttachmentTransformRules::KeepRelativeTransform);
-DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);               // Actor.h:2065
+DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);               // Actor.h:2062
 ```
 
 `SetupAttachment` at runtime on a registered component does nothing — use `AttachToComponent`.
 
 ## Attachment & detachment rules
 
-`FAttachmentTransformRules` (`EngineTypes.h`:74) controls, **per channel** (location, rotation,
+`FAttachmentTransformRules` (`EngineTypes.h`:75) controls, **per channel** (location, rotation,
 scale), whether the child keeps its world transform or snaps to the parent/socket, plus whether
 physics is woken. The common presets:
 
@@ -51,7 +51,7 @@ physics is woken. The common presets:
 | `SnapToTargetNotIncludingScale` | snap location+rotation to parent/socket, keep own scale |
 | `SnapToTargetIncludingScale` | snap location+rotation+scale to parent/socket |
 
-`FDetachmentTransformRules` (`EngineTypes.h`:121) is the mirror for detaching, typically
+`FDetachmentTransformRules` (`EngineTypes.h`:122) is the mirror for detaching, typically
 `KeepWorldTransform` (stay put in the world) or `KeepRelativeTransform`.
 
 For full control, construct the rules per channel:
@@ -70,7 +70,7 @@ follows it (e.g. a weapon on a hand bone). `NAME_None` attaches at the component
 
 ## Mobility
 
-`USceneComponent::Mobility` (`SceneComponent.h`:298, `EComponentMobility::Type`) governs whether a
+`USceneComponent::Mobility` (`SceneComponent.h`:303, `EComponentMobility::Type`) governs whether a
 component may move and how lighting treats it:
 
 | Mobility | Can move at runtime? | Typical use |
@@ -80,7 +80,7 @@ component may move and how lighting treats it:
 | `Movable` | **yes** | anything transformed during play |
 
 Set transform only on `Movable` components at runtime — moving a `Static` component during play is
-ignored/asserts. Set mobility with `SetMobility` (`SceneComponent.h`:1287); a child generally
+ignored/asserts. Set mobility with `SetMobility` (`SceneComponent.h`:1296); a child generally
 shouldn't be "more static" than its parent.
 
 ## Relative vs world transforms
@@ -90,8 +90,8 @@ world transform. Pick the setter that matches your intent:
 
 ```cpp
 Comp->SetRelativeLocation(FVector(0, 0, 50));     // relative to parent
-Comp->SetWorldLocation(FVector(100, 0, 0));       // absolute world (SceneComponent.h:556)
-Comp->SetRelativeTransform(NewXf);                // SceneComponent.h:456
+Comp->SetWorldLocation(FVector(100, 0, 0));       // absolute world (SceneComponent.h:561)
+Comp->SetRelativeTransform(NewXf);                // SceneComponent.h:461
 const FVector W = Comp->GetComponentLocation();   // resolved world location
 const FVector R = Comp->GetRelativeLocation();
 ```

@@ -1,7 +1,7 @@
 # Motion Matching & Motion Warping — full reference
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the Pose Search (Motion Matching) plugin
-and the Motion Warping plugin. Grounded in UE 5.7
+and the Motion Warping plugin. Grounded in UE 5.8
 (`Plugins/Animation/PoseSearch/Source/Runtime/Public/PoseSearch/PoseSearchLibrary.h`,
 `Plugins/Animation/MotionWarping/Source/MotionWarping/Public/MotionWarpingComponent.h`).
 
@@ -14,7 +14,7 @@ comparing a feature vector (trajectory, bone velocities, current pose) against a
 candidates. It replaces hand-authored state machines for locomotion, especially when large
 motion-capture libraries are available.
 
-The Pose Search plugin ships with UE 5.7 and is production-ready (stabilized in 5.4).
+The Pose Search plugin ships with UE 5.8 and is production-ready (stabilized in 5.4).
 Enable it in Edit → Plugins → Animation → Pose Search.
 
 ### Key classes
@@ -24,7 +24,7 @@ Enable it in Edit → Plugins → Animation → Pose Search.
 - **`UPoseSearchSchema`** — defines which features are extracted (bone positions/velocities,
   trajectory points, tags).
 - **`UPoseSearchLibrary`** — Blueprint/C++ library with the search entry point
-  (`PoseSearchLibrary.h`:159).
+  (`PoseSearchLibrary.h`:141).
 - **`FMotionMatchingState`** — per-character state that persists the current search result
   between frames (`PoseSearchLibrary.h`:56).
 
@@ -49,8 +49,9 @@ For responsive locomotion, feed predicted trajectory into the MM node:
 // The component caches past/future trajectory samples compatible with Pose Search schemas.
 ```
 
-The `AnimationLocomotionLibrary` plugin (`Plugins/Animation/AnimationLocomotionLibrary`)
-provides `UAnimationWarpingLibrary::ComputeTrajectory` and related helpers for building
+The PoseSearch plugin's `UPoseSearchTrajectoryLibrary`
+(`Plugins/Animation/PoseSearch/Source/Runtime/Public/PoseSearch/PoseSearchTrajectoryLibrary.h`)
+provides `PoseSearchGenerateTransformTrajectory` and related helpers for building
 trajectory data without a dedicated component.
 
 ### Tuning
@@ -71,7 +72,7 @@ Motion Warping adjusts root-motion clips at runtime to land a character at a tar
 position or orientation — useful for vaulting, ledge grabs, melee attacks, and any
 context-sensitive traversal where the animation must meet a world point.
 
-Enable the `MotionWarping` plugin (bundled with UE 5.7).
+Enable the `MotionWarping` plugin (bundled with UE 5.8).
 
 ### Setup
 
@@ -132,9 +133,9 @@ a full Motion Matching database for deterministic asset selection.
 
 ## Related
 
-- `PoseSearchLibrary.h`: `UPoseSearchLibrary`:159, `FMotionMatchingState`:56.
-- `MotionWarpingComponent.h`: `UMotionWarpingComponent`:99,
-  `AddOrUpdateWarpTargetFromTransform`:166, `bSearchForWindowsInAnimsWithinMontages`:107.
+- `PoseSearchLibrary.h`: `UPoseSearchLibrary`:141, `FMotionMatchingState`:56.
+- `MotionWarpingComponent.h`: `UMotionWarpingComponent`:100,
+  `AddOrUpdateWarpTargetFromTransform`:186, `bSearchForWindowsInAnimsWithinMontages`:112.
 - Official doc: [Motion Matching](https://dev.epicgames.com/documentation/unreal-engine/motion-matching-in-unreal-engine)
 - Official doc: [Dynamic Asset Selection](https://dev.epicgames.com/documentation/unreal-engine/dynamic-asset-selection-in-unreal-engine)
 - Official doc: [Locomotion](https://dev.epicgames.com/documentation/unreal-engine/locomotion-in-unreal-engine)

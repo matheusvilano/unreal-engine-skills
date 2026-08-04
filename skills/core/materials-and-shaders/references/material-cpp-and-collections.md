@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the full `UMaterialInstanceDynamic`
 C++ API, `UKismetMaterialLibrary` for material parameter collections, per-instance
-primitive data, and common runtime gotchas. Grounded in UE 5.7
+primitive data, and common runtime gotchas. Grounded in UE 5.8
 (`Engine/Source/Runtime/Engine/Public/Materials/MaterialInstanceDynamic.h`,
 `Engine/Source/Runtime/Engine/Classes/Kismet/KismetMaterialLibrary.h`,
 `Engine/Source/Runtime/Engine/Public/Materials/MaterialParameterCollection.h`) and the
@@ -38,7 +38,7 @@ void SetTextureParameterValueByInfo(                                      // :69
 void SetDoubleVectorParameterValue(FName ParameterName, FVector4 Value); // :117
 ```
 
-Line numbers reference `MaterialInstanceDynamic.h` in UE 5.7.
+Line numbers reference `MaterialInstanceDynamic.h` in UE 5.8.
 
 ### Parameter getters
 
@@ -116,7 +116,7 @@ instance; do not reuse it on a different MID.
 **Pattern 1 — from a component slot (most common)**
 
 ```cpp
-// PrimitiveComponent.h:1546
+// PrimitiveComponent.h:1629
 UMaterialInstanceDynamic* MID =
     Mesh->CreateDynamicMaterialInstance(SlotIndex, SourceMaterial);
 ```
@@ -130,7 +130,7 @@ starting parent (can be `nullptr` to use the slot's current material).
 UMaterialInstanceDynamic* MID =
     UMaterialInstanceDynamic::Create(BaseMat, this);
 // … configure parameters …
-Mesh->SetMaterial(SlotIndex, MID);   // PrimitiveComponent.h:1517
+Mesh->SetMaterial(SlotIndex, MID);   // PrimitiveComponent.h:1600
 ```
 
 Use this when you need to configure parameters before the MID is visible on a

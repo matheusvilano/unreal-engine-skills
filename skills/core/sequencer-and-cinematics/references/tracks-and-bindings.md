@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the `UMovieScene` data model — tracks,
 sections, channels — and the binding system (possessables, spawnables, runtime overrides).
-Grounded in UE 5.7 (`Engine/Source/Runtime/MovieScene/Public/MovieScene.h`,
+Grounded in UE 5.8 (`Engine/Source/Runtime/MovieScene/Public/MovieScene.h`,
 `MovieSceneTrack.h`, `MovieSceneBinding.h`, `MovieScenePossessable.h`, `MovieSceneSpawnable.h`).
 
 ## MovieScene data model
@@ -56,9 +56,9 @@ inside the sequence asset. The player instantiates it when the spawnable's spawn
 
 Relevant flags (`MovieSceneSpawnable.h`):
 - `bContinuouslyRespawn` — re-spawn if something external destroys it during the sequence.
-- `bEvaluateTracksWhenNotSpawned` — pre-evaluate tracks even before the actor exists.
-- `SpawnOwnership` — `ThisSequence` (default), `RootSequence`, or `External` (never auto-
-  destroyed at sequence end).
+- `bNetAddressableName` — spawn with a consistent net-addressable name for replication.
+- `SpawnOwnership` — `InnerSequence` ("This Sequence", default), `RootSequence`, or
+  `External` (never auto-destroyed at sequence end).
 
 ## Runtime binding overrides
 

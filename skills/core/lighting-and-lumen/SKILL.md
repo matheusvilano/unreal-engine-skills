@@ -12,7 +12,7 @@ description: Light Unreal scenes in C++ and configure them correctly — light c
   tuning exposure or color grading, placing reflection captures, or deciding between
   baked and dynamic lighting.
 metadata:
-  engine-version: "5.7"
+  engine-version: "5.8"
   category: world-building
 ---
 
@@ -41,12 +41,12 @@ All light components derive from `USceneComponent` through the following chain:
 
 ```
 USceneComponent
-└─ ULightComponentBase        (LightComponentBase.h:14) — Intensity, LightColor, CastShadows
-   ├─ ULightComponent         (LightComponent.h:45)     — Temperature, ShadowBias, IES, LightFunction
-   │  ├─ ULocalLightComponent (LocalLightComponent.h:17) — AttenuationRadius, IntensityUnits
-   │  │  ├─ UPointLightComponent (PointLightComponent.h:18) — SourceRadius, SourceLength
-   │  │  │  └─ USpotLightComponent (SpotLightComponent.h:16) — InnerConeAngle, OuterConeAngle
-   │  │  └─ URectLightComponent  (RectLightComponent.h:23) — SourceWidth, SourceHeight, BarnDoorAngle
+└─ ULightComponentBase        (LightComponentBase.h:15) — Intensity, LightColor, CastShadows
+   ├─ ULightComponent         (LightComponent.h:48)     — Temperature, ShadowBias, IES, LightFunction
+   │  ├─ ULocalLightComponent (LocalLightComponent.h:18) — AttenuationRadius, IntensityUnits
+   │  │  ├─ UPointLightComponent (PointLightComponent.h:19) — SourceRadius, SourceLength
+   │  │  │  └─ USpotLightComponent (SpotLightComponent.h:17) — InnerConeAngle, OuterConeAngle
+   │  │  └─ URectLightComponent  (RectLightComponent.h:24) — SourceWidth, SourceHeight, BarnDoorAngle
    │  └─ UDirectionalLightComponent (DirectionalLightComponent.h:18) — DynamicShadowCascades, bAtmosphereSunLight
    └─ USkyLightComponent      (SkyLightComponent.h:101)  — bRealTimeCapture, SourceType, Cubemap
 ```
@@ -102,10 +102,10 @@ fields (all in `Engine/Classes/Engine/Scene.h`):
 
 | `FPostProcessSettings` field | Purpose |
 |---|---|
-| `LumenSceneLightingQuality` (line 1718) | fidelity of the Lumen scene cache |
-| `LumenFinalGatherQuality` (line 1734) | noise vs cost of the final gather pass |
-| `LumenMaxTraceDistance` (line 1746) | max ray length; too small leaks GI into caves |
-| `LumenReflectionQuality` (line 1777) | reflection ray quality |
+| `LumenSceneLightingQuality` (line 1783) | fidelity of the Lumen scene cache |
+| `LumenFinalGatherQuality` (line 1799) | noise vs cost of the final gather pass |
+| `LumenMaxTraceDistance` (line 1811) | max ray length; too small leaks GI into caves |
+| `LumenReflectionQuality` (line 1846) | reflection ray quality |
 
 See [references/lumen-gi-and-reflections.md](references/lumen-gi-and-reflections.md)
 for the full Lumen settings table, emissive GI, and hardware ray tracing notes.
@@ -120,8 +120,8 @@ Enable via Project Settings → Rendering → Shadows → Shadow Map Method: **V
 Shadow Maps**. The CVars `r.Shadow.Virtual.*` control quality and cache behaviour.
 
 Key shadow properties on `ULightComponent` (`LightComponent.h`):
-- `ShadowBias` (line 110) / `ShadowSlopeBias` (line 120) — self-shadow acne
-- `ContactShadowLength` (line 128) — screen-space contact shadow ray length
+- `ShadowBias` (line 113) / `ShadowSlopeBias` (line 123) — self-shadow acne
+- `ContactShadowLength` (line 131) — screen-space contact shadow ray length
 - `CastShadows` / `CastDynamicShadows` / `CastStaticShadows` — per-channel toggle
 
 For `UDirectionalLightComponent`, cascaded shadow maps are set with
@@ -146,13 +146,13 @@ Fog depth and god rays come from `UExponentialHeightFogComponent`
 ## Post Process Volume and exposure
 
 `APostProcessVolume` (`Engine/PostProcessVolume.h`) hosts `FPostProcessSettings`
-(`Engine/Scene.h:692`). Set `bUnbound = true` for a global volume; bounded volumes
+(`Engine/Scene.h:711`). Set `bUnbound = true` for a global volume; bounded volumes
 blend by distance (Priority and BlendRadius fields).
 
 Exposure settings in `FPostProcessSettings`:
-- `AutoExposureMethod` (line 1429) — `AEM_Histogram` (default) or `AEM_Basic`
-- `AutoExposureBias` (line 1860) — EV100 offset for all metering modes
-- `AutoExposureMinBrightness` / `AutoExposureMaxBrightness` (lines 1921, 1929) —
+- `AutoExposureMethod` (line 1491) — `AEM_Histogram` (default) or `AEM_Basic`
+- `AutoExposureBias` (line 1933) — EV100 offset for all metering modes
+- `AutoExposureMinBrightness` / `AutoExposureMaxBrightness` (lines 1994, 2002) —
   clamp the auto-exposure range (in EV100 or cd/m² depending on project setting)
 
 For predictable results, prefer **manual exposure** over auto: set
@@ -164,7 +164,7 @@ Color grading and tone curve live alongside exposure in the same struct; see
 
 ## Reflection captures (legacy / spec fill)
 
-`UReflectionCaptureComponent` (`Components/ReflectionCaptureComponent.h:29`) and its
+`UReflectionCaptureComponent` (`Components/ReflectionCaptureComponent.h:30`) and its
 concrete subclasses (`USphereReflectionCaptureComponent`,
 `UBoxReflectionCaptureComponent`) provide cubemap IBL for surfaces with low roughness
 in areas where Lumen reflections have insufficient quality (e.g., enclosed interiors or
@@ -233,43 +233,43 @@ On `ULocalLightComponent`:
 
 - Lumen is the default GI system for new UE5 projects; existing UE4 projects converted
   to UE5 do not automatically enable it (avoids breaking baked workflows).
-- MegaLights (`bAllowMegaLights` on `ULightComponent`, line 168) is a UE5.4+ feature
-  for stochastic many-light rendering; present in 5.7 but experimental.
+- MegaLights (`bAllowMegaLights` on `ULightComponent`, line 171) is a UE5.5+ feature
+  for stochastic many-light rendering; present in 5.8 but still experimental.
 - VSMs replaced the legacy Cascaded Shadow Map default for PC/console in UE5; mobile
   platforms still use traditional shadow maps.
 
 ## References & source material
 
-Engine source (UE 5.7, under `Engine/Source/Runtime/Engine/Classes/`):
-- `Components/LightComponentBase.h` — `ULightComponentBase`:14; `Intensity`:36,
-  `LightColor`:43, `CastShadows`:57, `IndirectLightingIntensity`:115,
-  `SetCastShadows()`:145, `GetLightColor()`:149.
-- `Components/LightComponent.h` — `ULightComponent`:45; `Temperature`:53,
-  `ShadowBias`:110, `ShadowSlopeBias`:120, `ContactShadowLength`:128,
-  `bAllowMegaLights`:168, `LightFunctionMaterial`:202, `IESTexture`:217,
-  `SetIntensity()`:283, `SetLightColor()`:293, `SetTemperature()`:300.
-- `Components/LocalLightComponent.h` — `ULocalLightComponent`:17;
-  `IntensityUnits`:27, `AttenuationRadius`:45, `SetAttenuationRadius()`:52.
-- `Components/PointLightComponent.h` — `UPointLightComponent`:18;
-  `SourceRadius`:44, `SourceLength`:58, `SetSourceRadius()`:70.
-- `Components/SpotLightComponent.h` — `USpotLightComponent`:16;
-  `InnerConeAngle`:22, `OuterConeAngle`:26.
-- `Components/RectLightComponent.h` — `URectLightComponent`:23;
-  `SourceWidth`:32, `SourceHeight`:39, `BarnDoorAngle`:45, `BarnDoorLength`:51.
+Engine source (UE 5.8, under `Engine/Source/Runtime/Engine/Classes/`):
+- `Components/LightComponentBase.h` — `ULightComponentBase`:15; `Intensity`:37,
+  `LightColor`:44, `CastShadows`:58, `IndirectLightingIntensity`:116,
+  `SetCastShadows()`:146, `GetLightColor()`:150.
+- `Components/LightComponent.h` — `ULightComponent`:48; `Temperature`:57,
+  `ShadowBias`:113, `ShadowSlopeBias`:123, `ContactShadowLength`:131,
+  `bAllowMegaLights`:171, `LightFunctionMaterial`:205, `IESTexture`:219,
+  `SetIntensity()`:286, `SetLightColor()`:296, `SetTemperature()`:303.
+- `Components/LocalLightComponent.h` — `ULocalLightComponent`:18;
+  `IntensityUnits`:28, `AttenuationRadius`:46, `SetAttenuationRadius()`:53.
+- `Components/PointLightComponent.h` — `UPointLightComponent`:19;
+  `SourceRadius`:45, `SourceLength`:59, `SetSourceRadius()`:71.
+- `Components/SpotLightComponent.h` — `USpotLightComponent`:17;
+  `InnerConeAngle`:23, `OuterConeAngle`:27.
+- `Components/RectLightComponent.h` — `URectLightComponent`:24;
+  `SourceWidth`:33, `SourceHeight`:40, `BarnDoorAngle`:46, `BarnDoorLength`:52.
 - `Components/SkyLightComponent.h` — `USkyLightComponent`:101;
-  `bRealTimeCapture`:108, `SourceType`:113, `RecaptureSky()`:303.
+  `bRealTimeCapture`:108, `SourceType`:112, `RecaptureSky()`:304.
 - `Components/DirectionalLightComponent.h` — `UDirectionalLightComponent`:18;
   `DynamicShadowDistanceMovableLight`:59, `DynamicShadowCascades`:73,
   `bAtmosphereSunLight`:164.
-- `Components/ReflectionCaptureComponent.h` — `UReflectionCaptureComponent`:29.
+- `Components/ReflectionCaptureComponent.h` — `UReflectionCaptureComponent`:30.
 - `Engine/PostProcessVolume.h` — `APostProcessVolume`:22; `bUnbound`:51.
-- `Engine/Scene.h` — `FPostProcessSettings`:692; `AutoExposureMethod`:1429,
-  `AutoExposureBias`:1860, `AutoExposureMinBrightness`:1921,
-  `AutoExposureMaxBrightness`:1929, `LumenSceneLightingQuality`:1718,
-  `LumenFinalGatherQuality`:1734, `LumenMaxTraceDistance`:1746,
-  `LumenReflectionQuality`:1777.
+- `Engine/Scene.h` — `FPostProcessSettings`:711; `AutoExposureMethod`:1491,
+  `AutoExposureBias`:1933, `AutoExposureMinBrightness`:1994,
+  `AutoExposureMaxBrightness`:2002, `LumenSceneLightingQuality`:1783,
+  `LumenFinalGatherQuality`:1799, `LumenMaxTraceDistance`:1811,
+  `LumenReflectionQuality`:1846.
 
-Official docs (UE 5.7):
+Official docs (UE 5.8):
 - Light Types and Their Mobility —
   <https://dev.epicgames.com/documentation/unreal-engine/light-types-and-their-mobility-in-unreal-engine>
 - Lumen Global Illumination and Reflections —

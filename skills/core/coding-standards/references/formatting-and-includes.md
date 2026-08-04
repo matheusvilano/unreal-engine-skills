@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers Allman braces, indentation, switch
 statements, namespaces, const rules, include order, IWYU, `#pragma once`, API export macros,
-and forward declarations. Grounded in UE 5.7 engine headers under `Engine/Source/Runtime/`.
+and forward declarations. Grounded in UE 5.8 engine headers under `Engine/Source/Runtime/`.
 
 ## Brace style (Allman)
 
@@ -143,9 +143,9 @@ Order for a **source file** (`.cpp`):
 
 Do not include the `.generated.h` in a `.cpp` — it belongs in the header.
 
-Engine evidence: `Character.h` lines 5–18 show fine-grained includes ending with
-`"Character.generated.h"` at line 18. `Actor.h` lines 5–28 show IWYU-style includes ending
-with `"Actor.generated.h"` at line 28.
+Engine evidence: `Character.h` lines 5–19 show fine-grained includes ending with
+`"Character.generated.h"` at line 19. `Actor.h` lines 5–32 show IWYU-style includes ending
+with `"Actor.generated.h"` at line 32.
 
 ### Fine-grained vs `CoreMinimal.h`
 
@@ -177,7 +177,7 @@ In the corresponding `.cpp`, include the full header:
 ```
 
 Forward-declared types must be declared in their namespace (if any) to avoid link errors.
-Engine example: `ActorComponent.h` lines 27–36 show a cluster of forward declarations
+Engine example: `ActorComponent.h` lines 27–38 show a cluster of forward declarations
 (`class AActor`, `class UWorld`, etc.) before the class body.
 
 ## API export macros
@@ -197,12 +197,12 @@ class MYGAME_API AMyPawn : public APawn
 
 The macro expands to `__declspec(dllexport)` when building the module and
 `__declspec(dllimport)` when consuming it (Windows; other platforms use visibility attributes).
-This is defined per-platform in `Core/Public/Windows/WindowsPlatform.h`:213–214.
+This is defined per-platform in `Core/Public/Windows/WindowsPlatform.h`:209–210.
 
 Without the macro, the linker cannot find the symbol in other modules. Engine examples:
-- `ENGINE_API AActor()` at `GameFramework/Actor.h`:262 (constructor export)
-- `ENGINE_API virtual void GetLifetimeReplicatedProps(...)` at `GameFramework/Actor.h`:273
-- `COREUOBJECT_API UObject()` at `CoreUObject/Public/UObject/Object.h`:102
+- `ENGINE_API AActor()` at `GameFramework/Actor.h`:288 (constructor export)
+- `ENGINE_API virtual void GetLifetimeReplicatedProps(...)` at `GameFramework/Actor.h`:306
+- `COREUOBJECT_API UObject()` at `CoreUObject/Public/UObject/Object.h`:106
 
 Inline functions and template specializations do not need the export macro (they are
 header-only). Only apply the macro to non-inline methods or free functions that must cross
@@ -238,10 +238,10 @@ to eliminate ambiguity.
 
 ## Source material
 
-Engine source paths verified in UE 5.7:
-- `Runtime/Engine/Classes/GameFramework/Actor.h`:3, 28 — `#pragma once`, `generated.h` last.
-- `Runtime/Engine/Classes/GameFramework/Character.h`:3, 5, 18 — `CoreMinimal.h` first, `generated.h` last.
-- `Runtime/Engine/Classes/Components/ActorComponent.h`:3, 23, 27–36 — `#pragma once`, `generated.h` last, forward decls.
-- `Runtime/CoreUObject/Public/UObject/Object.h`:102, 125 — `COREUOBJECT_API` export macro.
-- `Runtime/Engine/Classes/GameFramework/Actor.h`:262, 273 — `ENGINE_API` on constructor and virtual.
-- `Runtime/Core/Public/Windows/WindowsPlatform.h`:213–214 — `DLLEXPORT`/`DLLIMPORT` definition.
+Engine source paths verified in UE 5.8:
+- `Runtime/Engine/Classes/GameFramework/Actor.h`:3, 32 — `#pragma once`, `generated.h` last.
+- `Runtime/Engine/Classes/GameFramework/Character.h`:3, 5, 19 — `CoreMinimal.h` first, `generated.h` last.
+- `Runtime/Engine/Classes/Components/ActorComponent.h`:3, 23, 27–38 — `#pragma once`, `generated.h` last, forward decls.
+- `Runtime/CoreUObject/Public/UObject/Object.h`:106, 129 — `COREUOBJECT_API` export macro.
+- `Runtime/Engine/Classes/GameFramework/Actor.h`:288, 306 — `ENGINE_API` on constructor and virtual.
+- `Runtime/Core/Public/Windows/WindowsPlatform.h`:209–210 — `DLLEXPORT`/`DLLIMPORT` definition.

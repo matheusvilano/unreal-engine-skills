@@ -10,7 +10,7 @@ description: Terrain, instanced vegetation, and procedural environment generatio
   HISM, authoring PCG graphs, querying landscape data from C++, or debugging instancing
   and PCG generation issues.
 metadata:
-  engine-version: "5.7"
+  engine-version: "5.8"
   category: world-building
 ---
 
@@ -47,15 +47,15 @@ per-region.
 
 ```
 ALandscape : ALandscapeProxy : APartitionActor
-                  └── TArray<ULandscapeComponent*> LandscapeComponents  (LandscapeProxy.h:663)
-                  └── UMaterialInterface* LandscapeMaterial             (LandscapeProxy.h:574)
-                  └── int32 ComponentSizeQuads                          (LandscapeProxy.h:898)
-                  └── int32 SubsectionSizeQuads                         (LandscapeProxy.h:901)
-                  └── int32 NumSubsections                              (LandscapeProxy.h:904)
-                  └── bool  bEnableNanite                               (LandscapeProxy.h:458)
+                  └── TArray<ULandscapeComponent*> LandscapeComponents  (LandscapeProxy.h:682)
+                  └── UMaterialInterface* LandscapeMaterial             (LandscapeProxy.h:604)
+                  └── int32 ComponentSizeQuads                          (LandscapeProxy.h:924)
+                  └── int32 SubsectionSizeQuads                         (LandscapeProxy.h:927)
+                  └── int32 NumSubsections                              (LandscapeProxy.h:930)
+                  └── bool  bEnableNanite                               (LandscapeProxy.h:491)
 ```
 
-`ULandscapeComponent` (`LandscapeComponent.h`:413) extends `UPrimitiveComponent` — it is
+`ULandscapeComponent` (`LandscapeComponent.h`:431) extends `UPrimitiveComponent` — it is
 the renderable, collidable unit of terrain.
 
 ### Heightmap dimensions
@@ -132,11 +132,11 @@ Adding/removing instances invalidates the tree; `BuildTreeIfOutdated(bool Async,
 triggers a rebuild (synchronous or async).
 
 Key API (HierarchicalInstancedStaticMeshComponent.h):
-- `AddInstance(Transform, bWorldSpace)`:305 — add one instance; returns index.
-- `AddInstances(Transforms, bReturnIndices, bWorldSpace)`:306 — batch add.
-- `RemoveInstance(Index)`:307 / `RemoveInstances(Indices)`:308 — remove by index.
-- `UpdateInstanceTransform(Index, NewTransform, bWorldSpace, bMarkDirty, bTeleport)`:310.
-- `BuildTreeIfOutdated(Async, ForceUpdate)`:332 — explicit rebuild trigger.
+- `AddInstance(Transform, bWorldSpace)`:303 — add one instance; returns index.
+- `AddInstances(Transforms, bReturnIndices, bWorldSpace)`:304 — batch add.
+- `RemoveInstance(Index)`:305 / `RemoveInstances(Indices)`:306 — remove by index.
+- `UpdateInstanceTransform(Index, NewTransform, bWorldSpace, bMarkDirty, bTeleport)`:308.
+- `BuildTreeIfOutdated(Async, ForceUpdate)`:330 — explicit rebuild trigger.
 
 ```cpp
 // Batch-adding foliage instances from C++ (illustrative):
@@ -172,9 +172,9 @@ PCG is a shipped plugin at `Engine/Plugins/PCG/`. Enable it in `.uproject` if no
 
 | Type | Header | Role |
 |---|---|---|
-| `UPCGComponent` | `PCGComponent.h`:150 | Runs a graph on its actor; entry point for generate/cleanup |
-| `UPCGGraph` | `PCGGraph.h`:266 | Asset containing nodes and edges |
-| `UPCGGraphInterface` | `PCGGraph.h`:107 | Abstract base for graphs and graph instances |
+| `UPCGComponent` | `PCGComponent.h`:112 | Runs a graph on its actor; entry point for generate/cleanup |
+| `UPCGGraph` | `PCGGraph.h`:332 | Asset containing nodes and edges |
+| `UPCGGraphInterface` | `PCGGraph.h`:159 | Abstract base for graphs and graph instances |
 | `UPCGData` | `PCGData.h` | Base for all spatial/attribute data flowing through the graph |
 | `UPCGPointData` | `Data/PCGPointData.h` | Point cloud — the primary per-instance data type |
 | `UPCGLandscapeData` | `Data/PCGLandscapeData.h` | Samples landscape height/normals/layers |
@@ -214,7 +214,7 @@ void AMyActor::BeginPlay()
 }
 
 // Listening to generation completion:
-PCGComp->OnGraphGeneratedExternal.AddDynamic(this, &AMyActor::OnPCGDone);
+PCGComp->OnPCGGraphGeneratedExternal.AddDynamic(this, &AMyActor::OnPCGDone);
 ```
 
 PCG landscape data (`UPCGLandscapeData`) exposes layer weights as point attributes when
@@ -270,7 +270,7 @@ graph to, for example, restrict scatter to slope ranges below a threshold.
 - `UFoliageType_InstancedStaticMesh.NaniteOverrideMaterials` was added in UE5 for Nanite
   foliage support.
 - `CleanupLocal(bool bRemoveComponents, bool bSave)` was deprecated in 5.6; use the
-  `bRemoveComponents`-only overload (`PCGComponent.h`:266).
+  `bRemoveComponents`-only overload (`PCGComponent.h`:232).
 - `UPCGComponent.GenerationTrigger = GenerateAtRuntime` enables the runtime generation
   scheduler (new in 5.3+; scheduler policy expanded in 5.6/5.7).
 - Landscape Edit Layers are stable since UE5; the underlying renderer classes
@@ -279,12 +279,12 @@ graph to, for example, restrict scatter to slope ranges below a threshold.
 
 ## References & source material
 
-Engine source (UE 5.7):
+Engine source (UE 5.8):
 - `Runtime/Landscape/Classes/Landscape.h` — `ALandscape`:276 (extends `ALandscapeProxy`).
-- `Runtime/Landscape/Classes/LandscapeProxy.h` — `ALandscapeProxy`:417,
-  `LandscapeComponents`:663, `LandscapeMaterial`:574, `ComponentSizeQuads`:898,
-  `SubsectionSizeQuads`:901, `NumSubsections`:904, `bEnableNanite`:458.
-- `Runtime/Landscape/Classes/LandscapeComponent.h` — `ULandscapeComponent`:413.
+- `Runtime/Landscape/Classes/LandscapeProxy.h` — `ALandscapeProxy`:450,
+  `LandscapeComponents`:682, `LandscapeMaterial`:604, `ComponentSizeQuads`:924,
+  `SubsectionSizeQuads`:927, `NumSubsections`:930, `bEnableNanite`:491.
+- `Runtime/Landscape/Classes/LandscapeComponent.h` — `ULandscapeComponent`:431.
 - `Runtime/Landscape/Classes/LandscapeLayerInfoObject.h` — `ULandscapeLayerInfoObject`:59.
 - `Runtime/Landscape/Classes/LandscapeSplineActor.h` — `ALandscapeSplineActor`:14.
 - `Runtime/Foliage/Public/FoliageType.h` — `UFoliageType`:105.
@@ -292,16 +292,16 @@ Engine source (UE 5.7):
 - `Runtime/Foliage/Public/InstancedFoliageActor.h` — `AInstancedFoliageActor`:28.
 - `Runtime/Foliage/Public/ProceduralFoliageComponent.h` — `UProceduralFoliageComponent`:42.
 - `Runtime/Engine/Classes/Components/HierarchicalInstancedStaticMeshComponent.h` —
-  `UHierarchicalInstancedStaticMeshComponent`:135, `AddInstance`:305, `AddInstances`:306,
-  `RemoveInstance`:307, `UpdateInstanceTransform`:310, `BuildTreeIfOutdated`:332.
-- `Plugins/PCG/Source/PCG/Public/PCGComponent.h` — `UPCGComponent`:150,
-  `Generate()`:246, `Cleanup()`:247, `GenerateLocal()`:251, `GenerationTrigger`:349.
-- `Plugins/PCG/Source/PCG/Public/PCGGraph.h` — `UPCGGraph`:266, `UPCGGraphInterface`:107.
+  `UHierarchicalInstancedStaticMeshComponent`:135, `AddInstance`:303, `AddInstances`:304,
+  `RemoveInstance`:305, `UpdateInstanceTransform`:308, `BuildTreeIfOutdated`:330.
+- `Plugins/PCG/Source/PCG/Public/PCGComponent.h` — `UPCGComponent`:112,
+  `Generate()`:253, `Cleanup()`:257, `GenerateLocal()`:221, `GenerationTrigger`:327.
+- `Plugins/PCG/Source/PCG/Public/PCGGraph.h` — `UPCGGraph`:332, `UPCGGraphInterface`:159.
 - `Plugins/PCG/Source/PCG/Public/Data/PCGLandscapeData.h` — `UPCGLandscapeData`,
   `FPCGLandscapeDataProps` (layer weights, height-only mode, GPU sampling).
 - `Plugins/PCG/Source/PCG/Public/Data/PCGPointData.h` — `UPCGPointData`.
 
-Official docs (UE 5.7):
+Official docs (UE 5.8):
 - Landscape Outdoor Terrain — <https://dev.epicgames.com/documentation/unreal-engine/landscape-outdoor-terrain-in-unreal-engine>
 - Landscape Technical Guide — <https://dev.epicgames.com/documentation/unreal-engine/landscape-technical-guide-in-unreal-engine>
 - Landscape Materials — <https://dev.epicgames.com/documentation/unreal-engine/landscape-materials-in-unreal-engine>

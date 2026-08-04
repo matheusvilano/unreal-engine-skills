@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers Virtual Shadow Maps, Cascaded Shadow
 Maps, shadow bias, contact shadows, and the Post Process Volume exposure and color
-grading stack. Grounded in UE 5.7 (`Engine/Source/Runtime/Engine/Classes/Components/
+grading stack. Grounded in UE 5.8 (`Engine/Source/Runtime/Engine/Classes/Components/
 LightComponent.h` and `Engine/Classes/Engine/Scene.h`) and the official
 [Shadowing](https://dev.epicgames.com/documentation/unreal-engine/shadowing-in-unreal-engine)
 and [Virtual Shadow Maps](https://dev.epicgames.com/documentation/unreal-engine/virtual-shadow-maps-in-unreal-engine)
@@ -45,11 +45,11 @@ Manual CSM controls on `UDirectionalLightComponent` (`DirectionalLightComponent.
 - `DynamicShadowCascades:int32` (line 73) — cascade count 0–4 (0 disables CSMs)
 - `DynamicShadowDistanceMovableLight:float` (line 59) — max shadow distance for
   Movable lights
-- `DynamicShadowDistanceStationaryLight:float` (line 65) — max distance for
+- `DynamicShadowDistanceStationaryLight:float` (line 66) — max distance for
   Stationary lights
-- `CascadeDistributionExponent:float` (line 79) — distribute cascades towards camera
+- `CascadeDistributionExponent:float` (line 80) — distribute cascades towards camera
   (>1) or uniformly (1)
-- `FarShadowCascadeCount:int32` (line 111) — extra far cascades beyond
+- `FarShadowCascadeCount:int32` (line 112) — extra far cascades beyond
   `DynamicShadowDistanceMovableLight`; requires `FarShadowDistance`
 
 ## Shadow bias properties (ULightComponent, LightComponent.h)
@@ -59,10 +59,10 @@ Shadow bias controls self-shadow artefacts (surface acne). All fields are
 
 | Property | Line | Setter | Purpose |
 |---|---|---|---|
-| `ShadowBias` | 110 | `SetShadowBias(float)` | Constant offset pushing receiver away from the shadow map |
-| `ShadowSlopeBias` | 120 | `SetShadowSlopeBias(float)` | Bias proportional to surface slope; reduces grazing-angle artefacts |
-| `ShadowResolutionScale` | 101 | — | Multiplies the auto-chosen shadow map resolution |
-| `ShadowSharpen` | 124 | — | Additional sharpening of the filter (0–1) |
+| `ShadowBias` | 113 | `SetShadowBias(float)` | Constant offset pushing receiver away from the shadow map |
+| `ShadowSlopeBias` | 123 | `SetShadowSlopeBias(float)` | Bias proportional to surface slope; reduces grazing-angle artefacts |
+| `ShadowResolutionScale` | 104 | — | Multiplies the auto-chosen shadow map resolution |
+| `ShadowSharpen` | 127 | — | Additional sharpening of the filter (0–1) |
 
 Typical starting point: `ShadowBias = 0.5`, `ShadowSlopeBias = 0.5`. Increase if
 objects appear to "float" (bias too high causes this) or decrease if you see acne
@@ -74,11 +74,11 @@ Contact shadows are a screen-space ray cast from the shading pixel towards the l
 using the scene depth buffer. They add fine contact hardening on top of any other
 shadow method.
 
-- `ContactShadowLength:float` (line 128) — ray length in screen space (0 = off,
+- `ContactShadowLength:float` (line 131) — ray length in screen space (0 = off,
   1 = full screen height) or in world units when `ContactShadowLengthInWS = true`.
-- `ContactShadowCastingIntensity:float` (line 136) — shadow darkness for primitives
+- `ContactShadowCastingIntensity:float` (line 139) — shadow darkness for primitives
   that opt into contact shadows (default 1.0).
-- `ContactShadowNonCastingIntensity:float` (line 140) — shadow for primitives that
+- `ContactShadowNonCastingIntensity:float` (line 143) — shadow for primitives that
   do not cast contact shadows (default 0.0).
 
 Contact shadows are view-dependent and miss occluders outside the viewport; they are
@@ -87,16 +87,16 @@ a supplement, not a replacement for standard shadow maps.
 ## Post Process Volume — exposure
 
 `APostProcessVolume` (`Engine/PostProcessVolume.h:22`) blends `FPostProcessSettings`
-(`Engine/Scene.h:692`). Relevant exposure fields:
+(`Engine/Scene.h:711`). Relevant exposure fields:
 
 | Field | Line | Notes |
 |---|---|---|
-| `AutoExposureMethod` | 1429 | `AEM_Histogram` (default), `AEM_Basic`, `AEM_Manual` |
-| `AutoExposureBias` | 1860 | EV100 offset applied on top of the metering result |
-| `AutoExposureMinBrightness` | 1921 | Clamp floor for histogram (cd/m² or EV100) |
-| `AutoExposureMaxBrightness` | 1929 | Clamp ceiling for histogram |
-| `AutoExposureLowPercent` | 1903 | % of pixels excluded from the dark side of the histogram |
-| `AutoExposureHighPercent` | 1913 | % of pixels excluded from the bright side |
+| `AutoExposureMethod` | 1491 | `AEM_Histogram` (default), `AEM_Basic`, `AEM_Manual` |
+| `AutoExposureBias` | 1933 | EV100 offset applied on top of the metering result |
+| `AutoExposureMinBrightness` | 1994 | Clamp floor for histogram (cd/m² or EV100) |
+| `AutoExposureMaxBrightness` | 2002 | Clamp ceiling for histogram |
+| `AutoExposureLowPercent` | 1976 | % of pixels excluded from the dark side of the histogram |
+| `AutoExposureHighPercent` | 1986 | % of pixels excluded from the bright side |
 
 ### Manual exposure
 

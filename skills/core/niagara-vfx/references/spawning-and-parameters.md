@@ -2,15 +2,15 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers all spawn variants, parameter store internals,
 soft-reference loading, component pooling, `ANiagaraActor`, and a worked example. Grounded in
-UE 5.7 (`Engine/Plugins/FX/Niagara/Source/Niagara/Public/NiagaraFunctionLibrary.h`,
+UE 5.8 (`Engine/Plugins/FX/Niagara/Source/Niagara/Public/NiagaraFunctionLibrary.h`,
 `Public/NiagaraComponent.h`, `Public/NiagaraActor.h`) and the official
 [Niagara Overview](https://dev.epicgames.com/documentation/unreal-engine/overview-of-niagara-effects-for-unreal-engine)
 doc.
 
-## Spawn function signatures (UE 5.7)
+## Spawn function signatures (UE 5.8)
 
 ```cpp
-// UNiagaraFunctionLibrary — NiagaraFunctionLibrary.h:42
+// UNiagaraFunctionLibrary — NiagaraFunctionLibrary.h:93
 static UNiagaraComponent* SpawnSystemAtLocation(
     const UObject* WorldContextObject,
     UNiagaraSystem* SystemTemplate,
@@ -22,7 +22,7 @@ static UNiagaraComponent* SpawnSystemAtLocation(
     ENCPoolMethod PoolingMethod = ENCPoolMethod::None,
     bool bPreCullCheck       = true);
 
-// NiagaraFunctionLibrary.h:45
+// NiagaraFunctionLibrary.h:96
 static UNiagaraComponent* SpawnSystemAttached(
     UNiagaraSystem* SystemTemplate,
     USceneComponent* AttachToComponent,
@@ -35,7 +35,7 @@ static UNiagaraComponent* SpawnSystemAttached(
     ENCPoolMethod PoolingMethod = ENCPoolMethod::None,
     bool bPreCullCheck       = true);
 
-// Overload with explicit scale — NiagaraFunctionLibrary.h:47
+// Overload with explicit scale — NiagaraFunctionLibrary.h:98
 static UNiagaraComponent* SpawnSystemAttached(
     UNiagaraSystem* SystemTemplate,
     USceneComponent* AttachToComponent,
@@ -59,7 +59,7 @@ When you call `FX->SetVariableFloat(TEXT("Intensity"), 1.5f)`, Niagara:
 1. Looks up the `FName` in the component's `FNiagaraUserRedirectionParameterStore`
    (`OverrideParameters` member, `NiagaraComponent.h`).
 2. If the parameter exists in the system's `ExposedParameters` store
-   (`UNiagaraSystem::GetExposedParameters`, `NiagaraSystem.h:364`), writes the value.
+   (`UNiagaraSystem::GetExposedParameters`, `NiagaraSystem.h:368`), writes the value.
 3. On the next simulation tick, the value is forwarded into the live system instance's parameter
    store and becomes visible to modules.
 
@@ -68,7 +68,7 @@ Parameters set **before** `Activate()` are applied when the instance starts. Par
 instantaneous effect at spawn, set parameters before calling `Activate(true)` or before passing
 the component to a spawn function.
 
-## Parameter types and C++ setters (5.7)
+## Parameter types and C++ setters (5.8)
 
 | Niagara type | C++ setter | Notes |
 |---|---|---|

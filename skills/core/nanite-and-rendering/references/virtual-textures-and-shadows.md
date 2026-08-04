@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers Runtime Virtual Textures (RVT), Streaming
 Virtual Textures (SVT), and Virtual Shadow Maps (VSM) internals, page allocation, Nanite
-integration, and practical configuration. Grounded in UE 5.7
+integration, and practical configuration. Grounded in UE 5.8
 (`Engine/Source/Runtime/Engine/Classes/Engine/RendererSettings.h`,
 `Engine/Source/Runtime/Renderer/Private/VirtualShadowMaps/VirtualShadowMapArray.h`).
 
@@ -18,7 +18,7 @@ UE supports two VT types that serve different purposes:
 
 The standard VT form for regular textures: large textures (e.g., 16k or 32k terrain
 albedo) stream pages on demand rather than loading the full mip chain. Enabled globally
-with `r.VirtualTextures 1` (project restart required; `RendererSettings.h`:385).
+with `r.VirtualTextures 1` (project restart required; `RendererSettings.h`:417).
 
 SVT is most beneficial for:
 - Terrain layers with very high source resolution.
@@ -37,7 +37,7 @@ Key project settings (`RendererSettings.h`):
 | `VirtualTextureTileSize` | `r.VT.TileSize` | Tile size in pixels (power-of-2, default 128) |
 | `VirtualTextureTileBorderSize` | `r.VT.TileBorderSize` | Border for anisotropic filtering |
 | `bVirtualTextureAnisotropicFiltering` | `r.VT.AnisotropicFiltering` | Enable aniso on VT (adds shader cost) |
-| `bMobileVirtualTextures` | `r.Mobile.VirtualTextures` | VT on mobile (requires base VT enabled) |
+| `bMobileVirtualTextures` | `r.Mobile.VirtualTextures` | VT on mobile — project setting deprecated in 5.8; override `bVirtualTextures` in per-platform .ini instead |
 
 ### Runtime Virtual Textures (RVT)
 
@@ -63,7 +63,7 @@ VSM uses a **virtual address space** of 16k × 16k for directional lights (a cli
 covering multiple view-centered cascades) and per-light pages for local lights. Only pages
 that correspond to visible shadow-receiving surfaces are allocated and rendered each frame.
 
-### Page structure (`VirtualShadowMapArray.h`:72–77)
+### Page structure (`VirtualShadowMapArray.h`:73–79)
 
 | Constant | Value | Meaning |
 |---|---|---|
@@ -83,7 +83,7 @@ used for the main view, meaning:
   LOD or simplified shadow mesh.
 - The VSM page requests for shadowing are driven by the camera view's visible surface set;
   only pages needed to shadow visible receivers are allocated.
-- The `FNaniteVirtualShadowMapRenderPass` struct (`VirtualShadowMapArray.h`:47) collects
+- The `FNaniteVirtualShadowMapRenderPass` struct (`VirtualShadowMapArray.h`:48) collects
   Nanite shadow draws for batched execution.
 
 For non-Nanite meshes, VSM uses the conventional shadow mesh pass (fallback mesh if
@@ -143,11 +143,12 @@ r.MSAACount=4
 
 ## Version notes
 
-- **RVT + Nanite**: Nanite meshes can write to RVTs in 5.7 when the material has the
+- **RVT + Nanite**: Nanite meshes can write to RVTs in 5.8 when the material has the
   correct RVT output nodes.
 - **VSM + Nanite skeletal mesh**: skeletal mesh Nanite shadow rendering via VSM is
-  supported in 5.7; check the Nanite skeletal mesh documentation for limitations on
+  supported in 5.8; check the Nanite skeletal mesh documentation for limitations on
   complex animations.
-- **Mobile VT**: requires base `r.VirtualTextures=1` and `r.Mobile.VirtualTextures=1`;
+- **Mobile VT**: requires base `r.VirtualTextures=1`; the `bMobileVirtualTextures`
+  project setting is deprecated in 5.8 (override `bVirtualTextures` per platform);
   feature set is more limited than desktop (no RVT on all mobile paths).
 - **VSM with path tracer**: the path tracer uses its own shadow model and does not use VSM.

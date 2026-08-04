@@ -8,7 +8,7 @@ description: Reference and load Unreal assets correctly — hard vs soft referen
   loading assets on demand (level streaming, DLC, runtime content), enumerating or filtering
   assets without loading, or setting up a managed primary-asset pipeline with UPrimaryDataAsset.
 metadata:
-  engine-version: "5.7"
+  engine-version: "5.8"
   category: content-assets
 ---
 
@@ -227,28 +227,28 @@ Add to your `Build.cs` as needed:
 
 ## References & source material
 
-Engine source (UE 5.7, under `Engine/Source/`):
-- `Runtime/Engine/Classes/Engine/StreamableManager.h` — `FStreamableManager`:705,
-  `FStreamableHandle`:190, `RequestAsyncLoad`:730, `LoadSynchronous`:774,
-  `FStreamableDelegate` alias:32.
+Engine source (UE 5.8, under `Engine/Source/`):
+- `Runtime/Engine/Classes/Engine/StreamableManager.h` — `FStreamableManager`:731,
+  `FStreamableHandle`:196, `RequestAsyncLoad`:756, `LoadSynchronous`:800,
+  `FStreamableDelegate` alias:38.
 - `Runtime/Engine/Classes/Engine/AssetManager.h` — `UAssetManager`:83,
-  `GetStreamableManager()`:105, `LoadPrimaryAsset`:315, `UnloadPrimaryAssets`:342,
-  `ChangeBundleStateForPrimaryAssets`:386.
+  `GetStreamableManager()`:105, `LoadPrimaryAsset`:333, `UnloadPrimaryAssets`:367,
+  `ChangeBundleStateForPrimaryAssets`:390.
 - `Runtime/CoreUObject/Public/UObject/SoftObjectPtr.h` — `FSoftObjectPtr`:44,
-  `TSoftObjectPtr`:173, `TSoftClassPtr`:762, `LoadSynchronous`:82/514, `IsValid`:538/900,
-  `IsNull`:559/921, `ToSoftObjectPath`:96/571.
+  `TSoftObjectPtr`:173, `TSoftClassPtr`:795, `LoadSynchronous`:82/547, `IsValid`:571/933,
+  `IsNull`:592/954, `ToSoftObjectPath`:96/604.
 - `Runtime/CoreUObject/Public/UObject/PrimaryAssetId.h` — `FPrimaryAssetType`:27,
-  `FPrimaryAssetId`:125.
-- `Runtime/Engine/Classes/Engine/DataAsset.h` — `UDataAsset`:20, `UPrimaryDataAsset`:46,
-  `GetPrimaryAssetId`:52.
-- `Runtime/AssetRegistry/Public/AssetRegistry/IAssetRegistry.h` — `GetAssetsByClass`:333,
-  `GetAssets`:361, `GetDependencies`:511, `GetReferencers`:574.
+  `FPrimaryAssetId`:133.
+- `Runtime/Engine/Classes/Engine/DataAsset.h` — `UDataAsset`:17, `UPrimaryDataAsset`:47,
+  `GetPrimaryAssetId`:53.
+- `Runtime/AssetRegistry/Public/AssetRegistry/IAssetRegistry.h` — `GetAssetsByClass`:335,
+  `GetAssets`:363, `GetDependencies`:517, `GetReferencers`:580.
 - `Runtime/AssetRegistry/Public/AssetRegistry/AssetRegistryModule.h` — `FAssetRegistryModule`:26,
   `Get()`:34.
 - `Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h` — `FObjectFinder`:77,
   `FClassFinder`:157.
 
-Official docs (UE 5.7):
+Official docs (UE 5.8):
 - Asset Management — <https://dev.epicgames.com/documentation/unreal-engine/asset-management-in-unreal-engine>
 - Async Asset Loading — <https://dev.epicgames.com/documentation/unreal-engine/asynchronous-asset-loading-in-unreal-engine>
 - Referencing Assets — <https://dev.epicgames.com/documentation/unreal-engine/referencing-assets-in-unreal-engine>

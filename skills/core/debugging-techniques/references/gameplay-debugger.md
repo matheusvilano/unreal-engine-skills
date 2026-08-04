@@ -1,6 +1,6 @@
 # Gameplay Debugger — custom categories
 
-Deep dive for [../SKILL.md](../SKILL.md). Grounded in UE 5.7
+Deep dive for [../SKILL.md](../SKILL.md). Grounded in UE 5.8
 (`Engine/Source/Runtime/GameplayDebugger/Public/`).
 
 ## Architecture overview
@@ -87,7 +87,7 @@ void FMySystemCategory::CollectData(APlayerController* OwnerPC, AActor* DebugAct
 
     // AddShape renders geometry on the local side automatically
     FVector Loc = DebugActor ? DebugActor->GetActorLocation() : FVector::ZeroVector;
-    AddShape(FGameplayDebuggerShape::MakeSphere(Loc, 60.f, FColor::Green, TEXT("Radius")));
+    AddShape(FGameplayDebuggerShape::MakePoint(Loc, 60.f, FColor::Green, TEXT("Radius")));
 }
 
 void FMySystemCategory::DrawData(APlayerController* OwnerPC,
@@ -156,16 +156,16 @@ input.
 `FGameplayDebuggerShape` provides static factory methods:
 
 ```cpp
-FGameplayDebuggerShape::MakeSphere(Center, Radius, Color, OptLabel)
+FGameplayDebuggerShape::MakePoint(Location, Radius, Color, OptLabel)
 FGameplayDebuggerShape::MakeBox(Center, Extent, Color, OptLabel)
-FGameplayDebuggerShape::MakeCapsule(Center, HalfHeight, Radius, Color, OptLabel)
+FGameplayDebuggerShape::MakeCapsule(Center, Radius, HalfHeight, Color, OptLabel)
 FGameplayDebuggerShape::MakeSegment(Start, End, Color, OptLabel)
-FGameplayDebuggerShape::MakeCylinder(Start, End, Radius, Color, OptLabel)
+FGameplayDebuggerShape::MakeCylinder(Center, Radius, HalfHeight, Color, OptLabel)
 ```
 
 Source: `Runtime/GameplayDebugger/Public/GameplayDebuggerTypes.h`.
 
-## Source references (UE 5.7)
+## Source references (UE 5.8)
 
 - `Runtime/GameplayDebugger/Public/GameplayDebugger.h` — `IGameplayDebugger`:50,
   `RegisterCategory`:78, `UnregisterCategory`:79, `NotifyCategoriesChanged`:80.
@@ -173,6 +173,7 @@ Source: `Runtime/GameplayDebugger/Public/GameplayDebuggerTypes.h`.
   `CollectData`:56, `DrawData`:59, `AddTextLine`:68, `AddShape`:71, `SetDataPackReplication` and
   `MarkDataPackDirty` declared in the protected section.
 - `Runtime/GameplayDebugger/Public/GameplayDebuggerTypes.h` — `FGameplayDebuggerShape` factory
-  methods and `EGameplayDebuggerCategoryState` enum.
+  methods (:207–229).
+- `Runtime/GameplayDebugger/Public/GameplayDebugger.h` — `EGameplayDebuggerCategoryState` enum:41.
 - `Runtime/GameplayDebugger/Public/GameplayDebuggerAddonBase.h` — `BindKeyPress`,
   `EGameplayDebuggerInputMode`.

@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the four native-tag macros, the
 `FNativeGameplayTag` lifetime, module registration timing, multi-module sharing, and
-file-private tags. Grounded in UE 5.7
+file-private tags. Grounded in UE 5.8
 (`Engine/Source/Runtime/GameplayTags/Public/NativeGameplayTags.h`).
 
 ## The four macros
@@ -27,7 +27,7 @@ translation units would cause ODR violations or double-registration.
 outside the macros.
 
 On construction it calls `UGameplayTagsManager::AddNativeGameplayTag(this)` (the private
-overload at `GameplayTagsManager.h`:400) to register the tag pointer.  
+overload at `GameplayTagsManager.h`:407) to register the tag pointer.  
 On destruction it calls `RemoveNativeGameplayTag(this)`, so if a plugin module is
 unloaded the tag is safely removed from the dictionary.
 
@@ -37,7 +37,7 @@ usable everywhere an `FGameplayTag` is expected without calling `.GetTag()`.
 ## Registration timing
 
 Native tags register at **static initialization time** — before `main()` runs and before
-any `UObject` exists. The tag dictionary lock (`DoneAddingNativeTags`, `GameplayTagsManager.h`:405)
+any `UObject` exists. The tag dictionary lock (`DoneAddingNativeTags`, `GameplayTagsManager.h`:412)
 is called during engine startup after all module constructors have run. After that point,
 adding new native tags is unsafe.
 
@@ -57,7 +57,7 @@ UGameplayTagsManager::Get().CallOrRegister_OnDoneAddingNativeTagsDelegate(
 );
 ```
 
-`CallOrRegister_OnDoneAddingNativeTagsDelegate` is at `GameplayTagsManager.h`:415.
+`CallOrRegister_OnDoneAddingNativeTagsDelegate` is at `GameplayTagsManager.h`:429.
 
 ## Sharing tags across modules
 

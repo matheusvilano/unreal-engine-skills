@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers Level Instance runtime modes, Packed
 Level Actors, property overrides, and the relationship with World Partition. Grounded in
-UE 5.7 `Engine/Source/Runtime/Engine/Public/LevelInstance/` and the official
+UE 5.8 `Engine/Source/Runtime/Engine/Public/LevelInstance/` and the official
 [Level Instancing](https://dev.epicgames.com/documentation/unreal-engine/level-instancing-in-unreal-engine)
 doc.
 

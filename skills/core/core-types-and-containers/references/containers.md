@@ -1,12 +1,12 @@
 # Containers — deep reference
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers `TArray`, `TMap`, `TSet`, `TQueue`,
-`TArrayView`, allocators, and iteration patterns. Grounded in UE 5.7
+`TArrayView`, allocators, and iteration patterns. Grounded in UE 5.8
 (`Runtime/Core/Public/Containers/`).
 
 ## TArray
 
-`TArray<T>` (`Containers/Array.h`:669) is the workhorse container — a contiguous, growable
+`TArray<T>` (`Containers/Array.h`:767) is the workhorse container — a contiguous, growable
 array that owns its elements. Use it unless you have a specific reason to choose something
 else.
 
@@ -50,9 +50,9 @@ for (int32 i = Points.Num() - 1; i >= 0; --i)
 The default `FDefaultAllocator` heap-allocates. For performance-critical small arrays:
 
 - `TArray<T, TInlineAllocator<N>>` — first N elements on the stack, spills to heap.
-  `TInlineAllocator` is defined at `Containers/ContainerAllocationPolicies.h`:1073.
+  `TInlineAllocator` is defined at `Containers/ContainerAllocationPolicies.h`:1328.
 - `TArray<T, TFixedAllocator<N>>` — fixed capacity, no heap fallback; asserts if exceeded.
-  Defined at `Containers/ContainerAllocationPolicies.h`:1275.
+  Defined at `Containers/ContainerAllocationPolicies.h`:1530.
 - `TStaticArray<T, N>` (`Containers/StaticArray.h`:25) — fixed-size, stack-only, no
   `TArray` API; prefer for truly fixed-size data.
 

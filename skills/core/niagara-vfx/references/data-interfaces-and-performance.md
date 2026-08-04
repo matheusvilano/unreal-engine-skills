@@ -1,7 +1,7 @@
 # Data Interfaces and performance — full reference
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the Data Interface catalog, CPU/GPU simulation
-details, scalability settings, and the Niagara Debugger. Grounded in UE 5.7
+details, scalability settings, and the Niagara Debugger. Grounded in UE 5.8
 (`Engine/Plugins/FX/Niagara/Source/Niagara/Classes/NiagaraDataInterface.h`,
 `Classes/NiagaraDataInterfaceSkeletalMesh.h`, `Public/NiagaraFunctionLibrary.h`) and the
 official [Debugging and Optimization in Niagara](https://dev.epicgames.com/documentation/unreal-engine/debugging-and-optimization-in-niagara-effects-for-unreal-engine)
@@ -19,7 +19,7 @@ A DI is an **asset reference** carried by a User Parameter of type `Data Interfa
 concrete object (e.g. a `USkeletalMeshComponent`) at runtime either via a User Parameter or via
 a `UNiagaraFunctionLibrary` helper.
 
-## Data Interface catalog (UE 5.7)
+## Data Interface catalog (UE 5.8)
 
 ### Geometry
 
@@ -91,11 +91,14 @@ reads from it in the same or next frame.
 // Access a Data Channel from C++ (typically via UNiagaraDataChannelFunctionLibrary):
 #include "NiagaraDataChannelFunctionLibrary.h"
 
-// Write a burst location to the channel named "Explosions":
-UNiagaraDataChannelFunctionLibrary::WriteToNiagaraDataChannel(
+// Begin a write of one element to a channel asset; fill fields via the returned writer:
+UNiagaraDataChannelWriter* Writer = UNiagaraDataChannelFunctionLibrary::WriteToNiagaraDataChannel(
     this,
-    FName("Explosions"),
-    SpawnData);   // FNiagaraDataChannelGameData subclass
+    ExplosionsChannel,                      // UNiagaraDataChannelAsset*
+    FNiagaraDataChannelSearchParameters(),  // locates where the data lands in the world
+    /*Count*/ 1,
+    /*bVisibleToGame*/ true, /*bVisibleToCPU*/ true, /*bVisibleToGPU*/ true,
+    TEXT("MyGame"));
 ```
 
 Data Channels are primarily a gameplay-to-Niagara bus. For cross-system communication within

@@ -11,7 +11,7 @@ description: Create and control visual effects using Unreal's Niagara system —
   or sockets, driving an effect from gameplay parameters, choosing CPU vs GPU emitters, or
   migrating from Cascade (deprecated).
 metadata:
-  engine-version: "5.7"
+  engine-version: "5.8"
   category: vfx-audio
 ---
 
@@ -100,7 +100,7 @@ FX->SetColorParameter(TEXT("Color"),        FLinearColor::Red);
 FX->SetVectorParameter(TEXT("BeamEnd"),     TargetLocation);
 FX->SetActorParameter(TEXT("TargetActor"),  EnemyActor);
 
-// UNiagaraComponent's own typed setters (use FName; preferred in 5.7):
+// UNiagaraComponent's own typed setters (use FName; preferred in 5.8):
 FX->SetVariableFloat(TEXT("Intensity"),     1.5f);
 FX->SetVariableVec3(TEXT("WindDir"),        FVector(1, 0, 0));
 FX->SetVariableBool(TEXT("bIsActive"),      true);
@@ -224,23 +224,23 @@ for rare or once-per-level effects.
 
 ## References & source material
 
-Engine source (UE 5.7, `Engine/Plugins/FX/Niagara/Source/Niagara/`):
-- `Public/NiagaraComponent.h` — `UNiagaraComponent`: `Activate`:223, `Deactivate`:224,
-  `SetFloatParameter`:69, `SetColorParameter`:71, `SetVectorParameter`:70, `SetActorParameter`:72,
-  `SetVariableFloat`:520, `SetVariableVec3`:493, `SetVariableActor`:545,
-  `SetVariableBool`:538, `SetVariableInt`:529, `OnSystemFinished`:716, `bAutoDestroy`:173,
-  `SetAsset`:292, `SetEmitterEnable`:75.
-- `Classes/NiagaraSystem.h` — `UNiagaraSystem` (derives `UFXSystemAsset`):234,
-  `GetExposedParameters`:364, `GetEmitterHandles`:309.
+Engine source (UE 5.8, `Engine/Plugins/FX/Niagara/Source/Niagara/`):
+- `Public/NiagaraComponent.h` — `UNiagaraComponent`: `Activate`:226, `Deactivate`:227,
+  `SetFloatParameter`:72, `SetColorParameter`:74, `SetVectorParameter`:73, `SetActorParameter`:75,
+  `SetVariableFloat`:533, `SetVariableVec3`:506, `SetVariableActor`:558,
+  `SetVariableBool`:551, `SetVariableInt`:542, `OnSystemFinished`:754, `bAutoDestroy`:176,
+  `SetAsset`:295, `SetEmitterEnable`:78.
+- `Classes/NiagaraSystem.h` — `UNiagaraSystem` (derives `UFXSystemAsset`):238,
+  `GetExposedParameters`:368, `GetEmitterHandles`:313.
 - `Public/NiagaraFunctionLibrary.h` — `UNiagaraFunctionLibrary`:
-  `SpawnSystemAtLocation`:42, `SpawnSystemAttached`:45,
-  `OverrideSystemUserVariableSkeletalMeshComponent`:61,
-  `OverrideSystemUserVariableStaticMeshComponent`:54.
+  `SpawnSystemAtLocation`:93, `SpawnSystemAttached`:96,
+  `OverrideSystemUserVariableSkeletalMeshComponent`:112,
+  `OverrideSystemUserVariableStaticMeshComponent`:102.
 - `Classes/NiagaraDataInterface.h` — `UNiagaraDataInterface` base class.
 - `Classes/NiagaraDataInterfaceSkeletalMesh.h` — `UNiagaraDataInterfaceSkeletalMesh`.
 - `Public/NiagaraActor.h` — `ANiagaraActor` (actor wrapper, `SetDestroyOnSystemFinish`).
 
-Official docs (UE 5.7):
+Official docs (UE 5.8):
 - Creating Visual Effects (Niagara) —
   <https://dev.epicgames.com/documentation/unreal-engine/creating-visual-effects-in-niagara-for-unreal-engine>
 - Niagara Overview —

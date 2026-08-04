@@ -1,8 +1,8 @@
 # Engine module map
 
-Deep-dive companion to [../SKILL.md](../SKILL.md). Grounded in UE 5.7 at
-`E:\Program Files\Epic Games\UE_5.7\Engine\Source` (version confirmed via
-`Engine\Build\Build.version`: MajorVersion 5, MinorVersion 7, PatchVersion 4).
+Deep-dive companion to [../SKILL.md](../SKILL.md). Grounded in UE 5.8 at
+`E:\Program Files\Epic Games\UE_5.8\Engine\Source` (version confirmed via
+`Engine\Build\Build.version`: MajorVersion 5, MinorVersion 8, PatchVersion 1).
 
 This reference lists the most frequently needed modules, what they own, and
 where their headers live. Use it to resolve "which module do I add to Build.cs?"
@@ -33,7 +33,7 @@ a named subdirectory (e.g. `Engine\Plugins\EnhancedInput\`).
 | **Core** | `"Core"` | `Runtime\Core\Public\` | `TArray`, `TMap`, `TSet`, `FString`, `FName`, `FVector`, `FQuat`, `FTransform`, `TSharedPtr`, `FDelegateHandle` |
 | **CoreUObject** | `"CoreUObject"` | `Runtime\CoreUObject\Public\UObject\` | `UObject`, `UClass`, `UPackage`, `FObjectInitializer`, `TSubclassOf<>` |
 | **Engine** | `"Engine"` | `Runtime\Engine\Classes\` + `Runtime\Engine\Public\` | `AActor`, `UActorComponent`, `UWorld`, `UGameInstance`, `UGameEngine`, `AGameModeBase`, `APlayerController`, `APawn`, `ACharacter`, `UKismetSystemLibrary` |
-| **GameplayTags** | `"GameplayTags"` | `Runtime\GameplayTags\Classes\` | `FGameplayTag`:44, `FGameplayTagContainer`:250 |
+| **GameplayTags** | `"GameplayTags"` | `Runtime\GameplayTags\Classes\` | `FGameplayTag`:41, `FGameplayTagContainer`:247 |
 | **SlateCore** | `"SlateCore"` | `Runtime\SlateCore\Public\` | Slate geometry, brush, input, widget base |
 | **Slate** | `"Slate"` | `Runtime\Slate\Public\` | Concrete widget types |
 | **UMG** | `"UMG"` | `Runtime\UMG\Public\` | `UUserWidget`, `UWidgetComponent`, Blueprint widget bindings |

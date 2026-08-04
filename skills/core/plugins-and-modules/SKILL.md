@@ -10,7 +10,7 @@ description: Create, structure, and manage Unreal Engine plugins — the .uplugi
   structuring an editor or runtime plugin, wiring plugin module C++, enabling plugins in a
   project, or troubleshooting a plugin that won't load or whose content won't mount.
 metadata:
-  engine-version: "5.7"
+  engine-version: "5.8"
   category: tooling
 ---
 
@@ -96,9 +96,9 @@ Key fields (`FPluginDescriptor` fields, `PluginDescriptor.h`):
 | `Version` | `Version` | Integer; must increase with each release. |
 | `VersionName` | `VersionName` | Human-readable version string shown in UI. |
 | `EnabledByDefault` | `EnabledByDefault` (`EPluginEnabledByDefault`:28) | `true`/`false`/omit (unspecified). |
-| `CanContainContent` | `bCanContainContent`:121 | Must be `true` for the `Content/` folder to mount. |
+| `CanContainContent` | `bCanContainContent`:127 | Must be `true` for the `Content/` folder to mount. |
 | `Modules` | `Modules`:90 — `TArray<FModuleDescriptor>` | Code modules; see below. |
-| `Plugins` | `Plugins`:163 — `TArray<FPluginReferenceDescriptor>` | Other plugins this one depends on. |
+| `Plugins` | `Plugins`:174 — `TArray<FPluginReferenceDescriptor>` | Other plugins this one depends on. |
 
 For full field reference see
 [references/uplugin-descriptor.md](references/uplugin-descriptor.md).
@@ -159,10 +159,10 @@ void FMyFeatureModule::ShutdownModule()
 }
 ```
 
-- `IMPLEMENT_MODULE` is in `Runtime/Core/Public/Modules/ModuleManager.h`:933. It registers
+- `IMPLEMENT_MODULE` is in `Runtime/Core/Public/Modules/ModuleManager.h`:946. It registers
   the module with the `FModuleManager` and installs UE's memory allocator overrides
   (`PER_MODULE_BOILERPLATE`). Every plugin module must have exactly one call.
-- `IModuleInterface::StartupModule()`:31 / `ShutdownModule()`:55 in
+- `IModuleInterface::StartupModule()`:49 / `ShutdownModule()`:79 in
   `Runtime/Core/Public/Modules/ModuleInterface.h`.
 - Use `FDefaultModuleImpl` (no startup logic) or `FDefaultGameModuleImpl` (gameplay module)
   when you don't need custom init. See `module-and-build-system` for these helpers.
@@ -187,7 +187,7 @@ IMPLEMENT_MODULE(FMyFeatureEditorModule, MyFeatureEditor)
 ## Enabling plugins
 
 **In a project:** add to the `.uproject` `Plugins` array or use Edit → Plugins in the editor.
-Each entry is a `FPluginReferenceDescriptor` (`PluginReferenceDescriptor.h`:27):
+Each entry is a `FPluginReferenceDescriptor` (`PluginReferenceDescriptor.h`:26):
 
 ```json
 "Plugins": [
@@ -221,7 +221,7 @@ Assets are referenced as `/SharedAssets/...` in the asset browser. No C++ requir
 
 ## Querying plugins at runtime
 
-`IPluginManager` (`Runtime/Projects/Public/Interfaces/IPluginManager.h`:273) is the singleton
+`IPluginManager` (`Runtime/Projects/Public/Interfaces/IPluginManager.h`:284) is the singleton
 for querying and mounting plugins. `IPlugin` (`IPluginManager.h`:110) represents one plugin.
 
 ```cpp
@@ -246,12 +246,12 @@ Key `IPluginManager` methods (all pure virtual, `IPluginManager.h`):
 
 | Method | Line | Notes |
 |---|---|---|
-| `Get()` | 649 | Singleton accessor |
-| `FindPlugin(Name)` | 382 | Find by name; returns null if not discovered |
-| `FindEnabledPlugin(Name)` | 393 | Returns null if not enabled |
-| `GetEnabledPlugins()` | 417 | All enabled plugins |
-| `GetEnabledPluginsWithContent()` | 424 | Enabled plugins that can contain content |
-| `GetDiscoveredPlugins()` | 443 | All discovered plugins (enabled or not) |
+| `Get()` | 667 | Singleton accessor |
+| `FindPlugin(Name)` | 393 | Find by name; returns null if not discovered |
+| `FindEnabledPlugin(Name)` | 404 | Returns null if not enabled |
+| `GetEnabledPlugins()` | 428 | All enabled plugins |
+| `GetEnabledPluginsWithContent()` | 435 | Enabled plugins that can contain content |
+| `GetDiscoveredPlugins()` | 454 | All discovered plugins (enabled or not) |
 
 Key `IPlugin` methods:
 
@@ -296,30 +296,30 @@ For code-level dependencies between modules inside or across plugins, list the m
   your plugin loads at `Default` too, ordering is undefined. Use `PreDefault` for providers.
 - **bExplicitlyLoaded** — plugins with this flag set in the descriptor do not load
   automatically. They must be mounted via `IPluginManager::MountExplicitlyLoadedPlugin`
-  (`IPluginManager.h`:545).
+  (`IPluginManager.h`:556).
 - **Config files not packaged** — plugin config files are not automatically packaged; copy
   them to the project's `Config/` folder before distribution.
 
 ## References & source material
 
-Engine source (UE 5.7, under `E:\Program Files\Epic Games\UE_5.7\Engine\Source\`):
+Engine source (UE 5.8, under `E:\Program Files\Epic Games\UE_5.8\Engine\Source\`):
 - `Runtime/Projects/Public/PluginDescriptor.h` — `FPluginDescriptor`:38,
-  `EPluginEnabledByDefault`:28, `Modules` field:90, `bCanContainContent`:121,
-  `Plugins` field:163.
+  `EPluginEnabledByDefault`:28, `Modules` field:90, `bCanContainContent`:127,
+  `Plugins` field:174.
 - `Runtime/Projects/Public/ModuleDescriptor.h` — `FModuleDescriptor`:154,
   `EHostType` namespace:82, `ELoadingPhase` namespace:24.
-- `Runtime/Projects/Public/PluginReferenceDescriptor.h` — `FPluginReferenceDescriptor`:27,
-  `bEnabled`:37, `bOptional`:40.
-- `Runtime/Projects/Public/Interfaces/IPluginManager.h` — `IPlugin`:110, `IPluginManager`:273,
-  `FindPlugin`:382, `FindEnabledPlugin`:393, `GetEnabledPlugins`:417,
-  `GetEnabledPluginsWithContent`:424, `GetDiscoveredPlugins`:443, `Get()`:649.
-- `Runtime/Core/Public/Modules/ModuleManager.h` — `IMPLEMENT_MODULE`:933.
-- `Runtime/Core/Public/Modules/ModuleInterface.h` — `IModuleInterface`, `StartupModule`:31,
-  `ShutdownModule`:55.
+- `Runtime/Projects/Public/PluginReferenceDescriptor.h` — `FPluginReferenceDescriptor`:26,
+  `bEnabled`:32, `bOptional`:35.
+- `Runtime/Projects/Public/Interfaces/IPluginManager.h` — `IPlugin`:110, `IPluginManager`:284,
+  `FindPlugin`:393, `FindEnabledPlugin`:404, `GetEnabledPlugins`:428,
+  `GetEnabledPluginsWithContent`:435, `GetDiscoveredPlugins`:454, `Get()`:667.
+- `Runtime/Core/Public/Modules/ModuleManager.h` — `IMPLEMENT_MODULE`:946.
+- `Runtime/Core/Public/Modules/ModuleInterface.h` — `IModuleInterface`, `StartupModule`:49,
+  `ShutdownModule`:79.
 
-Real example descriptor: `E:\Program Files\Epic Games\UE_5.7\Engine\Plugins\FX\Niagara\Niagara.uplugin`
+Real example descriptor: `E:\Program Files\Epic Games\UE_5.8\Engine\Plugins\FX\Niagara\Niagara.uplugin`
 
-Official docs (UE 5.7):
+Official docs (UE 5.8):
 - Plugins in Unreal Engine —
   <https://dev.epicgames.com/documentation/unreal-engine/plugins-in-unreal-engine>
 - Setting Up Your Production Pipeline —

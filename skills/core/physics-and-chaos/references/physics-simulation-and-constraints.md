@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers `FBodyInstance` properties, sub-stepping,
 the Chaos solver, constraint drives, ragdoll setup, and physical materials. Grounded in
-UE 5.7 (`Engine/Source/Runtime/Engine/Classes/PhysicsEngine/BodyInstance.h`,
+UE 5.8 (`Engine/Source/Runtime/Engine/Classes/PhysicsEngine/BodyInstance.h`,
 `ConstraintInstance.h`, `PhysicsConstraintComponent.h`) and the official
 [Physics Bodies](https://dev.epicgames.com/documentation/unreal-engine/physics-bodies-in-unreal-engine)
 and [Physics Constraints](https://dev.epicgames.com/documentation/unreal-engine/physics-constraints-in-unreal-engine)
@@ -15,8 +15,8 @@ root body (or a named bone on a skeletal mesh). Common fields to adjust:
 
 | Field | Default | Purpose |
 |---|---|---|
-| `LinearDamping` (`:599`) | 0.01 | Drag on linear velocity each step |
-| `AngularDamping` (`:603`) | 0.0 | Drag on angular velocity each step |
+| `LinearDamping` (`:629`) | 0.01 | Drag on linear velocity each step |
+| `AngularDamping` (`:633`) | 0.0 | Drag on angular velocity each step |
 | `bSimulatePhysics` | false | Master toggle (set via `SetSimulatePhysics`) |
 | `bStartAwake` | true | Wake the body when physics starts |
 | `bNotifyRigidBodyCollision` | false | Fire `OnComponentHit` on physics impact |
@@ -150,7 +150,7 @@ ConstraintComp->ConstraintInstance.ProfileInstance.LinearBreakThreshold = 10000.
 ConstraintComp->BreakConstraint();
 ```
 
-`OnConstraintBroken` is a single-cast delegate declared in `EngineTypes.h`:1136.
+`OnConstraintBroken` is a single-cast delegate declared in `EngineTypes.h`:1179.
 
 ## Ragdoll setup
 

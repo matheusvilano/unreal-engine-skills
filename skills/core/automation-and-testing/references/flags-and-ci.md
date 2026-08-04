@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the full `EAutomationTestFlags`
 reference, CI command-line recipes, report export, and a Gauntlet overview. Grounded
-in UE 5.7 (`Runtime/Core/Public/Misc/AutomationTest.h`:87).
+in UE 5.8 (`Runtime/Core/Public/Misc/AutomationTest.h`:88).
 
 ## `EAutomationTestFlags` reference
 
@@ -168,12 +168,12 @@ For most projects, functional tests + command-line automation runner cover CI ne
 Gauntlet is warranted when targeting multiple devices, needing real network sessions,
 or running hour-scale stability/performance tests.
 
-## Source citations (UE 5.7)
+## Source citations (UE 5.8)
 
-- `Runtime/Core/Public/Misc/AutomationTest.h`:87 — `EAutomationTestFlags` enum with
+- `Runtime/Core/Public/Misc/AutomationTest.h`:88 — `EAutomationTestFlags` enum with
   all values and documentation comments.
-- `Runtime/Core/Public/Misc/AutomationTest.h`:143–148 — convenience mask constants
+- `Runtime/Core/Public/Misc/AutomationTest.h`:144–149 — convenience mask constants
   (`EAutomationTestFlags_ApplicationContextMask`, `EAutomationTestFlags_FilterMask`,
   `EAutomationTestFlags_PriorityMask`, etc.).
-- `Runtime/Core/Public/Misc/AutomationTest.h`:1607–1610 — `bSuppressLogWarnings`,
+- `Runtime/Core/Public/Misc/AutomationTest.h`:1608–1611 — `bSuppressLogWarnings`,
   `bElevateLogWarningsToErrors`, `SuppressedLogCategories`.
