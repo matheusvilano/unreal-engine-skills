@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers sound classes, sound mixes,
 submix DSP chains, audio buses, concurrency rules, and dynamic mixing from C++.
-Grounded in UE 5.7 engine source under `Runtime/Engine/Classes/Sound/`.
+Grounded in UE 5.8 engine source under `Runtime/Engine/Classes/Sound/`.
 
 ## Sound Classes
 
@@ -99,7 +99,7 @@ AudioComp->SetAudioBusSendPostEffect(MasterBus, 1.0f);
 ```
 
 `EAudioBusChannels` defines channel counts: Mono, Stereo, Quad, 5.1, 7.1
-(`AudioBus.h`:12–20).
+(`AudioBus.h`:12–21).
 
 Audio buses are used extensively with MetaSounds: a MetaSound graph node can read
 from an audio bus, enabling runtime sidechaining and audio analysis inside the DSP
@@ -181,5 +181,5 @@ Official doc: <https://dev.epicgames.com/documentation/unreal-engine/audio-modul
   is the modern approach for dynamic mixing.
 - `EMaxConcurrentResolutionRule::StopQuietest` was added later in UE4's lifecycle
   and is fully supported in UE5.
-- `bEnableMaxCountPlatformScaling` (`SoundConcurrency.h`:83) enables platform-scaled
+- `bEnableMaxCountPlatformScaling` (`SoundConcurrency.h`:104) enables platform-scaled
   `MaxCount` tables — useful for lower-end mobile targets.

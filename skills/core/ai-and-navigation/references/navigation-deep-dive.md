@@ -2,13 +2,13 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers nav area costs and query filters, RVO and
 Detour Crowd avoidance, nav links (simple and smart), Navigation Invokers for open worlds,
-and World Partition navigation mesh. Grounded in UE 5.7
+and World Partition navigation mesh. Grounded in UE 5.8
 (`Engine/Source/Runtime/NavigationSystem/Public/`).
 
 ## NavMesh generation fundamentals
 
-`UNavigationSystemV1` (declared at `NavigationSystem.h`:295) manages all navigation data in
-a world. It generates `ARecastNavMesh` (`NavMesh/RecastNavMesh.h`:573) from collision
+`UNavigationSystemV1` (declared at `NavigationSystem.h`:291) manages all navigation data in
+a world. It generates `ARecastNavMesh` (`NavMesh/RecastNavMesh.h`:571) from collision
 geometry by voxelizing the level and converting traversable regions into convex polygons.
 
 **Generation modes** (set in Project Settings → Navigation Mesh → Generation Mode):
@@ -55,15 +55,15 @@ driven by `MoveToActor`/`MoveToLocation`.
 
 Key signals:
 - `OnMoveCompleted` override on the controller fires when the move ends.
-- `ReceiveMoveCompleted` dynamic delegate (controller, line 239) for Blueprint-binding.
+- `ReceiveMoveCompleted` dynamic delegate (controller, line 240) for Blueprint-binding.
 - `EPathFollowingResult::Success/Blocked/OffPath/Aborted/Invalid` describes why movement
   stopped.
 - Call `StopMovement()` to cancel the current move (fires `Aborted` result).
 
 **Partial paths:** If no full path exists, `ARecastNavMesh` can return a partial path to the
 closest reachable point. Check `IsPartialPath()` on the `UNavigationPath` to detect this.
-`UNavigationSystemV1::FindPathToLocationSynchronously` (line 521) and
-`FindPathToActorSynchronously` (line 527) return a `UNavigationPath*` for manual path
+`UNavigationSystemV1::FindPathToLocationSynchronously` (line 535) and
+`FindPathToActorSynchronously` (line 541) return a `UNavigationPath*` for manual path
 inspection without issuing a `MoveTo`.
 
 ## Avoidance

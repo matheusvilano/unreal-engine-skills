@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the `AGameModeBase`/`AGameMode` class
 hierarchy, default-class properties, the match-state machine, `AGameStateBase`/`AGameState`
-replication, and how to configure a GameMode per-project or per-map. Grounded in UE 5.7
+replication, and how to configure a GameMode per-project or per-map. Grounded in UE 5.8
 (`Engine/Source/Runtime/Engine/Classes/GameFramework/GameModeBase.h`,
 `GameMode.h`, `GameStateBase.h`, `GameState.h`) and the official
 [Game Mode and Game State](https://dev.epicgames.com/documentation/unreal-engine/game-mode-and-game-state-in-unreal-engine)
@@ -63,14 +63,14 @@ protected:
 
 `GetDefaultPawnClassForController` is a `BlueprintNativeEvent` (`GameModeBase.h`:84), so the
 C++ override is the `_Implementation` suffix variant. `ChoosePlayerStart` is similarly a
-`BlueprintNativeEvent` (`GameModeBase.h`:411). `OnPostLogin` is a plain `virtual` protected
+`BlueprintNativeEvent` (`GameModeBase.h`:405). `OnPostLogin` is a plain `virtual` protected
 member (`GameModeBase.h`:334) — note that `DispatchPostLogin` was deprecated in 5.6
 (`GameModeBase.h`:329–330).
 
 ## Match-state machine (AGameMode only)
 
 `AGameMode` adds a replicated `FName MatchState` (`GameMode.h`:69) and a state machine that
-drives it. Valid states are constants in the `MatchState` namespace (`GameMode.h`:17–26):
+drives it. Valid states are constants in the `MatchState` namespace (`GameMode.h`:16–27):
 
 | State | Meaning |
 |---|---|

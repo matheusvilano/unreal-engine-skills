@@ -1,7 +1,7 @@
 # Pak files, IoStore, and chunking — full reference
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the pak and IoStore container formats,
-chunk assignment methods, compression, encryption, and chunk auditing. Grounded in UE 5.7
+chunk assignment methods, compression, encryption, and chunk auditing. Grounded in UE 5.8
 (`Engine/Source/Runtime/Core/Internal/IO/IoStore.h`,
 `Engine/Source/Developer/DeveloperToolSettings/Classes/Settings/ProjectPackagingSettings.h`)
 and the official
@@ -30,14 +30,14 @@ Two files per container:
   metadata (compressed block sizes, hash, compression method, etc.).
 - **`.ucas`** — bulk payload. Raw compressed data blocks addressed by `FIoChunkId`.
 
-`EIoStoreTocVersion` tracks the format version (`IoStore.h`:25); UE 5.7 uses `Latest`.
+`EIoStoreTocVersion` tracks the format version (`IoStore.h`:25); UE 5.8 uses `Latest`.
 
 The IoDispatcher reads the `.utoc` to build a hash-addressed lookup, then fetches
 `.ucas` blocks directly — avoiding path-based file system lookups. This is why IoStore
 loads packages faster than classic pak on high-latency storage (optical media, HDDs,
 streaming CDN).
 
-Enable via: `UProjectPackagingSettings::bUseIoStore = true` (`ProjectPackagingSettings.h`:270)
+Enable via: `UProjectPackagingSettings::bUseIoStore = true` (`ProjectPackagingSettings.h`:250)
 or the `-iostore` flag to UAT.
 
 **Zen Server** (`bUseZenStore = true`, requires `bUseIoStore`) hosts IoStore containers
@@ -55,7 +55,7 @@ assigned to a higher chunk falls into chunk 0 by default.
 **Chunks 1+** are downloaded separately (streaming install, DLC, patch, on-demand).
 
 Key settings in `UProjectPackagingSettings`:
-- `bGenerateChunks` (`ProjectPackagingSettings.h`:285) — enables chunk generation.
+- `bGenerateChunks` (`ProjectPackagingSettings.h`:265) — enables chunk generation.
 - `bGenerateNoChunks` — override to disable chunking on all platforms.
 - `bChunkHardReferencesOnly` — when true, only hard-reference dependencies are pulled
   into a chunk alongside their owner; soft references stay in their original chunk.
@@ -118,7 +118,7 @@ unintended asset duplication across chunks.
 | `PackageCompressionLevel_Distribution` | Effort level for distribution builds |
 | `CompressedChunkWildcard` | Only compress paks matching a pattern (e.g. `*pakchunk0*`) |
 
-Source: `ProjectPackagingSettings.h`:343–383.
+Source: `ProjectPackagingSettings.h`:323–363.
 
 Oodle is the recommended compressor for most platforms (best ratio/speed tradeoff).
 Setting `PackageCompressionMethod=Kraken` (balanced) is a good default; `Leviathan`

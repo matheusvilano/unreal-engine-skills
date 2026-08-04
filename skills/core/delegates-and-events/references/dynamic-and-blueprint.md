@@ -3,7 +3,7 @@
 Deep dive for [../SKILL.md](../SKILL.md). Covers `DECLARE_DYNAMIC_MULTICAST_DELEGATE`
 mechanics, `AddDynamic`/`RemoveDynamic`/`BindDynamic`, the `UDELEGATE` specifier,
 Blueprint event dispatcher wiring, serialization, and the performance trade-offs
-of dynamic delegates. Grounded in UE 5.7
+of dynamic delegates. Grounded in UE 5.8
 (`Engine/Source/Runtime/Core/Public/Delegates/DelegateSignatureImpl.inl`,
 `Delegates/Delegate.h`, official
 [Dynamic Delegates](https://dev.epicgames.com/documentation/unreal-engine/dynamic-delegates-in-unreal-engine)

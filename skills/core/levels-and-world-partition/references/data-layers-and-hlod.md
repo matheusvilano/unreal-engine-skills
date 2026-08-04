@@ -1,7 +1,7 @@
 # Data Layers & HLOD — full reference
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers Data Layer types, runtime states, load
-filters, replication, HLOD layer setup and generation. Grounded in UE 5.7
+filters, replication, HLOD layer setup and generation. Grounded in UE 5.8
 `Engine/Source/Runtime/Engine/Public/WorldPartition/DataLayer/` and the official
 [World Partition - Data Layers](https://dev.epicgames.com/documentation/unreal-engine/world-partition---data-layers-in-unreal-engine)
 doc.
@@ -19,11 +19,11 @@ Two orthogonal axes:
    - `ServerOnly` — state managed on the server; not visible to clients.
 
 Source: `Runtime/Engine/Public/WorldPartition/DataLayer/DataLayerAsset.h`:29 (`UDataLayerAsset`),
-:17 (`EDataLayerLoadFilter`).
+:18 (`EDataLayerLoadFilter`).
 
 ## Runtime states
 
-`EDataLayerRuntimeState` (from `DataLayerInstance.h`:25):
+`EDataLayerRuntimeState` (from `DataLayerInstance.h`:23):
 - `Unloaded` — actors are not loaded into memory.
 - `Loaded` — actors loaded but not visible (e.g. pre-load for a quest trigger).
 - `Activated` — actors loaded and visible; gameplay active.
@@ -55,8 +55,8 @@ Alternatively, use the asset-based shorthand:
 DLM->SetDataLayerRuntimeState(MyDataLayerAsset, EDataLayerRuntimeState::Loaded);
 ```
 
-Source: `Runtime/Engine/Public/WorldPartition/DataLayer/DataLayerManager.h`:83
-(`SetDataLayerInstanceRuntimeState`), :95 (`SetDataLayerRuntimeState`).
+Source: `Runtime/Engine/Public/WorldPartition/DataLayer/DataLayerManager.h`:82
+(`SetDataLayerInstanceRuntimeState`), :94 (`SetDataLayerRuntimeState`).
 
 ## Replication rules
 

@@ -12,7 +12,7 @@ description: Use Gameplay Tags in Unreal C++ — hierarchical FName-based labels
   systems share; when replacing brittle enums or string comparisons; or when working
   with GAS, AI behavior trees, animation, or UI systems that gate behavior on tags.
 metadata:
-  engine-version: "5.7"
+  engine-version: "5.8"
   category: gameplay-framework
 ---
 
@@ -234,7 +234,7 @@ and show custom editor widgets in Details panels.
 ## Version notes
 
 - `UE_DEFINE_GAMEPLAY_TAG_STATIC` (file-private tag) and the `UE_DEFINE_GAMEPLAY_TAG_COMMENT`
-  (with developer tooltip) forms were both present in UE5.0+; stable in 5.7.
+  (with developer tooltip) forms were both present in UE5.0+; stable in 5.8.
 - `GetSingleTagContainer(FGameplayTag)` on `UGameplayTagsManager` was deprecated in 5.4;
   the member `FGameplayTag::GetSingleTagContainer()` is the replacement.
 - `FGameplayTagQuery::MakeQuery_ExactMatchAnyTags` / `MakeQuery_ExactMatchAllTags` added
@@ -249,18 +249,18 @@ and show custom editor widgets in Details panels.
 
 ## References & source material
 
-Engine source (UE 5.7, `Engine/Source/Runtime/GameplayTags/`):
-- `Classes/GameplayTagContainer.h` — `FGameplayTag`:44, `RequestGameplayTag`:60,
-  `MatchesTag`:94, `MatchesTagExact`:103, `MatchesAny`:129, `GetSingleTagContainer`:147;
-  `FGameplayTagContainer`:250, `HasTag`:304, `HasTagExact`:321, `HasAny`:338,
-  `HasAnyExact`:361, `HasAll`:384, `HasAllExact`:407, `AddTag`:499, `RemoveTag`:525,
-  `AppendTags`:477, `MatchesQuery`:469; `FGameplayTagQuery`:738, `Matches`:804,
-  `BuildQuery`:816, `MakeQuery_MatchAnyTags`:855, `MakeQuery_MatchAllTags`:856,
-  `MakeQuery_MatchNoTags`:857; `FGameplayTagQueryExpression`:866.
-- `Classes/GameplayTagsManager.h` — `UGameplayTagsManager`:329, `Get()`:337,
-  `RequestGameplayTag`:368, `RequestGameplayTagContainer`:358,
-  `AddNativeGameplayTag`:396, `RequestGameplayTagParents`:426,
-  `RequestGameplayTagChildren`:447, `DoneAddingNativeTags`:405.
+Engine source (UE 5.8, `Engine/Source/Runtime/GameplayTags/`):
+- `Classes/GameplayTagContainer.h` — `FGameplayTag`:41, `RequestGameplayTag`:57,
+  `MatchesTag`:91, `MatchesTagExact`:100, `MatchesAny`:126, `GetSingleTagContainer`:144;
+  `FGameplayTagContainer`:247, `HasTag`:299, `HasTagExact`:316, `HasAny`:333,
+  `HasAnyExact`:356, `HasAll`:379, `HasAllExact`:402, `AddTag`:494, `RemoveTag`:520,
+  `AppendTags`:472, `MatchesQuery`:464; `FGameplayTagQuery`:737, `Matches`:803,
+  `BuildQuery`:815, `MakeQuery_MatchAnyTags`:854, `MakeQuery_MatchAllTags`:855,
+  `MakeQuery_MatchNoTags`:856; `FGameplayTagQueryExpression`:865.
+- `Classes/GameplayTagsManager.h` — `UGameplayTagsManager`:336, `Get()`:344,
+  `RequestGameplayTag`:375, `RequestGameplayTagContainer`:365,
+  `AddNativeGameplayTag`:403, `RequestGameplayTagParents`:446,
+  `RequestGameplayTagChildren`:467, `DoneAddingNativeTags`:412.
 - `Public/NativeGameplayTags.h` — `UE_DECLARE_GAMEPLAY_TAG_EXTERN`:31,
   `UE_DEFINE_GAMEPLAY_TAG_COMMENT`:36, `UE_DEFINE_GAMEPLAY_TAG`:41,
   `UE_DEFINE_GAMEPLAY_TAG_STATIC`:46; `FNativeGameplayTag`:58.
@@ -270,7 +270,7 @@ Engine source (UE 5.7, `Engine/Source/Runtime/GameplayTags/`):
 - `Classes/GameplayTagsSettings.h` — `UGameplayTagsSettings`:103, `FastReplication`:129,
   `GameplayTagTableList`:145.
 
-Official docs (UE 5.7):
+Official docs (UE 5.8):
 - Gameplay Tags — <https://dev.epicgames.com/documentation/unreal-engine/using-gameplay-tags-in-unreal-engine>
 - Gameplay Systems — <https://dev.epicgames.com/documentation/unreal-engine/gameplay-systems-in-unreal-engine>
 

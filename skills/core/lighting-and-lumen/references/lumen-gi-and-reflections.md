@@ -2,8 +2,8 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the Lumen architecture, the two
 tracing modes, the full settings table from `FPostProcessSettings`, emissive GI,
-sky light integration, and hardware ray tracing notes. Grounded in UE 5.7
-(`Engine/Source/Runtime/Engine/Classes/Engine/Scene.h` — `FPostProcessSettings`:692)
+sky light integration, and hardware ray tracing notes. Grounded in UE 5.8
+(`Engine/Source/Runtime/Engine/Classes/Engine/Scene.h` — `FPostProcessSettings`:711)
 and the official
 [Lumen Global Illumination and Reflections](https://dev.epicgames.com/documentation/unreal-engine/lumen-global-illumination-and-reflections-in-unreal-engine)
 doc.
@@ -50,7 +50,7 @@ To disable static lighting interference:
 - HRT scene update cost scales with instance count; scenes with >100k instances see
   significant update overhead — use SRT for open worlds at that scale.
 
-## Post Process Volume settings (FPostProcessSettings, Scene.h:692)
+## Post Process Volume settings (FPostProcessSettings, Scene.h:711)
 
 All Lumen-related overrides require the corresponding `bOverride_*` bit to be set;
 the editor's checkbox does this automatically.
@@ -59,29 +59,29 @@ the editor's checkbox does this automatically.
 
 | Field | Line | Default | Purpose |
 |---|---|---|---|
-| `LumenSceneLightingQuality` | 1718 | 1.0 | Fidelity of the Lumen scene cache; larger → better quality at higher GPU cost |
-| `LumenSceneDetail` | 1722 | 1.0 | Minimum instance size represented in Lumen scene; increase for small props |
-| `LumenSceneViewDistance` | 1726 | — | Max distance Lumen maintains for GI/sky shadowing |
-| `LumenSceneLightingUpdateSpeed` | 1730 | 1.0 | Propagation speed of lighting changes; higher = faster but more cost |
-| `LumenFinalGatherQuality` | 1734 | 1.0 | Sample count for the final gather; higher reduces noise |
-| `LumenFinalGatherLightingUpdateSpeed` | 1738 | 1.0 | How quickly final gather tracks lighting changes |
-| `LumenFinalGatherScreenTraces` | 1742 | on | Add screen-space traces to the final gather for extra detail |
-| `LumenMaxTraceDistance` | 1746 | — | Maximum ray length; too small → GI leaks into large enclosed spaces |
-| `LumenDiffuseColorBoost` | 1750 | 1.0 | Non-physical boost to indirect; useful for dark-material scenes |
-| `LumenSkylightLeaking` | 1754 | 0.0 | Fraction of skylight to bleed indoors (artistic, non-physical) |
-| `LumenSurfaceCacheResolution` | 1766 | 0.5 | Cache resolution scale for scene captures |
+| `LumenSceneLightingQuality` | 1783 | 1.0 | Fidelity of the Lumen scene cache; larger → better quality at higher GPU cost |
+| `LumenSceneDetail` | 1787 | 1.0 | Minimum instance size represented in Lumen scene; increase for small props |
+| `LumenSceneViewDistance` | 1791 | — | Max distance Lumen maintains for GI/sky shadowing |
+| `LumenSceneLightingUpdateSpeed` | 1795 | 1.0 | Propagation speed of lighting changes; higher = faster but more cost |
+| `LumenFinalGatherQuality` | 1799 | 1.0 | Sample count for the final gather; higher reduces noise |
+| `LumenFinalGatherLightingUpdateSpeed` | 1803 | 1.0 | How quickly final gather tracks lighting changes |
+| `LumenFinalGatherScreenTraces` | 1807 | on | Add screen-space traces to the final gather for extra detail |
+| `LumenMaxTraceDistance` | 1811 | — | Maximum ray length; too small → GI leaks into large enclosed spaces |
+| `LumenDiffuseColorBoost` | 1815 | 1.0 | Non-physical boost to indirect; useful for dark-material scenes |
+| `LumenSkylightLeaking` | 1823 | 0.0 | Fraction of skylight to bleed indoors (artistic, non-physical) |
+| `LumenSurfaceCacheResolution` | 1835 | 1.0 | Cache resolution scale for scene captures |
 
 ### Reflections category
 
 | Field | Line | Default | Purpose |
 |---|---|---|---|
-| `LumenReflectionQuality` | 1777 | 1.0 | Reflection ray sample count |
-| `LumenReflectionsScreenTraces` | 1781 | on | Screen-space refinement pass for reflections |
-| `LumenFrontLayerTranslucencyReflections` | 1785 | off | Mirror reflections on front translucency layer |
-| `LumenMaxRoughnessToTraceReflections` | 1789 | — | Max roughness for dedicated reflection rays; higher = glossy on rough surfaces but costly |
-| `LumenMaxReflectionBounces` | 1793 | 1 | Recursive reflection bounces (up to 8 in PPV, up to 64 via `r.Lumen.Reflections.MaxBounces`; requires HRT hit lighting) |
-| `LumenMaxRefractionBounces` | 1797 | 0 | Refraction ray bounces through translucency; >0 requires HRT hit lighting |
-| `LumenRayLightingMode` | 1714 | SurfaceCache | `SurfaceCache` (fast) or `HitLightingForReflections` (quality, requires HRT) |
+| `LumenReflectionQuality` | 1846 | 1.0 | Reflection ray sample count |
+| `LumenReflectionsScreenTraces` | 1850 | on | Screen-space refinement pass for reflections |
+| `LumenFrontLayerTranslucencyReflections` | 1854 | off | Mirror reflections on front translucency layer |
+| `LumenMaxRoughnessToTraceReflections` | 1858 | — | Max roughness for dedicated reflection rays; higher = glossy on rough surfaces but costly |
+| `LumenMaxReflectionBounces` | 1862 | 1 | Recursive reflection bounces (up to 8 in PPV, up to 64 via `r.Lumen.Reflections.MaxBounces`; requires HRT hit lighting) |
+| `LumenMaxRefractionBounces` | 1866 | 0 | Refraction ray bounces through translucency; >0 requires HRT hit lighting |
+| `LumenRayLightingMode` | 1779 | SurfaceCache | `SurfaceCache` (fast) or `HitLightingForReflections` (quality, requires HRT) |
 
 ## Sky light integration
 

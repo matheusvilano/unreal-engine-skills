@@ -9,7 +9,7 @@ description: Build AI in Unreal — AIController-driven pawns, Behavior Trees an
   queries for cover/flanking/positions, sensing the player, or replacing Behavior Trees
   with StateTree.
 metadata:
-  engine-version: "5.7"
+  engine-version: "5.8"
   category: systems
 ---
 
@@ -73,8 +73,8 @@ On the pawn (or its Blueprint):
 - `AIControllerClass = AMyAIController::StaticClass()`
 - `AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned`
 
-`RunBehaviorTree` is declared at `AIController.h`:261. It also sets
-`bStartAILogicOnPossess` (line 101) which auto-starts the BT when possessed.
+`RunBehaviorTree` is declared at `AIController.h`:262. It also sets
+`bStartAILogicOnPossess` (line 98) which auto-starts the BT when possessed.
 In server-only AI, the controller only exists on the server; guard client-side calls.
 
 ## Behavior Trees & Blackboard
@@ -129,14 +129,14 @@ full instancing model, node memory, composite abort modes, and service intervals
 
 ```cpp
 // Issue movement from the AIController:
-MoveToActor(TargetActor, /*AcceptanceRadius*/ 50.f);      // AIController.h:171
-MoveToLocation(Destination, 50.f);                         // AIController.h:186
+MoveToActor(TargetActor, /*AcceptanceRadius*/ 50.f);      // AIController.h:172
+MoveToLocation(Destination, 50.f);                         // AIController.h:187
 
 // React to completion:
 virtual void OnMoveCompleted(FAIRequestID RequestID,
-    const FPathFollowingResult& Result) override;           // AIController.h:229
+    const FPathFollowingResult& Result) override;           // AIController.h:230
 // Or bind the dynamic delegate:
-ReceiveMoveCompleted.AddDynamic(this, &AMyCtrl::OnMoveDone); // AIController.h:239
+ReceiveMoveCompleted.AddDynamic(this, &AMyCtrl::OnMoveDone); // AIController.h:240
 ```
 
 **Setup checklist:**
@@ -165,9 +165,9 @@ position", "closest visible health pickup".
 **Run from C++:**
 ```cpp
 // In an AIController or BT task:
-FEnvQueryRequest Request(CoverQuery, this); // EnvQueryManager.h:77
+FEnvQueryRequest Request(CoverQuery, this); // EnvQueryManager.h:80
 Request.Execute(EEnvQueryRunMode::SingleResult, this,
-    &AMyAIController::OnCoverQueryFinished); // EnvQueryManager.h:97-99
+    &AMyAIController::OnCoverQueryFinished); // EnvQueryManager.h:97-106
 
 void AMyAIController::OnCoverQueryFinished(
     TSharedPtr<FEnvQueryResult> Result)
@@ -292,10 +292,10 @@ StateTree C++ task authoring, schema setup, and the BT-vs-StateTree decision gui
 
 ## References & source material
 
-Engine source (UE 5.7, under `Engine/Source/Runtime/`):
-- `AIModule/Classes/AIController.h` — `AAIController`:90, `MoveToActor`:171,
-  `MoveToLocation`:186, `OnMoveCompleted`:229, `ReceiveMoveCompleted`:239,
-  `RunBehaviorTree`:261, `OnPossess`:346, `GetBlackboardComponent`:446.
+Engine source (UE 5.8, under `Engine/Source/Runtime/`):
+- `AIModule/Classes/AIController.h` — `AAIController`:87, `MoveToActor`:172,
+  `MoveToLocation`:187, `OnMoveCompleted`:230, `ReceiveMoveCompleted`:240,
+  `RunBehaviorTree`:262, `OnPossess`:351, `GetBlackboardComponent`:451.
 - `AIModule/Classes/BehaviorTree/BehaviorTreeComponent.h` — `UBehaviorTreeComponent`:104,
   `StartTree`:137, `StopTree`:140, `RestartTree`:146.
 - `AIModule/Classes/BehaviorTree/BTTaskNode.h` — `UBTTaskNode`:33, `ExecuteTask`:40,
@@ -314,22 +314,22 @@ Engine source (UE 5.7, under `Engine/Source/Runtime/`):
   `GetCurrentlyPerceivedActors`:372, `OnPerceptionUpdated`:396,
   `OnTargetPerceptionUpdated`:423.
 - `AIModule/Classes/Perception/AISenseConfig_Sight.h` — `UAISenseConfig_Sight`:18,
-  `SightRadius`:28, `LoseSightRadius`:32, `PeripheralVisionAngleDegrees`:36.
+  `SightRadius`:28, `LoseSightRadius`:32, `PeripheralVisionAngleDegrees`:37.
 - `AIModule/Classes/Navigation/PathFollowingComponent.h` — `UPathFollowingComponent`:216,
   `RequestMove`:248.
-- `NavigationSystem/Public/NavigationSystem.h` — `UNavigationSystemV1`:295,
-  `GetNavigationSystem`:488, `FindPathToLocationSynchronously`:521,
-  `FindPathToActorSynchronously`:527.
-- `NavigationSystem/Public/NavMesh/RecastNavMesh.h` — `ARecastNavMesh`:573.
+- `NavigationSystem/Public/NavigationSystem.h` — `UNavigationSystemV1`:291,
+  `GetNavigationSystem`:502, `FindPathToLocationSynchronously`:535,
+  `FindPathToActorSynchronously`:541.
+- `NavigationSystem/Public/NavMesh/RecastNavMesh.h` — `ARecastNavMesh`:571.
 
-Plugins (UE 5.7, under `Engine/Plugins/Runtime/`):
+Plugins (UE 5.8, under `Engine/Plugins/Runtime/`):
 - `StateTree/Source/StateTreeModule/Public/StateTree.h` — `UStateTree` asset.
 - `GameplayStateTree/Source/GameplayStateTreeModule/Public/Components/StateTreeAIComponent.h`
-  — `UStateTreeAIComponent`:15.
+  — `UStateTreeAIComponent`:16.
 - `GameplayStateTree/Source/GameplayStateTreeModule/Public/Components/StateTreeComponent.h`
   — `UStateTreeComponent`:39, `StartLogic`:54, `StopLogic`:56.
 
-Official docs (UE 5.7):
+Official docs (UE 5.8):
 - Artificial Intelligence — <https://dev.epicgames.com/documentation/unreal-engine/artificial-intelligence-in-unreal-engine>
 - Behavior Trees — <https://dev.epicgames.com/documentation/unreal-engine/behavior-trees-in-unreal-engine>
 - Navigation System — <https://dev.epicgames.com/documentation/unreal-engine/navigation-system-in-unreal-engine>

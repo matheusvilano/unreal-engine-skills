@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the garbage collection reachability cycle,
 the root set, object clustering, incremental GC, and the destruction callback sequence.
-Grounded in UE 5.7 (`Engine/Source/Runtime/CoreUObject/`).
+Grounded in UE 5.8 (`Engine/Source/Runtime/CoreUObject/`).
 
 ## The reachability cycle
 
@@ -22,9 +22,9 @@ Each cycle has three phases:
    `bPerformFullPurge=true`) it completes in one pass.
 
 `CollectGarbage(EObjectFlags KeepFlags, bool bPerformFullPurge)` is the manual trigger:
-`Runtime/CoreUObject/Public/UObject/UObjectGlobals.h`:930.
+`Runtime/CoreUObject/Public/UObject/UObjectGlobals.h`:952.
 `TryCollectGarbage` (non-blocking version):
-`Runtime/CoreUObject/Public/UObject/UObjectGlobals.h`:940.
+`Runtime/CoreUObject/Public/UObject/UObjectGlobals.h`:962.
 
 ## Root set
 
@@ -40,7 +40,7 @@ membership:
 | `RF_Standalone` flag | objects with this flag are kept alive even without UPROPERTY references |
 
 `AddToRoot` / `RemoveFromRoot` / `IsRooted` are declared in
-`Runtime/CoreUObject/Public/UObject/UObjectBaseUtility.h`:206, 212, 222.
+`Runtime/CoreUObject/Public/UObject/UObjectBaseUtility.h`:231, 237, 247.
 
 **`AddToRoot` is global and permanent until `RemoveFromRoot`** — the object survives every GC
 cycle. Missing the matching `RemoveFromRoot` is a common permanent leak.
@@ -57,8 +57,8 @@ components). Toggle via `bCanBeInCluster` or override `CanBeInCluster()`. Config
 
 ## Incremental GC
 
-Enabled by default in UE5. The mark phase is time-sliced across multiple frames to prevent
-hitches. `TObjectPtr` members (vs. raw `T* UPROPERTY`) are required for the GC write barrier that
+Incremental purge is on by default; incremental reachability analysis (time-slicing the mark
+phase across multiple frames to prevent hitches) is opt-in via `gc.AllowIncrementalReachability`. `TObjectPtr` members (vs. raw `T* UPROPERTY`) are required for the GC write barrier that
 keeps incremental marking safe when references change mid-frame. Raw `T* UPROPERTY` works but
 does not participate in the write barrier, which can cause objects to be missed in an incremental
 pass and only collected on the next full pass.
@@ -85,11 +85,11 @@ gameplay code should stop using it, but raw pointers to it will not be nulled.
 
 `IsValid(UObject* Test)` returns `true` if `Test` is non-null and has neither the garbage flag
 nor the `RF_BeginDestroyed` flag set:
-`Runtime/CoreUObject/Public/UObject/Object.h`:1875.
+`Runtime/CoreUObject/Public/UObject/Object.h`:1886.
 
 `MarkAsGarbage` asserts `!IsRooted()` — you must `RemoveFromRoot()` before marking rooted objects
 as garbage:
-`Runtime/CoreUObject/Public/UObject/UObjectBaseUtility.h`:182.
+`Runtime/CoreUObject/Public/UObject/UObjectBaseUtility.h`:207.
 
 ## Version note
 

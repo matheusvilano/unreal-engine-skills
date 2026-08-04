@@ -11,7 +11,7 @@ description: Create and drive Unreal Engine cinematics from C++ — ULevelSequen
   animating a film-style camera, firing gameplay callbacks from an event track, or
   rendering frames with the Movie Render Pipeline.
 metadata:
-  engine-version: "5.7"
+  engine-version: "5.8"
   category: animation
 ---
 
@@ -111,7 +111,7 @@ Key player methods (all on `UMovieSceneSequencePlayer`, base of `ULevelSequenceP
 | `GetCurrentTime()` | Returns `FQualifiedFrameTime` |
 
 Source: `Runtime/MovieScene/Public/MovieSceneSequencePlayer.h` — `Play`:193, `PlayLooping`:208,
-`Stop`:220, `Pause`:211, `SetPlaybackPosition`:344, `OnFinished`:426.
+`Stop`:220, `Pause`:212, `SetPlaybackPosition`:344, `OnFinished`:426.
 
 ## Bindings — possessables vs spawnables
 
@@ -235,7 +235,7 @@ Full MRQ setup and scripting: [references/movie-render-queue.md](references/movi
 
 ## References & source material
 
-Engine source (UE 5.7, under `Engine/Source/Runtime/`):
+Engine source (UE 5.8, under `Engine/Source/Runtime/`):
 - `LevelSequence/Public/LevelSequence.h` — `ULevelSequence`, `MovieScene`, `DirectorClass`.
 - `LevelSequence/Public/LevelSequenceActor.h` — `ALevelSequenceActor`, `GetSequencePlayer`:153,
   `SetBinding`:178, `SetBindingByTag`:190, `FindNamedBinding`:244, `bReplicatePlayback`:117.
@@ -244,17 +244,17 @@ Engine source (UE 5.7, under `Engine/Source/Runtime/`):
 - `LevelSequence/Public/LevelSequenceDirector.h` — `ULevelSequenceDirector`, `Player`:131,
   `GetBoundObjects`:65, `GetBoundActor`:95.
 - `MovieScene/Public/MovieSceneSequencePlayer.h` — `Play`:193, `PlayLooping`:208, `Stop`:220,
-  `Pause`:211, `SetPlaybackPosition`:344, `OnFinished`:426, `OnStop`:418, `OnPlay`:410.
+  `Pause`:212, `SetPlaybackPosition`:344, `OnFinished`:426, `OnStop`:418, `OnPlay`:410.
 - `MovieScene/Public/MovieSceneSequencePlaybackSettings.h` — `FMovieSceneSequencePlaybackSettings`.
 - `MovieScene/Public/MovieScene.h` — `UMovieScene` (tracks/sections/bindings model).
 - `CinematicCamera/Public/CineCameraComponent.h` — `UCineCameraComponent`, `CurrentFocalLength`:66,
-  `CurrentAperture`:70, `Filmback`:38, `FocusSettings`:53.
+  `CurrentAperture`:70, `Filmback`:38, `FocusSettings`:52.
 - `CinematicCamera/Public/CineCameraActor.h` — `ACineCameraActor`, `GetCineCameraComponent`:90.
 
-Plugin source (UE 5.7):
+Plugin source (UE 5.8):
 - `Engine/Plugins/MovieScene/MovieRenderPipeline/Source/MovieRenderPipelineCore/Public/MoviePipelineQueue.h`
 
-Official docs (UE 5.7, verified):
+Official docs (UE 5.8, verified):
 - Cinematics and Sequencer —
   <https://dev.epicgames.com/documentation/unreal-engine/cinematics-and-movie-making-in-unreal-engine>
 - Sequencer Overview —

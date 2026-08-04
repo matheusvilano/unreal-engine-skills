@@ -2,7 +2,7 @@
 
 Deep-dive for [../SKILL.md](../SKILL.md). Covers plugin folder conventions, multi-module
 layout patterns, the runtime/editor module split, content plugins, and the `IModuleInterface`
-lifecycle inside a plugin. Grounded in UE 5.7
+lifecycle inside a plugin. Grounded in UE 5.8
 (`Runtime/Projects/Public/PluginDescriptor.h`, `ModuleDescriptor.h`,
 `Runtime/Core/Public/Modules/ModuleInterface.h`).
 
@@ -193,10 +193,10 @@ module (`Runtime/Core/Public/Modules/ModuleInterface.h`):
 
 | Hook | Line | When called |
 |---|---|---|
-| `StartupModule()` | 31 | Module DLL loaded and module object constructed |
-| `ShutdownModule()` | 55 | Module about to be destroyed (reverse startup order) |
-| `SupportsDynamicReloading()` | 64 | Return `false` to prevent hot-reload of this module |
-| `PostLoadCallback()` | 45 | After a hot-reload of this module |
+| `StartupModule()` | 49 | Module DLL loaded and module object constructed |
+| `ShutdownModule()` | 79 | Module about to be destroyed (reverse startup order) |
+| `SupportsDynamicReloading()` | 88 | Return `false` to prevent hot-reload of this module |
+| `PostLoadCallback()` | 68 | After a hot-reload of this module |
 
 Plugin modules are loaded per the `LoadingPhase` in their `.uplugin` descriptor. The order
 within the same phase is not guaranteed between modules from different plugins. Use
@@ -235,8 +235,8 @@ dependent module will get an "unresolved external symbol" link error.
 - `Runtime/Projects/Public/PluginDescriptor.h` — `FPluginDescriptor`:38
 - `Runtime/Projects/Public/ModuleDescriptor.h` — `FModuleDescriptor`:154, `EHostType`:82
 - `Runtime/Core/Public/Modules/ModuleInterface.h` — `IModuleInterface`, all hooks
-- `Runtime/Core/Public/Modules/ModuleManager.h` — `IMPLEMENT_MODULE`:933,
-  `FDefaultModuleImpl`:871
-- Example: `E:\Program Files\Epic Games\UE_5.7\Engine\Plugins\FX\Niagara\Niagara.uplugin`
+- `Runtime/Core/Public/Modules/ModuleManager.h` — `IMPLEMENT_MODULE`:946,
+  `FDefaultModuleImpl`:884
+- Example: `E:\Program Files\Epic Games\UE_5.8\Engine\Plugins\FX\Niagara\Niagara.uplugin`
   (multi-module plugin with Runtime, UncookedOnly, and Editor modules)
 - Official doc: <https://dev.epicgames.com/documentation/unreal-engine/plugins-in-unreal-engine>

@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers multi-platform packaging, Device
 Profiles, the Client/Server dedicated-server pattern, IoStore On-Demand streaming, and
-patching/DLC workflows. Grounded in UE 5.7
+patching/DLC workflows. Grounded in UE 5.8
 (`Engine/Source/Runtime/Experimental/IoStore/OnDemandCore/Public/IO/IoStoreOnDemand.h`)
 and the official
 [Patching, Content Delivery, and DLC](https://dev.epicgames.com/documentation/unreal-engine/patching-content-delivery-and-dlc-in-unreal-engine)
@@ -70,7 +70,7 @@ The IoStore On-Demand system (`Runtime/Experimental/IoStore/OnDemand/`) enables 
 shipped game to fetch content from a CDN at runtime without requiring the full install
 upfront — the foundation for streaming installs and live-service drops.
 
-Core interface (source: `Engine/Source/Runtime/Experimental/IoStore/OnDemandCore/Public/IO/IoStoreOnDemand.h`:36):
+Core interface (source: `Engine/Source/Runtime/Experimental/IoStore/OnDemandCore/Public/IO/IoStoreOnDemand.h`:46/647):
 
 ```cpp
 namespace UE::IoStore

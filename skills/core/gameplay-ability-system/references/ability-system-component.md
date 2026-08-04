@@ -1,6 +1,6 @@
 # Ability System Component (ASC)
 
-> Deep-dive reference for `UAbilitySystemComponent`. Grounded in UE 5.7 source at
+> Deep-dive reference for `UAbilitySystemComponent`. Grounded in UE 5.8 source at
 > `Engine/Plugins/Runtime/GameplayAbilities/Source/GameplayAbilities/Public/AbilitySystemComponent.h`.
 > Return to [../SKILL.md](../SKILL.md) for the entry-level overview.
 
@@ -67,7 +67,7 @@ void AMyCharacter::OnRep_PlayerState()
 }
 ```
 
-`InitAbilityActorInfo` signature (`AbilitySystemComponent.h:1521`):
+`InitAbilityActorInfo` signature (`AbilitySystemComponent.h:1523`):
 ```
 virtual void InitAbilityActorInfo(AActor* InOwnerActor, AActor* InAvatarActor);
 ```
@@ -91,7 +91,7 @@ AttributeSet = CreateDefaultSubobject<UMyAttributeSet>(TEXT("AttributeSet"));
 ## Replication mode
 
 Set via `ASC->SetReplicationMode(Mode)` before the first replication frame. Defined in
-`AbilitySystemComponent.h:80`:
+`AbilitySystemComponent.h:81`:
 
 | Mode | Use when |
 |---|---|
@@ -117,7 +117,7 @@ AbilitySystemComponent->SetRemoveAbilityOnEnd(Handle);   // remove when ability 
 AbilitySystemComponent->ClearAllAbilities();             // remove everything
 ```
 
-`GiveAbility` signature (`AbilitySystemComponent.h:947`):
+`GiveAbility` signature (`AbilitySystemComponent.h:949`):
 ```
 FGameplayAbilitySpecHandle GiveAbility(const FGameplayAbilitySpec& AbilitySpec);
 ```
@@ -163,8 +163,8 @@ automatically as other abilities activate.
 ASC->RemoveActiveGameplayEffect(ActiveHandle);
 
 // Remove all effects with a given tag
-ASC->RemoveActiveGameplayEffectsWithTags(TagContainer);
+ASC->RemoveActiveEffectsWithTags(TagContainer);
 
-// Remove all effects from a specific source
-ASC->RemoveActiveEffects(FGameplayEffectQuery::MakeQuery_MatchAllSourceTags(SourceTag));
+// Remove all effects whose source spec had matching tags
+ASC->RemoveActiveEffects(FGameplayEffectQuery::MakeQuery_MatchAllSourceSpecTags(SourceTags));
 ```

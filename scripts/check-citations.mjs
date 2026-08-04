@@ -5,7 +5,7 @@
  * Verifies that every engine-source path cited in the skills
  * (Engine/Source/... and Engine/Plugins/...) exists on disk in a real engine
  * install. This keeps the repo's core quality claim — "ground claims in real
- * 5.7 source paths" — honest, and doubles as the upgrade tool when re-targeting
+ * 5.8 source paths" — honest, and doubles as the upgrade tool when re-targeting
  * a new engine version: anything that moved fails immediately.
  *
  * Usage:
@@ -14,7 +14,7 @@
  *
  * Engine root resolution:
  *   1. UE_ENGINE_ROOT env var (the directory that CONTAINS Engine/), if set.
- *   2. E:\Program Files\Epic Games\UE_5.7 (this machine's primary install).
+ *   2. E:\Program Files\Epic Games\UE_5.8 (this machine's primary install).
  *
  * Exit code 0 = all cited paths exist; 1 = at least one missing (or engine
  * root not found).
@@ -28,7 +28,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..');
 const skillsRoot = path.join(repoRoot, 'skills');
 
-const DEFAULT_ENGINE_ROOT = 'E:\\Program Files\\Epic Games\\UE_5.7';
+const DEFAULT_ENGINE_ROOT = 'E:\\Program Files\\Epic Games\\UE_5.8';
 const engineRoot = process.env.UE_ENGINE_ROOT?.trim() || DEFAULT_ENGINE_ROOT;
 
 // Matches Engine/Source/... and Engine/Plugins/... citations ending in a
@@ -36,7 +36,7 @@ const engineRoot = process.env.UE_ENGINE_ROOT?.trim() || DEFAULT_ENGINE_ROOT;
 const CITATION_RE =
   /Engine[\\/](?:Source|Plugins)[\\/][A-Za-z0-9_.\-\\/]+?\.(?:h|hpp|cpp|inl|cs|ini|usf|ush)\b/g;
 
-// A cited base DIRECTORY, e.g. "Engine source (UE 5.7, `Engine/Source/Runtime/GameplayTags/`):".
+// A cited base DIRECTORY, e.g. "Engine source (UE 5.8, `Engine/Source/Runtime/GameplayTags/`):".
 // Subsequent backticked relative paths in list items resolve against the most
 // recent base until the next base appears.
 const BASE_DIR_RE = /Engine[\\/](?:Source|Plugins)[\\/][A-Za-z0-9_.\-\\/]+[\\/](?=`|\)|\s|$)/;

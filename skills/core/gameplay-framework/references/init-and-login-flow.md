@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Documents the step-by-step server-side sequence from
 map load through player login, pawn spawn, and possession, along with seamless travel actor
-persistence and common respawn patterns. Grounded in UE 5.7
+persistence and common respawn patterns. Grounded in UE 5.8
 (`Engine/Source/Runtime/Engine/Classes/GameFramework/GameModeBase.h`) and the official
 [Game Mode and Game State](https://dev.epicgames.com/documentation/unreal-engine/game-mode-and-game-state-in-unreal-engine)
 doc.
@@ -56,36 +56,36 @@ Avoid heavy game logic here; it runs before the controller is fully net-initiali
 `PostLogin(NewPlayer)` (`GameModeBase.h`:326) is called after the controller is net-initialized.
 This is the first place replicated functions on the `PlayerController` can be called safely.
 
-In 5.7 the old `DispatchPostLogin(AController*)` is deprecated (`GameModeBase.h`:329) with a
+In 5.8 the old `DispatchPostLogin(AController*)` is deprecated (`GameModeBase.h`:329) with a
 UE_DEPRECATED(5.6) annotation. Override `OnPostLogin(AController* NewPlayer)` (protected
 virtual, `GameModeBase.h`:334) for server-side post-login logic. The Blueprint event
 `K2_PostLogin(APlayerController*)` (`GameModeBase.h`:339) fires from the same path for BP overrides.
 
 ### HandleStartingNewPlayer
 
-`HandleStartingNewPlayer(PC)` (`GameModeBase.h`:367) is the primary override point for
+`HandleStartingNewPlayer(PC)` (`GameModeBase.h`:361) is the primary override point for
 controlling what happens to new players. It is a `BlueprintNativeEvent`, so override
 `HandleStartingNewPlayer_Implementation` in C++. By default it calls `RestartPlayer`.
 
 Override use cases:
-- Skip spawning for spectators (`MustSpectate` check, `GameModeBase.h`:371).
+- Skip spawning for spectators (`MustSpectate` check, `GameModeBase.h`:365).
 - Defer spawning until a lobby countdown completes.
 - Spawn a spectator pawn first, then transition to gameplay pawn.
 
 ### RestartPlayer and spawn
 
-`RestartPlayer(NewPlayer)` (`GameModeBase.h`:441) is the canonical respawn entry point. It:
+`RestartPlayer(NewPlayer)` (`GameModeBase.h`:435) is the canonical respawn entry point. It:
 1. Calls `PlayerCanRestart(PC)` — a `BlueprintNativeEvent`; return false to block.
-2. Calls `FindPlayerStart(Controller, IncomingName)` (`GameModeBase.h`:422), which calls the
-   `BlueprintNativeEvent` `ChoosePlayerStart` (`GameModeBase.h`:411) for custom selection.
+2. Calls `FindPlayerStart(Controller, IncomingName)` (`GameModeBase.h`:416), which calls the
+   `BlueprintNativeEvent` `ChoosePlayerStart` (`GameModeBase.h`:405) for custom selection.
 3. Calls `SpawnDefaultPawnFor(Controller, StartSpot)` → or `SpawnDefaultPawnAtTransform` for
-   transform-based spawn (`GameModeBase.h`:467).
+   transform-based spawn (`GameModeBase.h`:461).
 4. Calls `PC->Possess(Pawn)`, which internally calls `OnPossess` / `PossessedBy`.
-5. Calls `SetPlayerDefaults(Pawn)` (`GameModeBase.h`:478) — override to initialize health,
+5. Calls `SetPlayerDefaults(Pawn)` (`GameModeBase.h`:472) — override to initialize health,
    ammo, etc. on a freshly spawned/respawned pawn.
 
 For transform-only spawn (no PlayerStart actor): call `RestartPlayerAtTransform(PC, Transform)`
-(`GameModeBase.h`:449) directly.
+(`GameModeBase.h`:443) directly.
 
 ## Seamless travel
 
@@ -103,7 +103,7 @@ running while clients transition. The GameMode hooks:
   has a different `PlayerControllerClass`; handles replacing the controller instance.
 
 PlayerState instances are preserved through seamless travel: `bFromPreviousLevel`
-(`PlayerState.h`:97) is set until the transition completes.
+(`PlayerState.h`:98) is set until the transition completes.
 
 ## Common respawn patterns
 

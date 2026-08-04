@@ -3,7 +3,7 @@
 Deep-dive for [../SKILL.md](../SKILL.md). Covers plugin dependency declaration and the
 dependency hierarchy, optional and platform-restricted dependencies, explicit-load plugins,
 runtime queries via `IPluginManager`/`IPlugin`, and packaging plugins for distribution.
-Grounded in UE 5.7 (`Runtime/Projects/Public/Interfaces/IPluginManager.h`,
+Grounded in UE 5.8 (`Runtime/Projects/Public/Interfaces/IPluginManager.h`,
 `PluginReferenceDescriptor.h`, `PluginDescriptor.h`).
 
 ## Plugin dependency rules
@@ -45,7 +45,7 @@ Both are required. Adding only one leads to either load-order failures or link e
 
 ## `FPluginReferenceDescriptor` in detail
 
-`Runtime/Projects/Public/PluginReferenceDescriptor.h`:27. Fields beyond the basics:
+`Runtime/Projects/Public/PluginReferenceDescriptor.h`:26. Fields beyond the basics:
 
 ### Optional dependencies
 
@@ -53,7 +53,7 @@ Both are required. Adding only one leads to either load-order failures or link e
 { "Name": "OptionalHelper", "Enabled": true, "Optional": true }
 ```
 
-`bOptional`:40 — when `true`, the engine silently continues startup even if the named plugin
+`bOptional`:35 — when `true`, the engine silently continues startup even if the named plugin
 is not installed or not enabled. Check at runtime before using optional plugin features:
 
 ```cpp
@@ -75,7 +75,7 @@ if (Helper.IsValid())
 }
 ```
 
-`PlatformAllowList`:46 / `PlatformDenyList`:49 restrict which platforms activate the
+`PlatformAllowList`:50 / `PlatformDenyList`:53 restrict which platforms activate the
 dependency. An empty allow list means all platforms.
 
 ### Target-type-restricted dependencies
@@ -88,7 +88,7 @@ dependency. An empty allow list means all platforms.
 }
 ```
 
-`TargetAllowList`:60 / `TargetDenyList`:63 accept `EBuildTargetType` string values:
+`TargetAllowList`:62 / `TargetDenyList`:65 accept `EBuildTargetType` string values:
 `Game`, `Editor`, `Server`, `Client`, `Program`.
 
 ### Version-pinned dependency
@@ -97,12 +97,12 @@ dependency. An empty allow list means all platforms.
 { "Name": "SomeSDK", "Enabled": true, "RequestedVersion": 5 }
 ```
 
-`RequestedVersion`:71 (`TOptional<int32>`) pins to a specific integer `Version` from the
+`RequestedVersion`:74 (`TOptional<int32>`) pins to a specific integer `Version` from the
 dependency's `.uplugin`. Use this when your plugin relies on a specific API revision.
 
 ## Explicit-load plugins
 
-Plugins with `"ExplicitlyLoaded": true` in their `.uplugin` (`bExplicitlyLoaded`:148 in
+Plugins with `"ExplicitlyLoaded": true` in their `.uplugin` (`bExplicitlyLoaded`:154 in
 `PluginDescriptor.h`) are not loaded automatically by the engine at startup, regardless of
 the `EnabledByDefault` setting or project enable state. This is used for plugins that should
 only load when explicitly requested (e.g. Game Feature Plugins, modular game content).
@@ -122,7 +122,7 @@ if (!bOK)
 }
 ```
 
-`MountExplicitlyLoadedPlugin` (`IPluginManager.h`:545) mounts content and loads modules up
+`MountExplicitlyLoadedPlugin` (`IPluginManager.h`:556) mounts content and loads modules up
 to the specified loading phase. Call `UnmountExplicitlyLoadedPlugin` to reverse this.
 
 For plugins loaded from a `.uplugin` path on disk rather than by name:
@@ -134,28 +134,28 @@ IPluginManager::Get().MountExplicitlyLoadedPlugin_FromFileName(
 
 ## `IPluginManager` API in depth
 
-`Runtime/Projects/Public/Interfaces/IPluginManager.h`:273. Singleton via `Get()`:649.
+`Runtime/Projects/Public/Interfaces/IPluginManager.h`:284. Singleton via `Get()`:667.
 
 ### Finding plugins
 
 | Method | Line | Returns | Notes |
 |---|---|---|---|
-| `FindPlugin(Name)` | 382 | `TSharedPtr<IPlugin>` | Any discovered plugin (enabled or not) |
-| `FindEnabledPlugin(Name)` | 393 | `TSharedPtr<IPlugin>` or null | Only if currently enabled |
-| `FindPluginFromPath(Path)` | 385 | `TSharedPtr<IPlugin>` | By filesystem path to plugin dir |
-| `GetEnabledPlugins()` | 417 | `TArray<TSharedRef<IPlugin>>` | All enabled plugins |
-| `GetEnabledPluginsWithContent()` | 424 | `TArray<TSharedRef<IPlugin>>` | Enabled + `CanContainContent` |
-| `GetDiscoveredPlugins()` | 443 | `TArray<TSharedRef<IPlugin>>` | All discovered (enabled or not) |
+| `FindPlugin(Name)` | 393 | `TSharedPtr<IPlugin>` | Any discovered plugin (enabled or not) |
+| `FindEnabledPlugin(Name)` | 404 | `TSharedPtr<IPlugin>` or null | Only if currently enabled |
+| `FindPluginFromPath(Path)` | 396 | `TSharedPtr<IPlugin>` | By filesystem path to plugin dir |
+| `GetEnabledPlugins()` | 428 | `TArray<TSharedRef<IPlugin>>` | All enabled plugins |
+| `GetEnabledPluginsWithContent()` | 435 | `TArray<TSharedRef<IPlugin>>` | Enabled + `CanContainContent` |
+| `GetDiscoveredPlugins()` | 454 | `TArray<TSharedRef<IPlugin>>` | All discovered (enabled or not) |
 
 ### Mounting and refresh
 
 | Method | Line | Notes |
 |---|---|---|
-| `MountNewlyCreatedPlugin(Name)` | 537 | Enables, mounts content, and loads modules for a newly created plugin |
-| `MountExplicitlyLoadedPlugin(Name, Phase)` | 545 | Load an explicit-load plugin up to a given phase |
-| `UnmountExplicitlyLoadedPlugin(Name, Reason)` | 578 | Unmount; does not unload compiled modules |
-| `RefreshPluginsList()` | 281 | Re-scan all plugin folders |
-| `AddPluginSearchPath(Path)` | 475 | Add an additional scan directory |
+| `MountNewlyCreatedPlugin(Name)` | 548 | Enables, mounts content, and loads modules for a newly created plugin |
+| `MountExplicitlyLoadedPlugin(Name, Phase)` | 556 | Load an explicit-load plugin up to a given phase |
+| `UnmountExplicitlyLoadedPlugin(Name, Reason)` | 588 | Unmount; does not unload compiled modules |
+| `RefreshPluginsList()` | 292 | Re-scan all plugin folders |
+| `AddPluginSearchPath(Path)` | 486 | Add an additional scan directory |
 
 ### Plugin dependency query
 
@@ -168,7 +168,7 @@ for (const FPluginReferenceDescriptor& Dep : Deps)
 }
 ```
 
-`GetPluginDependencies` (`IPluginManager.h`:583) returns the list from the plugin's `Plugins`
+`GetPluginDependencies` (`IPluginManager.h`:594) returns the list from the plugin's `Plugins`
 descriptor array.
 
 ## `IPlugin` API in depth
@@ -234,8 +234,8 @@ on individual module entries to restrict staging.
 
 ## Source references
 
-- `Runtime/Projects/Public/Interfaces/IPluginManager.h` — `IPlugin`:110, `IPluginManager`:273,
-  `EPluginLoadedFrom`:19, `EPluginType`:31
-- `Runtime/Projects/Public/PluginReferenceDescriptor.h` — `FPluginReferenceDescriptor`:27
-- `Runtime/Projects/Public/PluginDescriptor.h` — `bExplicitlyLoaded`:148
+- `Runtime/Projects/Public/Interfaces/IPluginManager.h` — `IPlugin`:110, `IPluginManager`:284,
+  `EPluginLoadedFrom`:18, `EPluginType`:30
+- `Runtime/Projects/Public/PluginReferenceDescriptor.h` — `FPluginReferenceDescriptor`:26
+- `Runtime/Projects/Public/PluginDescriptor.h` — `bExplicitlyLoaded`:154
 - Official doc: <https://dev.epicgames.com/documentation/unreal-engine/plugins-in-unreal-engine>

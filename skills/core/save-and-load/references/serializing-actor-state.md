@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the `UPROPERTY(SaveGame)` + `ArIsSaveGame`
 mechanism, `FObjectAndNameAsStringProxyArchive`, the full multi-actor capture/restore loop, and
-common pitfalls. Grounded in UE 5.7
+common pitfalls. Grounded in UE 5.8
 (`Engine/Source/Runtime/CoreUObject/Public/Serialization/ObjectAndNameAsStringProxyArchive.h`,
 `Engine/Source/Runtime/Core/Public/Serialization/Archive.h`,
 `Engine/Source/Runtime/CoreUObject/Public/UObject/ObjectMacros.h`).
@@ -17,9 +17,9 @@ push the bytes back into them.
 ## UPROPERTY(SaveGame) and CPF_SaveGame
 
 The `SaveGame` UPROPERTY specifier sets flag `CPF_SaveGame = 0x0000000001000000` on the property
-metadata (`ObjectMacros.h`:443). This flag has **no effect** during normal `UObject` serialization
+metadata (`ObjectMacros.h`:458). This flag has **no effect** during normal `UObject` serialization
 (including `SaveGameToSlot`). It only gates serialization when the archive's `ArIsSaveGame` bit
-is true (`Archive.h`:933).
+is true (`Archive.h`:942).
 
 ```cpp
 // On the actor you want to snapshot:

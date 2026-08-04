@@ -1,7 +1,7 @@
 # Log categories & verbosity — full reference
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers all category declaration patterns,
-verbosity semantics, build-time stripping, and runtime controls. Grounded in UE 5.7
+verbosity semantics, build-time stripping, and runtime controls. Grounded in UE 5.8
 (`Engine/Source/Runtime/Core/Public/Logging/LogMacros.h`,
 `Engine/Source/Runtime/Core/Public/Logging/LogCategory.h`,
 `Engine/Source/Runtime/Core/Public/Logging/LogVerbosity.h`).
@@ -48,8 +48,8 @@ DECLARE_LOG_CATEGORY_CLASS(LogMyClass, Log, All);
 DEFINE_LOG_CATEGORY_CLASS(UMyClass, LogMyClass);
 ```
 
-`DECLARE_LOG_CATEGORY_CLASS` expands to `DEFINE_LOG_CATEGORY_STATIC` — both declaration and
-definition are in the header, so the matching `DEFINE_LOG_CATEGORY_CLASS` provides the
+`DECLARE_LOG_CATEGORY_CLASS` expands to a static in-class category definition (via
+`UE_PRIVATE_DEFINE_LOG_CATEGORY`), so the matching `DEFINE_LOG_CATEGORY_CLASS` provides the
 out-of-class definition.
 
 ## Verbosity semantics in detail
@@ -77,11 +77,11 @@ levels compiled in.
 - `CompileTimeVerbosity` = `Warning` (3) — `Log`/`Verbose`/`VeryVerbose` calls for this
   category are **removed by the preprocessor** unconditionally, in all build types. Runtime
   changes cannot restore them.
-- This check is done via `if constexpr` inside `UE_PRIVATE_LOG` (`LogMacros.h`:318), so
+- This check is done via `if constexpr` inside `UE_PRIVATE_LOG` (`LogMacros.h`:337), so
   there is no runtime overhead for suppressed levels.
 
 Monolithic builds can additionally define `COMPILED_IN_MINIMUM_VERBOSITY` to apply a global
-floor across all categories (`LogMacros.h`:91–96).
+floor across all categories (`LogMacros.h`:93–98).
 
 ## Runtime verbosity controls
 
@@ -93,7 +93,7 @@ Log LogMyModule Log           ; restore to Log
 Log all Error                 ; suppress everything to Error
 ```
 
-`UE_SET_LOG_VERBOSITY(CategoryName, Verbosity)` is the C++ equivalent (`LogMacros.h`:260).
+`UE_SET_LOG_VERBOSITY(CategoryName, Verbosity)` is the C++ equivalent (`LogMacros.h`:267).
 
 ### Command line
 
@@ -118,7 +118,7 @@ ELogVerbosity::Type Current = UE_GET_LOG_VERBOSITY(LogMyModule);
 ```
 
 `UE_LOG_ACTIVE` checks both compile-time and runtime suppression. Declared in
-`LogMacros.h`:255.
+`LogMacros.h`:262.
 
 ## Built-in engine categories
 

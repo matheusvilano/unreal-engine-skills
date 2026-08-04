@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the `FProjectDescriptor` schema, the
 `FModuleDescriptor` fields, primary-game-module registration, and how the module manager
-loads them. Grounded in UE 5.7
+loads them. Grounded in UE 5.8
 (`Engine/Source/Runtime/Projects/Public/ProjectDescriptor.h`,
 `Engine/Source/Runtime/Projects/Public/ModuleDescriptor.h`,
 `Engine/Source/Runtime/Core/Public/Modules/ModuleManager.h`).
@@ -32,7 +32,7 @@ field on the struct:
 The `EngineAssociation` field is resolved differently depending on how the engine was
 obtained:
 
-- **Launcher install** — a stable version string such as `"5.7"`. Binaries for each major
+- **Launcher install** — a stable version string such as `"5.8"`. Binaries for each major
   version live in a fixed registry-tracked location; any machine with the same launcher
   version can open the project.
 - **Source-built engine with a foreign project** — a GUID that indexes a per-machine
@@ -87,7 +87,7 @@ Source: `ModuleDescriptor.h:82–150`.
 | `PostConfigInit` | Very early, immediately after the config system — subsystem hooks |
 | `EarliestPossible` | As early as possible, before pak mounts — compression plugins |
 
-Source: `ModuleDescriptor.h:26–58`.
+Source: `ModuleDescriptor.h:26–60`.
 
 ## The primary game module
 
@@ -101,7 +101,7 @@ calling `IMPLEMENT_PRIMARY_GAME_MODULE` in its `.cpp` implementation file.
 IMPLEMENT_PRIMARY_GAME_MODULE(FDefaultModuleImpl, MyGame, "MyGame");
 ```
 
-- The macro is defined at `Runtime/Core/Public/Modules/ModuleManager.h:1081–1122`.
+- The macro is defined at `Runtime/Core/Public/Modules/ModuleManager.h:1100–1136`.
 - In modular (editor/development) builds it expands to `IMPLEMENT_GAME_MODULE`, which
   itself expands to `IMPLEMENT_MODULE`. In monolithic (shipping) builds it additionally
   writes the project name string into `GInternalProjectName` so the executable knows what

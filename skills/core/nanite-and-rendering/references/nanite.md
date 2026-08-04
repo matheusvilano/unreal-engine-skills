@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the cluster hierarchy and streaming model,
 static vs runtime displacement, the fallback mesh, visualization modes, and build/runtime
-diagnostics. Grounded in UE 5.7
+diagnostics. Grounded in UE 5.8
 (`Engine/Source/Runtime/Engine/Classes/Engine/EngineTypes.h`,
 `Engine/Source/Runtime/Engine/Public/Rendering/NaniteResources.h`).
 
@@ -15,12 +15,12 @@ At build time, Nanite analyzes each mesh and produces a hierarchical cluster tre
 2. **Hierarchy nodes** (`FPackedHierarchyNode`) — form a BVH over clusters. The GPU
    traverses this hierarchy per frame to select visible clusters at the right LOD.
 3. **Pages** — clusters are packed into streaming pages. Root pages reside in memory at
-   all times (`FResources::RootData`, `NaniteResources.h`:412); the remainder are streamed
-   on demand from the `StreamablePages` bulk store (`:413`).
+   all times (`FResources::RootData`, `NaniteResources.h`:455); the remainder are streamed
+   on demand from the `StreamablePages` bulk store (`:456`).
 4. **Imposter** — a billboard fallback used for very distant instances when even the
    coarsest cluster is too expensive.
 
-`Nanite::FResources` (`NaniteResources.h`:409) is the runtime handle:
+`Nanite::FResources` (`NaniteResources.h`:452) is the runtime handle:
 
 | Field | Meaning |
 |---|---|
@@ -99,7 +99,7 @@ Fallback quality is controlled by `FallbackPercentTriangles` (triangle budget) a
 `FallbackRelativeError` toward 0 (less simplification). For runtime memory savings,
 increase it (more aggressive simplification).
 
-`UStaticMesh::HasNaniteFallbackMesh(EShaderPlatform)` (`StaticMesh.h`:2170) returns
+`UStaticMesh::HasNaniteFallbackMesh(EShaderPlatform)` (`StaticMesh.h`:2192) returns
 `true` if a fallback was built for the given platform.
 
 ## Nanite visualization modes
@@ -126,10 +126,10 @@ On `UStaticMeshComponent` (`StaticMeshComponent.h`):
 
 | Field | Line | Effect |
 |---|---|---|
-| `bDisallowNanite` | :161 | Force fallback for this instance |
-| `bForceNaniteForMasked` | :157 | Allow Nanite even for masked materials when project setting disables it |
-| `WorldPositionOffsetDisableDistance` | :153 | Stop WPO evaluation beyond screen distance (0 = always on) |
-| `bEvaluateWorldPositionOffset` | :171 | Per-instance WPO toggle |
+| `bDisallowNanite` | :166 | Force fallback for this instance |
+| `bForceNaniteForMasked` | :162 | Allow Nanite even for masked materials when project setting disables it |
+| `WorldPositionOffsetDisableDistance` | :158 | Stop WPO evaluation beyond screen distance (0 = always on) |
+| `bEvaluateWorldPositionOffset` | :176 | Per-instance WPO toggle |
 
 ## Common diagnostics
 
@@ -143,13 +143,14 @@ On `UStaticMeshComponent` (`StaticMeshComponent.h`):
 
 ## Version notes
 
-- **Skeletal mesh Nanite** (production): UE 5.5+. In 5.7, skeletal meshes use animation LODs
+- **Skeletal mesh Nanite** (production): UE 5.5+. In 5.8, skeletal meshes use animation LODs
   only; geometry LODs are not used. One draw call per skeletal mesh instance.
-- **Spline mesh Nanite**: fully supported in 5.7 (landscape splines, blueprint splines).
+- **Spline mesh Nanite**: fully supported in 5.8 (landscape splines, blueprint splines).
   Set `MaxEdgeLengthFactor` for significantly curved splines to prevent simplification
   artifacts near the deformation apex.
 - **Foliage Nanite**: uses voxelization and WPO animation. Foliage with small WPO offsets
   is fine without `MaxEdgeLengthFactor`; large-scale wind requires it.
-- **Nanite tessellation**: experimental in 5.5–5.6, production-track in 5.7.
+- **Nanite tessellation**: experimental in 5.5–5.6, production-track in 5.7;
+  `r.Nanite.Tessellation` defaults to 1 (on) in 5.8.
 - **`UE_DEPRECATED(5.7)` on `UStaticMesh::NaniteSettings`** direct field access: always
   use `GetNaniteSettings()`/`SetNaniteSettings()`.

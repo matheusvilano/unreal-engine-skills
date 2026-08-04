@@ -2,66 +2,66 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the component class hierarchy,
 per-type property reference, C++ authoring patterns, and how to pick the right
-mobility for a given scenario. Grounded in UE 5.7
+mobility for a given scenario. Grounded in UE 5.8
 (`Engine/Source/Runtime/Engine/Classes/Components/`).
 
 ## Component class hierarchy
 
 ```
-ULightComponentBase  (LightComponentBase.h:14)
-├─ Intensity:float (line 36)          — total energy emitted
-├─ LightColor:FColor (line 43)        — filter tint
-├─ CastShadows:uint32 (line 57)
-├─ IndirectLightingIntensity (line 115) — GI contribution scale
-└─ SetCastShadows(bool) (line 145)
+ULightComponentBase  (LightComponentBase.h:15)
+├─ Intensity:float (line 37)          — total energy emitted
+├─ LightColor:FColor (line 44)        — filter tint
+├─ CastShadows:uint32 (line 58)
+├─ IndirectLightingIntensity (line 116) — GI contribution scale
+└─ SetCastShadows(bool) (line 146)
 
-ULightComponent : ULightComponentBase  (LightComponent.h:45)
-├─ Temperature:float (line 53)        — colour temperature (Kelvin, white = 6500)
-├─ bUseTemperature:uint32 (line 67)
-├─ ShadowBias:float (line 110)        — prevent self-shadow acne
-├─ ShadowSlopeBias:float (line 120)
-├─ ContactShadowLength:float (line 128)
-├─ bAllowMegaLights:uint32 (line 168) — opt into stochastic many-light (UE5.4+)
-├─ LightFunctionMaterial (line 202)   — cookie material (not supported on RectLight)
-├─ IESTexture (line 217)              — real-world luminaire distribution
-├─ SetIntensity(float) (line 283)
-├─ SetLightColor(FLinearColor, bSRGB) (line 293)
-└─ SetTemperature(float) (line 300)
+ULightComponent : ULightComponentBase  (LightComponent.h:48)
+├─ Temperature:float (line 57)        — colour temperature (Kelvin, white = 6500)
+├─ bUseTemperature:uint32 (line 69)
+├─ ShadowBias:float (line 113)        — prevent self-shadow acne
+├─ ShadowSlopeBias:float (line 123)
+├─ ContactShadowLength:float (line 131)
+├─ bAllowMegaLights:uint32 (line 171) — opt into stochastic many-light (UE5.5+)
+├─ LightFunctionMaterial (line 205)   — cookie material (not supported on RectLight)
+├─ IESTexture (line 219)              — real-world luminaire distribution
+├─ SetIntensity(float) (line 286)
+├─ SetLightColor(FLinearColor, bSRGB) (line 296)
+└─ SetTemperature(float) (line 303)
 
-ULocalLightComponent : ULightComponent  (LocalLightComponent.h:17)
-├─ IntensityUnits:ELightUnits (line 27)   — Candelas | Lumens | EV100
-├─ InverseExposureBlend:float (line 34)   — constant on-screen brightness blend
-├─ AttenuationRadius:float (line 45)      — bounding sphere; affects tile culling
-└─ SetAttenuationRadius(float) (line 52)
+ULocalLightComponent : ULightComponent  (LocalLightComponent.h:18)
+├─ IntensityUnits:ELightUnits (line 28)   — Candelas | Lumens | EV100
+├─ InverseExposureBlend:float (line 36)   — constant on-screen brightness blend
+├─ AttenuationRadius:float (line 46)      — bounding sphere; affects tile culling
+└─ SetAttenuationRadius(float) (line 53)
 
-UPointLightComponent : ULocalLightComponent  (PointLightComponent.h:18)
-├─ bUseInverseSquaredFalloff:uint32 (line 29)
-├─ SourceRadius:float (line 44)      — sphere radius; softens penumbra
-├─ SoftSourceRadius:float (line 50)
-└─ SourceLength:float (line 58)      — capsule extension for tube lights
+UPointLightComponent : ULocalLightComponent  (PointLightComponent.h:19)
+├─ bUseInverseSquaredFalloff:uint32 (line 30)
+├─ SourceRadius:float (line 45)      — sphere radius; softens penumbra
+├─ SoftSourceRadius:float (line 52)
+└─ SourceLength:float (line 59)      — capsule extension for tube lights
 
-USpotLightComponent : UPointLightComponent  (SpotLightComponent.h:16)
-├─ InnerConeAngle:float (line 22)    — degrees, full-intensity cone
-└─ OuterConeAngle:float (line 26)    — degrees, penumbra edge
+USpotLightComponent : UPointLightComponent  (SpotLightComponent.h:17)
+├─ InnerConeAngle:float (line 23)    — degrees, full-intensity cone
+└─ OuterConeAngle:float (line 27)    — degrees, penumbra edge
 
-URectLightComponent : ULocalLightComponent  (RectLightComponent.h:23)
-├─ SourceWidth:float (line 32)
-├─ SourceHeight:float (line 39)
-├─ BarnDoorAngle:float (line 45)     — occlusion flap angle (deg)
-└─ BarnDoorLength:float (line 51)
+URectLightComponent : ULocalLightComponent  (RectLightComponent.h:24)
+├─ SourceWidth:float (line 33)
+├─ SourceHeight:float (line 40)
+├─ BarnDoorAngle:float (line 46)     — occlusion flap angle (deg)
+└─ BarnDoorLength:float (line 52)
 
 UDirectionalLightComponent : ULightComponent  (DirectionalLightComponent.h:18)
 ├─ DynamicShadowDistanceMovableLight:float (line 59)
 ├─ DynamicShadowCascades:int32 (line 73)   — CSM cascade count (0–4)
 ├─ LightSourceAngle:float (line 138)       — angular diameter in degrees (sun ≈ 0.54)
 ├─ bAtmosphereSunLight:uint32 (line 164)   — drives USkyAtmosphereComponent
-└─ SetAtmosphereSunLight(bool) (line 310)
+└─ SetAtmosphereSunLight(bool) (line 311)
 
 USkyLightComponent : ULightComponentBase  (SkyLightComponent.h:101)
 ├─ bRealTimeCapture:bool (line 108)        — recapture every frame
-├─ SourceType:ESkyLightSourceType (line 113) — CapturedScene | SpecifiedCubemap
-├─ Cubemap:UTextureCube* (line 117)
-└─ RecaptureSky() (line 303)
+├─ SourceType:ESkyLightSourceType (line 112) — CapturedScene | SpecifiedCubemap
+├─ Cubemap:UTextureCube* (line 116)
+└─ RecaptureSky() (line 304)
 ```
 
 ## Intensity units for local lights
@@ -157,6 +157,6 @@ contribution.
 
 ## Version notes
 
-- `MegaLights` (`bAllowMegaLights`, `MegaLightsShadowMethod`) was added in UE5.4 for
-  stochastic many-light evaluation; available in 5.7 but still evolving.
+- `MegaLights` (`bAllowMegaLights`, `MegaLightsShadowMethod`) was added in UE5.5 for
+  stochastic many-light evaluation; available in 5.8 but still experimental.
 - `TObjectPtr<T>` is the modern member UPROPERTY form (UE5+); raw `T*` still compiles.

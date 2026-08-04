@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the `FFastArraySerializer` step-by-step setup,
 `MarkItemDirty` / `MarkArrayDirty`, per-element callbacks, and when to use fast arrays vs plain
-`TArray`. Grounded in UE 5.7
+`TArray`. Grounded in UE 5.8
 (`Runtime/Net/Core/Classes/Net/Serialization/FastArraySerializer.h`).
 
 ## When to use FFastArraySerializer
@@ -164,10 +164,10 @@ automatically for fast-array types in `UnrealNetwork.h`:379–390).
 | Ability/task list (GAS) | `FFastArraySerializer` (GAS uses it internally) |
 | Ordered collection where order matters | Plain replicated `TArray` (fast array order is not guaranteed) |
 
-## Source references (UE 5.7)
+## Source references (UE 5.8)
 
 - `Runtime/Net/Core/Classes/Net/Serialization/FastArraySerializer.h` — usage pattern :60–134,
-  `FFastArraySerializer` :~300, `FFastArraySerializerItem`, `MarkItemDirty`, `MarkArrayDirty`,
+  `FFastArraySerializer` :408, `FFastArraySerializerItem` :298, `MarkItemDirty`, `MarkArrayDirty`,
   `FastArrayDeltaSerialize`, per-element callback signatures :83–85.
 - `Runtime/Engine/Public/Net/UnrealNetwork.h`:379–390 — `FixupParams` for fast-array Iris
   registration.

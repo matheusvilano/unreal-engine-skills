@@ -2,19 +2,19 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the complete set of specifiers for
 `UCLASS`, `UPROPERTY`, `UFUNCTION`, `USTRUCT`, `UENUM`, and `UINTERFACE`, including less-common
-options that appear in real codebases. Grounded in UE 5.7
+options that appear in real codebases. Grounded in UE 5.8
 (`Engine/Source/Runtime/CoreUObject/Public/UObject/ObjectMacros.h`).
 
 ## How the macros work
 
 `UCLASS(...)`, `UPROPERTY(...)`, `UFUNCTION(...)`, `USTRUCT(...)`, `UENUM(...)`, and
-`UINTERFACE(...)` expand to empty stubs at C++ compile time (`ObjectMacros.h`:744-749). Their
+`UINTERFACE(...)` expand to empty stubs at C++ compile time (`ObjectMacros.h`:778-785). Their
 actual content is parsed by UHT *before* the compiler runs. UHT generates a `ClassName.generated.h`
 containing the real boilerplate (thunks, reflection tables, `GENERATED_BODY` expansion). The
 `.generated.h` must be the last `#include` in the header; the compiler then sees the completed
 class declaration.
 
-`GENERATED_BODY()` (`ObjectMacros.h`:765) expands to a file-and-line-keyed macro that UHT
+`GENERATED_BODY()` (`ObjectMacros.h`:800) expands to a file-and-line-keyed macro that UHT
 populates with:
 - `StaticClass()` / `StaticStruct()` accessors.
 - Constructor/destructor boilerplate.
@@ -24,7 +24,7 @@ populates with:
 `GENERATED_UCLASS_BODY()` is the legacy form (pre-UE4.15) that required you to declare the
 constructor separately; `GENERATED_BODY()` supersedes it for all new code.
 
-## UCLASS specifiers (namespace UC, ObjectMacros.h:792)
+## UCLASS specifiers (namespace UC, ObjectMacros.h:832)
 
 ### Essential
 | Specifier | Effect |
@@ -57,7 +57,7 @@ Applied as `UCLASS(meta=(Key="Value"))`:
 | `DisplayName="My Name"` | Custom display name in the editor. |
 | `DeprecationMessage="..."` | Shown when the deprecated class is used. |
 
-## UPROPERTY specifiers (namespace UP, ObjectMacros.h:1046)
+## UPROPERTY specifiers (namespace UP, ObjectMacros.h:1086)
 
 ### Edit and visibility
 | Specifier | Effect |
@@ -124,7 +124,7 @@ Applied as `UPROPERTY(meta=(Key="Value"))`:
 | `EditCondition="BoolPropName"` | Any | Greys out the property when the named bool is false. |
 | `MakeEditWidget` | FVector/FRotator | Shows a viewport widget for in-world editing. |
 
-## UFUNCTION specifiers (namespace UF, ObjectMacros.h:945)
+## UFUNCTION specifiers (namespace UF, ObjectMacros.h:985)
 
 ### Blueprint exposure
 | Specifier | Effect |
@@ -166,7 +166,7 @@ Applied as `UPROPERTY(meta=(Key="Value"))`:
 | `DefaultToSelf` | A parameter defaults to `self` in Blueprint. |
 | `HidePin="ParamName"` | Hides a parameter pin (it must have a default). |
 
-## USTRUCT specifiers (namespace US, ObjectMacros.h:1176)
+## USTRUCT specifiers (namespace US, ObjectMacros.h:1216)
 
 | Specifier | Effect |
 |---|---|

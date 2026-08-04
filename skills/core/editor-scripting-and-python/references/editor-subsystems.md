@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers all `UEditorSubsystem` subclasses used for
 editor automation, their key methods, Python equivalents, and how to obtain them in C++ and
-Python. Grounded in UE 5.7 source under `Engine/Source/Editor/`.
+Python. Grounded in UE 5.8 source under `Engine/Source/Editor/`.
 
 ## Subsystem access pattern
 
@@ -114,11 +114,11 @@ shipping builds (they are editor-only in intent even within this module).
 
 | Method | Line | What it does |
 |---|---|---|
-| `NewLevel(Path, bPartitioned)` | 106 | Create and load a blank (or partitioned) level |
-| `NewLevelFromTemplate(Path, Tpl)` | 117 | Create level from a template |
-| `LoadLevel(Path)` | 126 | Close current level and open another |
-| `SaveCurrentLevel()` | 133 | Save the currently open persistent level |
-| `SaveAllDirtyLevels()` | 140 | Save all dirty sublevels |
+| `NewLevel(Path, bPartitioned)` | 147 | Create and load a blank (or partitioned) level |
+| `NewLevelFromTemplate(Path, Tpl)` | 158 | Create level from a template |
+| `LoadLevel(Path)` | 167 | Close current level and open another |
+| `SaveCurrentLevel()` | 174 | Save the currently open persistent level |
+| `SaveAllDirtyLevels()` | 181 | Save all dirty sublevels |
 | `EditorPlaySimulate()` | 63 | Start Simulate mode |
 | `EditorRequestBeginPlay()` | 78 | Request PIE start |
 | `EditorRequestEndPlay()` | 81 | Request PIE stop |
@@ -138,7 +138,7 @@ lvl.load_level("/Game/Maps/TestMap")
 
 ## `UAssetEditorSubsystem`
 
-**Header:** `Engine/Source/Editor/UnrealEd/Public/Subsystems/AssetEditorSubsystem.h:105`  
+**Header:** `Engine/Source/Editor/UnrealEd/Public/Subsystems/AssetEditorSubsystem.h:112`  
 **Module:** `UnrealEd`
 
 Manages open asset editors (Static Mesh Editor, Blueprint Editor, Material Editor, etc.).
@@ -152,17 +152,17 @@ Key methods: `OpenEditorForAsset(Asset)`, `CloseAllAssetEditors()`,
 
 ## `UUnrealEditorSubsystem`
 
-**Header:** `Engine/Source/Editor/UnrealEd/Public/Subsystems/UnrealEditorSubsystem.h:15`  
+**Header:** `Engine/Source/Editor/UnrealEd/Public/Subsystems/UnrealEditorSubsystem.h:17`  
 **Module:** `UnrealEd`
 
 A small utility subsystem for things that don't belong in the more specific subsystems.
 
 | Method | Line | What it does |
 |---|---|---|
-| `GetLevelViewportCameraInfo(Loc, Rot)` | 30 | Read the primary viewport camera pose |
-| `SetLevelViewportCameraInfo(Loc, Rot)` | 40 | Move the viewport camera |
-| `GetEditorWorld()` | 47 | The `UWorld` used by the level editor |
-| `GetGameWorld()` | 50 | The PIE `UWorld` (null if not in PIE) |
+| `GetLevelViewportCameraInfo(Loc, Rot)` | 32 | Read the primary viewport camera pose |
+| `SetLevelViewportCameraInfo(Loc, Rot)` | 42 | Move the viewport camera |
+| `GetEditorWorld()` | 49 | The `UWorld` used by the level editor |
+| `GetGameWorld()` | 52 | The PIE `UWorld` (null if not in PIE) |
 
 ```python
 import unreal
@@ -176,20 +176,20 @@ if success:
 
 ## `UEditorUtilitySubsystem`
 
-**Header:** `Engine/Source/Editor/Blutility/Public/EditorUtilitySubsystem.h:46`  
+**Header:** `Engine/Source/Editor/Blutility/Public/EditorUtilitySubsystem.h:47`  
 **Module:** `Blutility`
 
 Manages the lifetime of Editor Utility Widget tabs and `UEditorUtilityTask` background tasks.
 
 | Method | Line | What it does |
 |---|---|---|
-| `TryRun(Asset)` | 75 | Run a `UEditorUtilityObject` (or widget) |
-| `SpawnAndRegisterTab(Blueprint)` | 87 | Open a widget tab in the editor |
-| `SpawnAndRegisterTabWithId(BP, Id)` | 96 | Open with an explicit tab ID (useful from Python) |
-| `CloseTabByID(Id)` | 122 | Close a widget tab by its ID |
-| `DoesTabExist(Id)` | 119 | Check if a tab is open |
-| `RegisterAndExecuteTask(Task)` | 135 | Queue a `UEditorUtilityTask` |
-| `FindUtilityWidgetFromBlueprint(BP)` | 131 | Get the live widget instance |
+| `TryRun(Asset)` | 76 | Run a `UEditorUtilityObject` (or widget) |
+| `SpawnAndRegisterTab(Blueprint)` | 88 | Open a widget tab in the editor |
+| `SpawnAndRegisterTabWithId(BP, Id)` | 97 | Open with an explicit tab ID (useful from Python) |
+| `CloseTabByID(Id)` | 124 | Close a widget tab by its ID |
+| `DoesTabExist(Id)` | 120 | Check if a tab is open |
+| `RegisterAndExecuteTask(Task)` | 140 | Queue a `UEditorUtilityTask` |
+| `FindUtilityWidgetFromBlueprint(BP)` | 132 | Get the live widget instance |
 
 PIE delegates: `OnBeginPIE`, `OnEndPIE` (`BlueprintAssignable`).
 

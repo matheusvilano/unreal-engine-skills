@@ -1,11 +1,11 @@
 # Utility types — deep reference
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers `TOptional`, `TVariant`, `TTuple`,
-`TPair`, and related helpers. Grounded in UE 5.7 (`Runtime/Core/Public/`).
+`TPair`, and related helpers. Grounded in UE 5.8 (`Runtime/Core/Public/`).
 
 ## TOptional
 
-`TOptional<T>` (`Misc/Optional.h`:127) is the UE equivalent of `std::optional`. It wraps a
+`TOptional<T>` (`Misc/Optional.h`:47) is the UE equivalent of `std::optional`. It wraps a
 `T` that may or may not be present, without heap allocation.
 
 ```cpp
@@ -18,12 +18,12 @@ TOptional<FHitResult> Trace(const FVector& Start, const FVector& End)
 }
 
 auto Result = Trace(Origin, Target);
-if (Result.IsSet())          // IsSet:69 — check before GetValue
+if (Result.IsSet())          // IsSet:359 — check before GetValue
 {
-    ProcessHit(Result.GetValue()); // GetValue:443 — asserts if not set
+    ProcessHit(Result.GetValue()); // GetValue:370 — asserts if not set
 }
 // Or use Get with a default
-FHitResult Hit = Result.Get(FHitResult{});  // Get:472
+FHitResult Hit = Result.Get(FHitResult{});  // Get:407
 ```
 
 **Rules:**
@@ -45,13 +45,13 @@ using FEvent = TVariant<FPickupEvent, FDamageEvent, FDeathEvent>;
 FEvent E;
 E.Set<FPickupEvent>(FPickupEvent{ Actor });   // Set and activate the type
 
-if (E.IsType<FPickupEvent>())                 // IsType:140
+if (E.IsType<FPickupEvent>())                 // IsType:124
 {
-    FPickupEvent& Pickup = E.Get<FPickupEvent>(); // Get:148 — asserts if wrong type
+    FPickupEvent& Pickup = E.Get<FPickupEvent>(); // Get:132 — asserts if wrong type
 }
 
 // Safe fallback
-if (FDamageEvent* D = E.TryGet<FDamageEvent>()) // TryGet:177 — returns pointer, null if wrong type
+if (FDamageEvent* D = E.TryGet<FDamageEvent>()) // TryGet:160 — returns pointer, null if wrong type
 {
     ApplyDamage(*D);
 }
@@ -64,13 +64,13 @@ compile-time.
 
 ## TTuple
 
-`TTuple<A, B, ...>` (`Templates/Tuple.h`:651) is a fixed-size, heterogeneous collection.
+`TTuple<A, B, ...>` (`Templates/Tuple.h`:531) is a fixed-size, heterogeneous collection.
 Access is by index (compile-time constant) using `Get<N>()`.
 
 ```cpp
 TTuple<FString, int32, bool> Entry = MakeTuple(TEXT("Player"), 100, true);
 
-FString& Name  = Entry.Get<0>();  // Get:307
+FString& Name  = Entry.Get<0>();  // Get:245
 int32    Score = Entry.Get<1>();
 bool     bAlive = Entry.Get<2>();
 ```

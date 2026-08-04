@@ -1,7 +1,7 @@
 # Choosing a subsystem — decision guide
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers when to use each subsystem type vs
-alternatives, networking constraints, and plugin patterns. Grounded in UE 5.7 subsystem
+alternatives, networking constraints, and plugin patterns. Grounded in UE 5.8 subsystem
 framework and related systems (`gameplay-framework`, `networking-and-replication`).
 
 ## The core question: what is the lifetime of the data?

@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers `UCLASS(Config=X)` / `UPROPERTY(config)`
 mechanics, the config file hierarchy, `GConfig` manual reads, and `UDeveloperSettings` for
-Project Settings panel integration. Grounded in UE 5.7
+Project Settings panel integration. Grounded in UE 5.8
 (`Engine/Source/Runtime/DeveloperSettings/Public/Engine/DeveloperSettings.h`) and the official
 [Configuration Files](https://dev.epicgames.com/documentation/unreal-engine/configuration-files-in-unreal-engine)
 doc.

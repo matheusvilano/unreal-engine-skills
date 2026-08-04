@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the built-in AnimGraph skeletal control
 IK nodes (Two Bone IK, FABRIK, CCDIK), the IK Rig AnimGraph node (`FAnimNode_IKRig`),
-performance guidance, and the `UIKRigComponent` goal-feeding pattern. Grounded in UE 5.7
+performance guidance, and the `UIKRigComponent` goal-feeding pattern. Grounded in UE 5.8
 (`Engine/Plugins/Animation/IKRig/Source/IKRig/Public/` and
 `Engine/Source/Runtime/AnimGraphRuntime/`).
 
@@ -164,7 +164,7 @@ Practical guidance:
 
 ---
 
-## Source references (UE 5.7)
+## Source references (UE 5.8)
 
 - `IKRig/Source/IKRig/Public/AnimNodes/AnimNode_IKRig.h`:22 — `FAnimNode_IKRig`.
 - `IKRig/Source/IKRig/Public/AnimNodes/AnimNode_IKRig.h`:97 — `SetProcessorNeedsInitialized()`.
@@ -175,6 +175,6 @@ Practical guidance:
   (StrengthAlpha, PullChainAlpha, PinRotation).
 - `IKRig/Source/IKRig/Public/Rig/Solvers/IKRigLimbSolver.h`:34 — `FIKRigLimbSolver`.
 
-Official docs (UE 5.7):
+Official docs (UE 5.8):
 - IK Rig in Animation Blueprints — <https://dev.epicgames.com/documentation/unreal-engine/ik-rig-in-animation-blueprints-in-unreal-engine>
 - IK Rig Solvers — <https://dev.epicgames.com/documentation/unreal-engine/ik-rig-solvers-in-unreal-engine>

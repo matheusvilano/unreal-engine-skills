@@ -12,7 +12,7 @@ description: Navigate and configure an Unreal Engine project — the .uproject d
   understanding EngineAssociation values, registering a primary game module, or debugging
   "wrong engine version" / "stale generated headers" / config-not-applying problems.
 metadata:
-  engine-version: "5.7"
+  engine-version: "5.8"
   category: cpp-foundations
 ---
 
@@ -74,7 +74,7 @@ The `.uproject` is a JSON file deserialised into `FProjectDescriptor`
 ```json
 {
   "FileVersion": 3,
-  "EngineAssociation": "5.7",
+  "EngineAssociation": "5.8",
   "Modules": [
     { "Name": "MyGame", "Type": "Runtime", "LoadingPhase": "Default" }
   ],
@@ -91,7 +91,7 @@ Controls which engine instance opens the project:
 
 | Value | Meaning |
 |---|---|
-| `"5.7"` | Launcher install; any machine with UE 5.7 can open it |
+| `"5.8"` | Launcher install; any machine with UE 5.8 can open it |
 | `"{GUID}"` | Local source-built engine; GUID indexes `HKCU\Software\Epic Games\Unreal Engine\Builds` |
 | `"../UnrealEngine"` | Relative path to an engine subdirectory (e.g. Git submodule) |
 | `""` (empty) | Walk up the directory hierarchy — use when engine and project share a repo |
@@ -137,7 +137,7 @@ Every C++ project needs exactly one **primary game module**. It is declared with
 IMPLEMENT_PRIMARY_GAME_MODULE(FDefaultModuleImpl, MyGame, "MyGame");
 ```
 
-- Macro defined at `Runtime/Core/Public/Modules/ModuleManager.h:1081`.
+- Macro defined at `Runtime/Core/Public/Modules/ModuleManager.h:1100`.
 - Use `FDefaultModuleImpl` unless you need `StartupModule`/`ShutdownModule` hooks.
 - All additional modules in the project use `IMPLEMENT_MODULE` (not the primary variant).
 
@@ -279,28 +279,28 @@ text-merge). Full `.gitignore` and `.gitattributes` patterns:
 
 ## References & source material
 
-Engine source (UE 5.7, under `Engine/Source/`):
-- `Runtime/Projects/Public/ProjectDescriptor.h` — `FProjectDescriptor` struct:43,
+Engine source (UE 5.8, under `Engine/Source/`):
+- `Runtime/Projects/Public/ProjectDescriptor.h` — `FProjectDescriptor` struct:42,
   `EngineAssociation`:76, `Modules`:85, `Plugins`:88.
 - `Runtime/Projects/Public/ModuleDescriptor.h` — `FModuleDescriptor`:154,
   `EHostType::Type`:82, `ELoadingPhase::Type`:26.
 - `Runtime/Projects/Public/PluginReferenceDescriptor.h` — plugin enable/disable
   descriptor used in `"Plugins"` array.
-- `Runtime/Core/Public/Modules/ModuleManager.h` — `IMPLEMENT_PRIMARY_GAME_MODULE`:1081,
-  `IMPLEMENT_GAME_MODULE`:971, `IMPLEMENT_MODULE`:904.
-- `Runtime/Core/Public/Misc/ConfigCacheIni.h` — `FConfigCacheIni`:1239, `GetInt`:~1400,
-  `LoadGlobalIniFile`:1816.
+- `Runtime/Core/Public/Modules/ModuleManager.h` — `IMPLEMENT_PRIMARY_GAME_MODULE`:1100,
+  `IMPLEMENT_GAME_MODULE`:984, `IMPLEMENT_MODULE`:946.
+- `Runtime/Core/Public/Misc/ConfigCacheIni.h` — `FConfigCacheIni`:1264, `GetInt`:1490,
+  `LoadGlobalIniFile`:1843.
 - `Runtime/Core/Public/Misc/ConfigHierarchy.h` — `GConfigLayers[]` inline array
   defining the full hierarchy layer order.
 - `Runtime/Core/Public/CoreGlobals.h` — `extern FConfigCacheIni* GConfig`:96,
   `GEngineIni`, `GGameIni` globals.
-- `Runtime/Core/Public/Misc/Paths.h` — `FPaths::ProjectDir()`:277,
-  `FPaths::ProjectContentDir()`:291, `FPaths::ProjectConfigDir()`:298,
-  `FPaths::ProjectSavedDir()`:305.
+- `Runtime/Core/Public/Misc/Paths.h` — `FPaths::ProjectDir()`:262,
+  `FPaths::ProjectContentDir()`:276, `FPaths::ProjectConfigDir()`:283,
+  `FPaths::ProjectSavedDir()`:290.
 - `Runtime/EngineSettings/Classes/GameMapsSettings.h` — `UGameMapsSettings`:101,
   `GameDefaultMap`:209, `GlobalDefaultGameMode`:217.
 
-Official docs (UE 5.7, verified live):
+Official docs (UE 5.8, verified live):
 - Unreal Engine Directory Structure —
   <https://dev.epicgames.com/documentation/unreal-engine/unreal-engine-directory-structure>
 - Configuration Files in Unreal Engine —

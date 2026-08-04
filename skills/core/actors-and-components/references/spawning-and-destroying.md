@@ -1,7 +1,7 @@
 # Spawning and destroying actors — full reference
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers `SpawnActor` variants, `FActorSpawnParameters`,
-collision handling, deferred spawn, destruction, and pooling. Grounded in UE 5.7
+collision handling, deferred spawn, destruction, and pooling. Grounded in UE 5.8
 (`Engine/Source/Runtime/Engine/Classes/Engine/World.h`,
 `GameFramework/Actor.h`, `Engine/Classes/Engine/EngineTypes.h`) and the official
 [Spawning and Destroying an Actor](https://dev.epicgames.com/documentation/unreal-engine/spawning-and-destroying-unreal-engine-actors)
@@ -15,7 +15,7 @@ Spawning can **fail and return null** (e.g. blocked location), so null-check the
 
 ## `SpawnActor` variants
 
-Templated overloads return the typed pointer (`World.h`:~3674+):
+Templated overloads return the typed pointer (`World.h`:~3790+):
 
 ```cpp
 // Class supplied as a UClass / TSubclassOf, with transform + params:
@@ -31,7 +31,7 @@ subclass. Spawning the C++ class directly bypasses any components/defaults added
 
 ## `FActorSpawnParameters`
 
-`World.h`:418 — the optional knobs. Common fields:
+`World.h`:420 — the optional knobs. Common fields:
 
 | Field | Purpose |
 |---|---|
@@ -54,7 +54,7 @@ Params.SpawnCollisionHandlingOverride =
 
 ## Collision handling on spawn
 
-`ESpawnActorCollisionHandlingMethod` (`EngineTypes.h`:4169) decides what happens when the spawn
+`ESpawnActorCollisionHandlingMethod` (`EngineTypes.h`:4411) decides what happens when the spawn
 transform overlaps existing geometry:
 
 | Value | Behavior |
@@ -79,7 +79,7 @@ AProjectile* P = GetWorld()->SpawnActorDeferred<AProjectile>(ProjectileClass, Sp
                                                              /*Owner=*/this, /*Instigator=*/GetInstigator());
 P->Damage = 50.f;            // configure the valid-but-incomplete instance
 P->SetReplicates(true);
-P->FinishSpawning(SpawnTransform);   // Actor.h:3116 — runs construction → PostInitializeComponents → BeginPlay
+P->FinishSpawning(SpawnTransform);   // Actor.h:3117 — runs construction → PostInitializeComponents → BeginPlay
 ```
 
 `SpawnActorDeferred` runs everything up to `PostActorCreated`, then pauses; `FinishSpawning`
@@ -98,7 +98,7 @@ Actor->SetLifeSpan(5.f);          // auto-Destroy after N seconds
 garbage collection frees it later. `EndPlay(EEndPlayReason::Destroyed)` runs as part of this —
 put cleanup there, since `EndPlay` also covers level transitions, PIE end, and streaming unload.
 Don't keep raw pointers to actors that may be destroyed; use `TWeakObjectPtr<AActor>` and check
-`IsValid()`. `EEndPlayReason` is defined at `EngineTypes.h`:3428.
+`IsValid()`. `EEndPlayReason` is defined at `EngineTypes.h`:3670.
 
 ## Object pooling (when spawn/destroy churn matters)
 

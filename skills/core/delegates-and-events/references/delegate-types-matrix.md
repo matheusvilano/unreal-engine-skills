@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers every `DECLARE_*` macro family,
 the underlying template types they produce, parameter and payload limits, the
-thread-safe variant, and the deprecated `DECLARE_EVENT` pattern. Grounded in UE 5.7
+thread-safe variant, and the deprecated `DECLARE_EVENT` pattern. Grounded in UE 5.8
 (`Engine/Source/Runtime/Core/Public/Delegates/DelegateCombinations.h` and `Delegate.h`).
 
 ## Macro families and what they produce
@@ -15,16 +15,16 @@ template types are in `Delegate.h` and `DelegateSignatureImpl.inl`.
 | `DECLARE_DELEGATE*` | `TDelegate<Ret(Params...)>` | no | yes | no |
 | `DECLARE_MULTICAST_DELEGATE*` | `TMulticastDelegate<void(Params...)>` | yes | no | no |
 | `DECLARE_TS_MULTICAST_DELEGATE*` | `TMulticastDelegate<void(Params...), FDefaultTSDelegateUserPolicy>` | yes | no | no |
-| `DECLARE_DYNAMIC_DELEGATE*` | class derived from `TBaseDynamicDelegate<...>` | no | yes | single-bind only |
-| `DECLARE_DYNAMIC_MULTICAST_DELEGATE*` | class derived from `TBaseDynamicMulticastDelegate<...>` | yes | no | yes |
+| `DECLARE_DYNAMIC_DELEGATE*` | class derived from `TDynamicDelegate<...>` | no | yes | single-bind only |
+| `DECLARE_DYNAMIC_MULTICAST_DELEGATE*` | class derived from `TDynamicMulticastDelegate<...>` | yes | no | yes |
 | `DECLARE_EVENT` | class derived from `TMulticastDelegate<...>`, friend-gated | yes (owner only) | no | no |
 
 Source: `DelegateCombinations.h` — base macros at lines 20 (`DECLARE_DELEGATE`),
 23 (`DECLARE_MULTICAST_DELEGATE`), 26 (`DECLARE_TS_MULTICAST_DELEGATE`),
 32 (`DECLARE_EVENT`), 35 (`DECLARE_DYNAMIC_DELEGATE`), 38 (`DECLARE_DYNAMIC_MULTICAST_DELEGATE`).
 
-The `FUNC_DECLARE_*` helper macros in `Delegate.h` define the actual typedef/class bodies
-(lines 208, 212, 216, 224, 235, 296).
+The `UE_PRIVATE_DECLARE_*` helper macros in `Delegate.h` define the actual typedef/class bodies
+(lines 205, 209, 213, 221, 231, 239). The old `FUNC_DECLARE_*` forms are deprecated in 5.8.
 
 ## Parameter count suffixes
 
@@ -46,7 +46,7 @@ All families use the same naming pattern. Supported suffixes and their meanings:
 The maximum is **9 parameters** (all families). `_RetVal` prefixes the suffix for
 single-cast only: `DECLARE_DELEGATE_RetVal`, `DECLARE_DELEGATE_RetVal_OneParam`, etc.
 Multicast and dynamic delegates cannot have return values (enforced by
-`TMulticastDelegate`'s `static_assert` in `DelegateSignatureImpl.inl:1036`).
+`TMulticastDelegate`'s `static_assert` in `DelegateSignatureImpl.inl:1095`).
 
 ### Dynamic delegate — named params
 
@@ -91,7 +91,7 @@ class EventName : public TMulticastDelegate<void()>
 };
 ```
 
-Only `OwnerType` can call `Broadcast`. The comment in `DelegateCombinations.h:29`
+Only `OwnerType` can call `Broadcast`. The comment in `DelegateCombinations.h:30`
 marks it deprecated: "consider deprecated for new delegates, use normal multicast instead."
 Preferred modern approach — declare a plain `DECLARE_MULTICAST_DELEGATE`, keep it
 `private`, and expose a const registration accessor:
@@ -112,7 +112,7 @@ private:
 };
 ```
 
-The `TMulticastDelegateRegistration` accessor pattern (from `DelegateSignatureImpl.inl:724`)
+The `TMulticastDelegateRegistration` accessor pattern (from `DelegateSignatureImpl.inl:739`)
 deletes `Broadcast`, making it impossible for callers to fire the event accidentally.
 
 ## Thread-safe multicast
@@ -128,7 +128,7 @@ or `AsyncTask` if they touch shared state.
 ## `FDelegateHandle`
 
 `Add*` on multicast delegates returns an `FDelegateHandle` — a `uint64` ID that
-uniquely identifies one binding (`IDelegateInstance.h:14`). Use it for precise removal:
+uniquely identifies one binding (`IDelegateInstance.h:15`). Use it for precise removal:
 
 ```cpp
 FDelegateHandle Handle = OnHealthChanged.AddUObject(this, &AHud::OnHealth);

@@ -1,7 +1,7 @@
 ---
 name: mover-movement-system
 description: Implement actor movement with Unreal's experimental Mover plugin
-  (UE 5.7) — the modular, rollback-networked successor to
+  (UE 5.8) — the modular, rollback-networked successor to
   CharacterMovementComponent. Covers UMoverComponent / UCharacterMoverComponent
   setup, producing input via IMoverInputProducerInterface and
   FCharacterDefaultInputs, movement modes and transitions, layered moves,
@@ -12,7 +12,7 @@ description: Implement actor movement with Unreal's experimental Mover plugin
   mode or layered move, migrating from CMC, wiring Enhanced Input into
   ProduceInput, or debugging Mover prediction/rollback behavior.
 metadata:
-  engine-version: "5.7"
+  engine-version: "5.8"
   category: gameplay-framework
 ---
 
@@ -25,7 +25,7 @@ logic lives in modular objects (movement modes, layered moves, transitions,
 modifiers) instead of a hard-coded enum + `switch`, and all state flows through
 replicated snapshot structs instead of direct component mutation.
 
-Status in 5.7: **Experimental** (`Engine/Plugins/Experimental/Mover/`). APIs
+Status in 5.8: **Experimental** (`Engine/Plugins/Experimental/Mover/`). APIs
 still change between minor versions. CMC remains fully supported; choose Mover
 for new projects that want its modular architecture, rollback netcode, or
 physics-driven movement — see the `character-and-movement` skill for CMC.
@@ -52,7 +52,7 @@ ProduceInput  →  SimulationTick  →  FinalizeFrame
 - **`FMoverInputCmdContext`** — what the player/AI *wants* this frame. A
   `FMoverDataCollection` of typed structs; the default set is
   `FCharacterDefaultInputs` (`MoverDataModelTypes.h:34`).
-- **`FMoverSyncState`** (`MoverSimulationTypes.h:191`) — the authoritative,
+- **`FMoverSyncState`** (`MoverSimulationTypes.h:228`) — the authoritative,
   replicated, rollback-able state: current mode name, active layered
   moves/modifiers, and a data collection holding `FMoverDefaultSyncState`
   (`MoverDataModelTypes.h:148` — location, orientation, velocity, movement base).
@@ -67,7 +67,7 @@ Three rules follow:
    setters. Queue things instead: `QueueNextMode`, `QueueLayeredMove`,
    `QueueInstantMovementEffect`, `QueueMovementModifier`. Mover warns when an
    external system moves the actor (`bWarnOnExternalMovement`,
-   `MoverComponent.h:833`).
+   `MoverComponent.h:933`).
 2. **All gameplay influence enters through the input cmd or queued objects**, so
    the simulation can replay them identically during a network rollback.
 3. **`ProduceInput` runs only on the locally-controlled instance** and is *not*
@@ -77,7 +77,8 @@ Three rules follow:
 
 1. Enable the **Mover** plugin (Experimental). Optionally **MoverExamples**
    (sample pawns, modes, zipline/vault content) and **MoverTests**.
-   Physics-driven movement lives partly in the separate **ChaosMover** plugin.
+   Physics-driven movement lives in the separate **ChaosMover** plugin (in 5.8
+   the physics backend and modes moved there entirely).
 2. C++ module dependency:
 
 ```csharp
@@ -170,9 +171,9 @@ Wiring notes:
 
 - If the **owning actor** implements `IMoverInputProducerInterface`, the
   MoverComponent auto-registers it as its `InputProducer` at BeginPlay
-  (`MoverComponent.cpp:295-304`). Actor components implementing the interface
+  (`MoverComponent.cpp:292-302`). Actor components implementing the interface
   are also gathered when `bGatherInputFromAllInputProducerComponents` is true
-  (`MoverComponent.h:211`).
+  (`MoverComponent.h:232`).
 - `ProduceInput` is a `BlueprintNativeEvent` — override
   `ProduceInput_Implementation` in C++ or the *Produce Input* event in BP.
 - Bind Enhanced Input actions normally in `SetupPlayerInputComponent`; the
@@ -185,9 +186,9 @@ Wiring notes:
 
 ## Movement modes
 
-Modes are instanced `UBaseMovementMode` objects (`MovementMode.h:39`) keyed by
-`FName` in `UMoverComponent::MovementModes` (`MoverComponent.h:188`). Default
-names live in `DefaultModeNames` (`MoverSimulationTypes.h:21-27`):
+Modes are instanced `UBaseMovementMode` objects (`MovementMode.h:40`) keyed by
+`FName` in `UMoverComponent::MovementModes` (`MoverComponent.h:209`). Default
+names live in `DefaultModeNames` (`MoverSimulationTypes.h:25-31`):
 
 | Name | Default class | Notes |
 |------|---------------|-------|
@@ -195,13 +196,13 @@ names live in `DefaultModeNames` (`MoverSimulationTypes.h:21-27`):
 | `Falling` | `UFallingMode` (`Modes/FallingMode.h`) | airborne + gravity; default starting mode of `UCharacterMoverComponent` |
 | `Flying` | `UFlyingMode` (`Modes/FlyingMode.h`) | free 3D movement |
 | `Swimming` | `USwimmingMode` (`Modes/SwimmingMode.h`) | requires Water plugin volumes; not registered by default |
-| — | `UNavWalkingMode`, `Async*Mode`, `PhysicsDriven*Mode` | nav-mesh walking, async-sim and physics-backend variants |
+| — | `UNavWalkingMode`, `Async*Mode`; `Chaos*Mode` (ChaosMover plugin) | nav-mesh walking, async-sim and physics-backend variants |
 
 Changing modes:
 
 ```cpp
 // From game code (applies at the start of the next sim frame):
-MoverComp->QueueNextMode(DefaultModeNames::Flying);          // MoverComponent.h:358
+MoverComp->QueueNextMode(DefaultModeNames::Flying);          // MoverComponent.h:414
 
 // From input (the default character modes honor this):
 Inputs.SuggestedMovementMode = DefaultModeNames::Flying;     // MoverDataModelTypes.h:66
@@ -212,8 +213,8 @@ MoverComp->RemoveMovementMode(TEXT("Gliding"));
 ```
 
 React to changes via the `OnMovementModeChanged` delegate
-(`MoverComponent.h:115`). Mode-owned `Transitions` and component-level
-`Transitions` (`MoverComponent.h:196`) evaluate every tick and can switch modes
+(`MoverComponent.h:128`). Mode-owned `Transitions` and component-level
+`Transitions` (`MoverComponent.h:217`) evaluate every tick and can switch modes
 declaratively — a `UBaseMovementModeTransition` returns the target mode name
 from `Evaluate` (`MovementModeTransition.h:65`).
 
@@ -227,8 +228,10 @@ class UMyGlidingMode : public UBaseMovementMode
     GENERATED_BODY()
 public:
     // Phase 1: propose velocity/orientation from input + current state
-    virtual void GenerateMove_Implementation(const FMoverTickStartData& StartState,
-        const FMoverTimeStep& TimeStep, FProposedMove& OutProposedMove) const override;
+    // (5.8 added the leading FMoverSimContext parameter)
+    virtual void GenerateMove_Implementation(const FMoverSimContext& SimContext,
+        const FMoverTickStartData& StartState, const FMoverTimeStep& TimeStep,
+        FProposedMove& OutProposedMove) const override;
 
     // Phase 2: execute the mixed proposed move against the world
     virtual void SimulationTick_Implementation(const FSimulationTickParams& Params,
@@ -242,7 +245,7 @@ MoverComponent subclass; never `NewObject` with a random outer.
 
 ## Layered moves (temporary motion: dash, launch, knockback)
 
-Layered moves (`FLayeredMoveBase`, `LayeredMove.h:72`) run *on top of* the
+Layered moves (`FLayeredMoveBase`, `LayeredMove.h:74`) run *on top of* the
 current mode for a duration, each generating a proposed move mixed by
 `MixMode` (`EMoveMixMode`: additive / override velocity / override all) and
 `Priority`. They replicate and participate in rollback.
@@ -254,21 +257,21 @@ TSharedPtr<FLayeredMove_LinearVelocity> Dash = MakeShared<FLayeredMove_LinearVel
 Dash->Velocity   = GetActorForwardVector() * 1200.f;
 Dash->DurationMs = 250.f;                       // 0 = single tick, <0 = until removed
 Dash->MixMode    = EMoveMixMode::OverrideVelocity;
-MoverComp->QueueLayeredMove(Dash);              // MoverComponent.h:288
+MoverComp->QueueLayeredMove(Dash);              // MoverComponent.h:314
 ```
 
 Built-ins in `DefaultMovementSet/LayeredMoves/BasicLayeredMoves.h`:
-`FLayeredMove_LinearVelocity:28`, `FLayeredMove_JumpImpulseOverDuration:78`,
-`FLayeredMove_JumpTo:118`, `FLayeredMove_MoveTo:184`,
-`FLayeredMove_MoveToDynamic:247`, `FLayeredMove_RadialImpulse:284`; plus
+`FLayeredMove_LinearVelocity:29`, `FLayeredMove_JumpImpulseOverDuration:147`,
+`FLayeredMove_JumpTo:187`, `FLayeredMove_MoveTo:253`,
+`FLayeredMove_MoveToDynamic:316`, `FLayeredMove_RadialImpulse:353`; plus
 `FLayeredMove_AnimRootMotion` (`LayeredMoves/AnimRootMotionLayeredMove.h`) for
 montage root motion and `MultiJumpLayeredMove.h`. Cancel by gameplay tag with
-`CancelFeaturesWithTag` (`MoverComponent.h:312`).
+`CancelFeaturesWithTag` (`MoverComponent.h:364`).
 
-5.7 also adds an instanced flavor — stateless `ULayeredMoveLogic` classes with
+5.7 added an instanced flavor — stateless `ULayeredMoveLogic` classes with
 replicated `FLayeredMoveInstancedData` (`LayeredMoveBase.h`), registered via
 `RegisterMove` and activated with `QueueLayeredMoveActivation`
-(`MoverComponent.h:277`). Details and custom-move authoring in
+(`MoverComponent.h:303`). Details and custom-move authoring in
 [references/layered-moves-and-instant-effects.md](references/layered-moves-and-instant-effects.md).
 
 ## Instant movement effects (one-tick state changes)
@@ -283,7 +286,7 @@ movement state for exactly one tick — the rollback-safe replacement for
 // Teleport (instead of SetActorLocation):
 TSharedPtr<FTeleportEffect> Teleport = MakeShared<FTeleportEffect>();
 Teleport->TargetLocation = Destination;
-MoverComp->QueueInstantMovementEffect(Teleport);   // MoverComponent.h:336
+MoverComp->QueueInstantMovementEffect(Teleport);   // MoverComponent.h:394
 
 // Launch (instead of LaunchCharacter / direct velocity write):
 TSharedPtr<FApplyVelocityEffect> Launch = MakeShared<FApplyVelocityEffect>();
@@ -293,7 +296,7 @@ MoverComp->QueueInstantMovementEffect(Launch);
 
 Built-ins: `FTeleportEffect:15`, `FJumpImpulseEffect:67`,
 `FApplyVelocityEffect:96` (in `BasicInstantMovementEffects.h`). For networked
-physics simulations, `ScheduleInstantMovementEffect` (`MoverComponent.h:342`)
+physics simulations, `ScheduleInstantMovementEffect` (`MoverComponent.h:402`)
 delays application so every endpoint applies it on the same frame.
 
 ## Jumping, crouching, state queries
@@ -310,7 +313,7 @@ MoverComp->IsCrouching(); MoverComp->IsSwimming(); MoverComp->IsSlopeSliding();
 ```
 
 The default character inputs also drive jumping (`bIsJumpJustPressed`) when
-`bHandleJump` is set (`CharacterMoverComponent.h:125`). Crouching is a
+`bHandleJump` is set (`CharacterMoverComponent.h:129`). Crouching is a
 **movement modifier** (`FStanceModifier`,
 `DefaultMovementSet/MovementModifiers/StanceModifier.h:30`) — see the modes
 reference for modifier authoring.
@@ -318,32 +321,32 @@ reference for modifier authoring.
 General queries on any `UMoverComponent`:
 
 ```cpp
-FVector Vel   = MoverComp->GetVelocity();           // MoverComponent.h:470
-FVector Wish  = MoverComp->GetMovementIntent();     // :474
-FName   Mode  = MoverComp->GetMovementModeName();   // :492
+FVector Vel   = MoverComp->GetVelocity();           // MoverComponent.h:526
+FVector Wish  = MoverComp->GetMovementIntent();     // :530
+FName   Mode  = MoverComp->GetMovementModeName();   // :548
 
 // Full state snapshot:
 const FMoverDefaultSyncState* State =
     MoverComp->GetSyncState().SyncStateCollection.FindDataByType<FMoverDefaultSyncState>();
 
-// State tags (MoverTypes.h:15-23): Mover_IsOnGround, Mover_IsInAir, Mover_IsFalling...
-bool bGrounded = MoverComp->HasGameplayTag(Mover_IsOnGround, true);  // MoverComponent.h:633
+// State tags (MoverTypes.h:15-25): Mover_IsOnGround, Mover_IsInAir, Mover_IsFalling...
+bool bGrounded = MoverComp->HasGameplayTag(Mover_IsOnGround, true);  // MoverComponent.h:704
 
 // Floor under the actor:
 FHitResult Floor;
-if (MoverComp->TryGetFloorCheckHitResult(Floor)) { /* ... */ }       // :530
+if (MoverComp->TryGetFloorCheckHitResult(Floor)) { /* ... */ }       // :590
 ```
 
 Prediction sampling for anim/motion matching: `GetPredictedTrajectory`
-(`MoverComponent.h:488`).
+(`MoverComponent.h:544`).
 
 ## Tuning speeds & shared settings
 
 The legacy-style modes read a **shared settings object**,
 `UCommonLegacyMovementSettings`
-(`DefaultMovementSet/Settings/CommonLegacyMovementSettings.h`): `MaxSpeed:58`,
-`Acceleration:109`, `Deceleration:105`, `TurningRate:113`, `MaxStepHeight:54`,
-`MaxWalkSlopeCosine:40`, `JumpUpwardsSpeed:128`, ground/air/swim mode-name
+(`DefaultMovementSet/Settings/CommonLegacyMovementSettings.h`): `MaxSpeed:63`,
+`Acceleration:114`, `Deceleration:110`, `TurningRate:118`, `MaxStepHeight:59`,
+`MaxWalkSlopeCosine:40`, `JumpUpwardsSpeed:133`, ground/air/swim mode-name
 mappings, friction and braking. Edit it under the Mover component's **Shared
 Settings** array (auto-populated from each mode's `SharedSettingsClasses`), or
 at runtime:
@@ -360,17 +363,17 @@ if (UCommonLegacyMovementSettings* Settings =
 
 The MoverComponent doesn't tick itself; a **backend liaison**
 (`Backends/MoverBackendLiaison.h:24`, chosen by `BackendClass`,
-`MoverComponent.h:185`) drives ProduceInput/SimulationTick/FinalizeFrame:
+`MoverComponent.h:206`) drives ProduceInput/SimulationTick/FinalizeFrame:
 
 | Backend | Class | Use for |
 |---------|-------|---------|
-| Network Prediction (default) | `UMoverNetworkPredictionLiaisonComponent` (`Backends/MoverNetworkPredictionLiaison.h:28`) | kinematic characters with client prediction + rollback |
-| Chaos networked physics | `UMoverNetworkPhysicsLiaisonComponentBase` (`Backends/MoverNetworkPhysicsLiaisonBase.h:188`) | physics-driven movement (`UPhysicsCharacterMoverComponent` + `PhysicsDriven*` modes) |
-| Standalone | `UMoverStandaloneLiaisonComponent` (`Backends/MoverStandaloneLiaison.h:98`) | single-player / no networking, lowest overhead |
+| Network Prediction (default) | `UMoverNetworkPredictionLiaisonComponent` (`Backends/MoverNetworkPredictionLiaison.h:29`) | kinematic characters with client prediction + rollback |
+| Chaos networked physics | `UChaosMoverBackendComponent` (ChaosMover plugin, `ChaosMover/Backends/ChaosMoverBackend.h:28`) | physics-driven movement (`UChaosCharacterMoverComponent` + `Chaos*` modes) |
+| Standalone | `UMoverStandaloneLiaisonComponent` (`Backends/MoverStandaloneLiaison.h:100`) | single-player / no networking, lowest overhead |
 
 Rollbacks re-simulate forward from a corrected state; `OnPostSimulationRollback`
-(`MoverComponent.h:111`) fires so gameplay/VFX can react. Custom replicated
-movement state = your own `FMoverDataStructBase` (`MoverTypes.h:113`) added to
+(`MoverComponent.h:124`) fires so gameplay/VFX can react. Custom replicated
+movement state = your own `FMoverDataStructBase` (`MoverTypes.h:203`) added to
 the input/sync collections (the Mover analog of CMC's `FSavedMove` flags). Full
 detail — backend setup, custom state data, smoothing, reconciliation — in
 [references/networking-and-backends.md](references/networking-and-backends.md).
@@ -396,7 +399,7 @@ detail — backend setup, custom state data, smoothing, reconciliation — in
 - **Moving the actor externally** (`SetActorLocation`, physics pushes on a
   kinematic backend) fights the simulation — Mover logs a warning and the next
   finalize snaps the actor back. Use `FTeleportEffect`, or set
-  `bAcceptExternalMovement` (`MoverComponent.h:837`) if an external system
+  `bAcceptExternalMovement` (`MoverComponent.h:937`) if an external system
   (e.g. a cutscene) must own the transform temporarily.
 - **`UMoverComponent` alone does nothing** — it has no movement modes and a
   `NAME_None` starting mode. Use `UCharacterMoverComponent` or register modes
@@ -407,18 +410,18 @@ detail — backend setup, custom state data, smoothing, reconciliation — in
   tick, `< 0` runs until removed/`IsFinished` — a common source of
   "my dash never ends".
 - **`PreferredMode` of a layered move applies only when the move starts**, not
-  continuously (`LayeredMove.h:59-68` comment). Mid-move mode changes need an
+  continuously (`LayeredMove.h:60-70` comment). Mid-move mode changes need an
   instant effect or `QueueNextMode`.
 - **Don't cache `GetSyncState()` references across frames** — it's
   double-buffered per tick.
 - **Async simulation**: modes/transitions with `bSupportsAsync` may run off the
-  game thread (`MovementMode.h:119`) — no actor/world access in
+  game thread (`MovementMode.h:121`) — no actor/world access in
   `GenerateMove`/`SimulationTick` there; cache via the sim blackboard
-  (`GetSimBlackboard`, `MoverComponent.h:534`).
+  (`GetSimBlackboard`, `MoverComponent.h:594`).
 - **ProduceInput edge flags**: clear "just pressed" booleans after authoring a
   frame, or a single press repeats on every subsequent frame.
 - **5.6+ renames**: `OnActivate`/`OnDeactivate`/`OnGenerateMove`/
-  `OnSimulationTick` are dead (`MovementMode.h:134-141`); override
+  `OnSimulationTick` are dead (`MovementMode.h:136-143`); override
   `Activate`/`Deactivate` and the `_Implementation` variants instead. Expect
   further churn while Experimental — pin exact signatures against your engine's
   headers.
@@ -427,41 +430,45 @@ detail — backend setup, custom state data, smoothing, reconciliation — in
 
 ## Version notes
 
-- Mover ships as Experimental in 5.3+ and remains Experimental in 5.7; Epic
+- Mover ships as Experimental in 5.3+ and remains Experimental in 5.8; Epic
   states CMC stays supported for the foreseeable future.
-- 5.7 adds the instanced layered-move system (`ULayeredMoveLogic`), the
-  rollback-aware blackboard, and pathed physics movement
-  (`PhysicsMover/PathedMovement/`).
+- 5.7 added the instanced layered-move system (`ULayeredMoveLogic`), the
+  rollback-aware blackboard, and pathed physics movement.
+- 5.8 moved physics-driven movement out of the Mover plugin into the
+  **ChaosMover** plugin (`UChaosMoverBackendComponent`, `Chaos*Mode` classes,
+  `ChaosMover/PathedMovement/`), replacing the 5.7 `MoverNetworkPhysicsLiaison*`
+  backends and `PhysicsDriven*` modes. `GenerateMove` also gained a leading
+  `FMoverSimContext` parameter.
 - Line numbers in plugin headers drift across releases; header paths and
   class/function names are stable.
 
 ## References & source material
 
-Plugin source (UE 5.7, `Engine/Plugins/Experimental/Mover/Source/Mover/Public/`):
-- `MoverComponent.h` — `UMoverComponent:81`, `OnMovementModeChanged:115`,
-  `ProduceInput:160`, `SimulationTick:181`, `BackendClass:185`,
-  `MovementModes:188`, `StartingMovementMode:192`, `Transitions:196`,
-  `InputProducer:207`, `QueueLayeredMove:288`, `QueueMovementModifier:300`,
-  `CancelFeaturesWithTag:312`, `QueueInstantMovementEffect:336`,
-  `QueueNextMode:358`, `SetGravityOverride:375`, `GetVelocity:470`,
-  `GetPredictedTrajectory:488`, `GetMovementModeName:492`, `GetSyncState:513`,
-  `TryGetFloorCheckHitResult:530`, `GetSimBlackboard:534`, `HasGameplayTag:633`,
-  `bWarnOnExternalMovement:833`, `bAcceptExternalMovement:837`.
-- `MovementMode.h` — `UBaseMovementMode:39`, `GenerateMove:59`,
-  `SimulationTick:62`, `SharedSettingsClasses:104`, `Transitions:108`,
-  `GameplayTags:112`, `bSupportsAsync:119`.
+Plugin source (UE 5.8, `Engine/Plugins/Experimental/Mover/Source/Mover/Public/`):
+- `MoverComponent.h` — `UMoverComponent:93`, `OnMovementModeChanged:128`,
+  `ProduceInput:186`, `FinalizeFrame:189`, `BackendClass:206`,
+  `MovementModes:209`, `StartingMovementMode:213`, `Transitions:217`,
+  `InputProducer:228`, `QueueLayeredMove:314`, `QueueMovementModifier:352`,
+  `CancelFeaturesWithTag:364`, `QueueInstantMovementEffect:394`,
+  `QueueNextMode:414`, `SetGravityOverride:431`, `GetVelocity:526`,
+  `GetPredictedTrajectory:544`, `GetMovementModeName:548`, `GetSyncState:573`,
+  `TryGetFloorCheckHitResult:590`, `GetSimBlackboard:594`, `HasGameplayTag:704`,
+  `bWarnOnExternalMovement:933`, `bAcceptExternalMovement:937`.
+- `MovementMode.h` — `UBaseMovementMode:40`, `GenerateMove:60`,
+  `SimulationTick:63`, `SharedSettingsClasses:106`, `Transitions:110`,
+  `GameplayTags:114`, `bSupportsAsync:121`.
 - `MovementModeTransition.h` — `FTransitionEvalResult:18`,
   `UBaseMovementModeTransition:38`, `Evaluate:65`, `Trigger:68`.
-- `MoverSimulationTypes.h` — `DefaultModeNames:21`, `CommonBlackboard:30`,
-  `FMoverInputCmdContext:152`, `FMoverSyncState:191`, `FMoverTickStartData:357`,
-  `FSimulationTickParams:413`, `IMoverInputProducerInterface:448`.
+- `MoverSimulationTypes.h` — `DefaultModeNames:25`, `CommonBlackboard:34`,
+  `FMoverInputCmdContext:189`, `FMoverSyncState:228`, `FMoverTickStartData:394`,
+  `FSimulationTickParams:478`, `IMoverInputProducerInterface:517`.
 - `MoverDataModelTypes.h` — `EMoveInputType:17`, `FCharacterDefaultInputs:34`,
   `FMoverDefaultSyncState:148`, `UMoverDataModelBlueprintLibrary:271`.
-- `MoverTypes.h` — state gameplay tags `:15-23`, `FMoverTimeStep:86`,
-  `FMoverDataStructBase:113`, `FMoverDataCollection:188`,
-  `FMoverDataPersistence:352`.
-- `LayeredMove.h` — `FLayeredMoveBase:72`, `FLayeredMoveGroup:169`;
-  `LayeredMoveBase.h` — `ULayeredMoveLogic:120`.
+- `MoverTypes.h` — state gameplay tags `:15-25`, `FMoverTimeStep:149`,
+  `FMoverDataStructBase:203`, `FMoverDataCollection:278`,
+  `FMoverDataPersistence:442`.
+- `LayeredMove.h` — `FLayeredMoveBase:74`, `FLayeredMoveGroup:191`;
+  `LayeredMoveBase.h` — `ULayeredMoveLogic:133`.
 - `InstantMovementEffect.h` — `FInstantMovementEffect:51`.
 - `DefaultMovementSet/CharacterMoverComponent.h` — `UCharacterMoverComponent:27`,
   `Jump:87`, `Crouch:95`.
@@ -469,15 +476,15 @@ Plugin source (UE 5.7, `Engine/Plugins/Experimental/Mover/Source/Mover/Public/`)
   `UCommonLegacyMovementSettings:13`.
 - `DefaultMovementSet/LayeredMoves/BasicLayeredMoves.h`,
   `DefaultMovementSet/InstantMovementEffects/BasicInstantMovementEffects.h`.
-- `Backends/MoverBackendLiaison.h:24`, `Backends/MoverNetworkPredictionLiaison.h:28`,
-  `Backends/MoverNetworkPhysicsLiaisonBase.h:188`,
-  `Backends/MoverStandaloneLiaison.h:98`.
+- `Backends/MoverBackendLiaison.h:24`, `Backends/MoverNetworkPredictionLiaison.h:29`,
+  `Backends/MoverStandaloneLiaison.h:100`; Chaos physics backend:
+  `Engine/Plugins/Experimental/ChaosMover/Source/ChaosMover/Public/ChaosMover/Backends/ChaosMoverBackend.h:28`.
 
-Example source (UE 5.7):
+Example source (UE 5.8):
 - `Engine/Plugins/Experimental/MoverExamples/Source/MoverExamples/Public/MoverExamplesCharacter.h`
   — reference input-producing pawn (Enhanced Input → `FCharacterDefaultInputs`).
 
-Official docs (UE 5.7):
+Official docs (UE 5.8):
 - Mover overview — <https://dev.epicgames.com/documentation/unreal-engine/mover-in-unreal-engine>
 - Mover features & concepts — <https://dev.epicgames.com/documentation/unreal-engine/mover-features-and-concepts-in-unreal-engine>
 - Comparing Mover and CMC — <https://dev.epicgames.com/documentation/unreal-engine/comparing-mover-and-character-movement-component-in-unreal-engine>
@@ -488,7 +495,7 @@ Deep-dive references in this skill:
   generators, shared settings.
 - [references/layered-moves-and-instant-effects.md](references/layered-moves-and-instant-effects.md)
   — built-in catalog, custom layered moves & instant effects, mixing rules,
-  the 5.7 instanced layered-move system.
+  the instanced layered-move system (added in 5.7).
 - [references/networking-and-backends.md](references/networking-and-backends.md)
   — backend liaisons, rollback flow, custom sync/input state data, smoothing,
   physics-driven movement.

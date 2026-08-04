@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers `UAssetManager`, `UPrimaryDataAsset`, primary
 asset IDs, asset bundle metadata, the load/unload API, bundle-state switching, and custom Asset
-Manager subclassing. Grounded in UE 5.7
+Manager subclassing. Grounded in UE 5.8
 (`Engine/Source/Runtime/Engine/Classes/Engine/AssetManager.h` and `DataAsset.h`).
 
 ## Mental model: primary vs secondary assets
@@ -28,12 +28,12 @@ FPrimaryAssetId = FPrimaryAssetType (FName) + FName (asset name)
 Declared in `CoreUObject/Public/UObject/PrimaryAssetId.h`:
 - `FPrimaryAssetType` — `PrimaryAssetId.h`:27. A thin `FName` wrapper identifying the
   type group (e.g. `WeaponData`).
-- `FPrimaryAssetId` — `PrimaryAssetId.h`:125. Combines type + name, e.g.
+- `FPrimaryAssetId` — `PrimaryAssetId.h`:133. Combines type + name, e.g.
   `FPrimaryAssetId(TEXT("WeaponData"), TEXT("Rifle_01"))`.
 
 ## UPrimaryDataAsset — the minimal primary class
 
-`UPrimaryDataAsset` (`DataAsset.h`:46) extends `UDataAsset` with a built-in
+`UPrimaryDataAsset` (`DataAsset.h`:47) extends `UDataAsset` with a built-in
 `GetPrimaryAssetId()` that returns `ClassName:AssetName` automatically. It also maintains
 `FAssetBundleData` at save time by scanning `UPROPERTY` members with the `AssetBundles` meta tag.
 
@@ -60,7 +60,7 @@ public:
 };
 ```
 
-`UPrimaryDataAsset::GetPrimaryAssetId()` (`DataAsset.h`:52) returns the ID automatically. The
+`UPrimaryDataAsset::GetPrimaryAssetId()` (`DataAsset.h`:53) returns the ID automatically. The
 `AssetBundles` meta tells the engine which `TSoftObjectPtr` members to include in each named
 bundle without loading the assets.
 
@@ -81,7 +81,7 @@ Alternatively, override `StartInitialLoading()` in a custom `UAssetManager` subc
 void UMyAssetManager::StartInitialLoading()
 {
     Super::StartInitialLoading();
-    ScanPathsForPrimaryAssets(         // AssetManager.h:154
+    ScanPathsForPrimaryAssets(         // AssetManager.h:151
         TEXT("WeaponData"),
         {TEXT("/Game/Data/Weapons")},
         UWeaponData::StaticClass(),
@@ -105,7 +105,7 @@ UAssetManager& AM = UAssetManager::Get();   // AssetManager.h:97
 
 // Load one primary asset with specified bundles:
 TSharedPtr<FStreamableHandle> H =
-    AM.LoadPrimaryAsset(                     // AssetManager.h:315
+    AM.LoadPrimaryAsset(                     // AssetManager.h:333
         FPrimaryAssetId(TEXT("WeaponData"), TEXT("Rifle_01")),
         {TEXT("UI")},
         FStreamableDelegate::CreateUObject(this, &AMyHUD::OnWeaponLoaded));
@@ -115,7 +115,7 @@ AM.LoadPrimaryAssetsWithType(TEXT("WeaponData"), {TEXT("UI")},
     FStreamableDelegate::CreateUObject(this, &AMyHUD::OnAllWeaponsLoaded));
 
 // Unload (releases manager's reference; GC may reclaim assets):
-AM.UnloadPrimaryAsset(WeaponId);            // AssetManager.h:345
+AM.UnloadPrimaryAsset(WeaponId);            // AssetManager.h:370
 
 // Query whether a primary asset is in memory:
 if (UWeaponData* WD = AM.GetPrimaryAssetObject<UWeaponData>(WeaponId))
@@ -129,7 +129,7 @@ if (UWeaponData* WD = AM.GetPrimaryAssetObject<UWeaponData>(WeaponId))
 Switch which bundle of an already-registered primary is loaded without a full unload/reload:
 ```cpp
 // Switch from "UI" to "Game" bundle (adds "Game", removes "UI"):
-AM.ChangeBundleStateForPrimaryAssets(       // AssetManager.h:386
+AM.ChangeBundleStateForPrimaryAssets(       // AssetManager.h:390
     {WeaponId},
     {TEXT("Game")},   // add
     {TEXT("UI")},     // remove
@@ -147,7 +147,7 @@ For assets that have no on-disk representation (e.g. downloaded from a server):
 FAssetBundleData BundleData;
 BundleData.AddBundleAssets(TEXT("Menu"), {FSoftObjectPath(TEXT("/Game/UI/T_Dynamic.T_Dynamic"))});
 
-AM.AddDynamicAsset(                         // AssetManager.h:180
+AM.AddDynamicAsset(                         // AssetManager.h:202
     FPrimaryAssetId(TEXT("DynamicContent"), TEXT("Server_Zone_01")),
     FSoftObjectPath(),
     BundleData);
@@ -160,11 +160,11 @@ primary-asset dependencies.
 
 ```cpp
 TArray<FPrimaryAssetId> Ids;
-AM.GetPrimaryAssetIdList(TEXT("WeaponData"), Ids);   // AssetManager.h:259
+AM.GetPrimaryAssetIdList(TEXT("WeaponData"), Ids);   // AssetManager.h:281
 
 // Get FAssetData (no load):
 FAssetData Data;
-AM.GetPrimaryAssetData(Ids[0], Data);                // AssetManager.h:213
+AM.GetPrimaryAssetData(Ids[0], Data);                // AssetManager.h:235
 ```
 
 ## Module dependencies

@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the `USkeletalMesh` / `USkeleton` /
 `UPhysicsAsset` ecosystem, leader-pose components, bone queries, modular characters,
-and Nanite skeletal mesh. Grounded in UE 5.7
+and Nanite skeletal mesh. Grounded in UE 5.8
 (`Engine/Source/Runtime/Engine/Classes/Engine/SkeletalMesh.h`,
 `Engine/Source/Runtime/Engine/Classes/Components/SkeletalMeshComponent.h`,
 `Engine/Source/Runtime/Engine/Classes/Components/SkinnedMeshComponent.h`,
@@ -37,7 +37,7 @@ Designers add **virtual bones** in the Skeleton Editor to extend the hierarchy f
 targets or attachment points without changing the source mesh. Virtual bones are
 visible to AnimBP nodes but not rendered.
 
-`USkeletalMesh::GetSkeleton()` (line 740) returns the skeleton. Attempting to play an
+`USkeletalMesh::GetSkeleton()` (line 747) returns the skeleton. Attempting to play an
 animation sequence whose skeleton differs from the component's mesh skeleton will log
 a warning and play nothing at runtime.
 
@@ -53,7 +53,7 @@ A `UPhysicsAsset` holds:
 Assign at runtime:
 
 ```cpp
-SkMesh->SetPhysicsAsset(MyPhysicsAsset, /*bForceReInit=*/false);  // line 2051
+SkMesh->SetPhysicsAsset(MyPhysicsAsset, /*bForceReInit=*/false);  // line 2197
 ```
 
 Setting `bForceReInit = true` rebuilds all physics bodies immediately (expensive; avoid
@@ -66,7 +66,7 @@ Skeletal sockets follow the animation of their parent bone every frame. They are
 stored on the `USkeletalMesh` asset and are shared across all components:
 
 ```cpp
-// Retrieve a socket by name (USkinnedMeshComponent, line 1849):
+// Retrieve a socket by name (USkinnedMeshComponent, line 1955):
 USkeletalMeshSocket const* Sock = SkMesh->GetSocketByName(TEXT("hand_r"));
 if (Sock)
 {
@@ -81,8 +81,8 @@ if (Sock)
 FTransform WorldSockTransform = SkMesh->GetSocketTransform(TEXT("hand_r"));
 ```
 
-`USkeletalMesh::FindSocket()` (line 2637) searches the mesh's socket array and the
-skeleton's sockets. `FindSocketInfo()` (line 2653) also returns the bone index and
+`USkeletalMesh::FindSocket()` (line 2658) searches the mesh's socket array and the
+skeleton's sockets. `FindSocketInfo()` (line 2674) also returns the bone index and
 the socket's local offset — useful for FK corrections.
 
 ## Setting up a skeletal mesh component
@@ -93,9 +93,9 @@ SkMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("CharMesh"));
 SetRootComponent(SkMesh);
 
 // Assign mesh + animation class (both can be set via UPROPERTY in editor):
-SkMesh->SetSkeletalMesh(MySkeletalMesh);         // line 2052
-SkMesh->SetAnimInstanceClass(MyAnimBPClass);     // line 1010
-SkMesh->SetPhysicsAsset(MyPhysicsAsset);         // line 2051
+SkMesh->SetSkeletalMesh(MySkeletalMesh);         // line 2198
+SkMesh->SetAnimInstanceClass(MyAnimBPClass);     // line 1096
+SkMesh->SetPhysicsAsset(MyPhysicsAsset);         // line 2197
 
 // Swap mesh at runtime without resetting current pose:
 SkMesh->SetSkeletalMesh(NewMesh, /*bReinitPose=*/false);
@@ -142,9 +142,9 @@ Bone transforms are only valid on the game thread after the animation has ticked
 that frame. Do not read bone transforms from async or physics threads without
 `GetCachedAnimDataRequiresPerObjectLock` protection.
 
-## Nanite skeletal mesh (UE 5.7)
+## Nanite skeletal mesh (UE 5.8)
 
-In 5.7, Nanite for skeletal meshes is production-ready. Enabling it gives:
+In 5.8, Nanite for skeletal meshes is production-ready (since 5.7). Enabling it gives:
 - One GPU draw call for the entire character (vs. one per material section).
 - Virtual Shadow Map support.
 - Animation LODs (not geometry LODs — bones/sections can be stripped per LOD).

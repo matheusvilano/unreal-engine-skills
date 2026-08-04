@@ -10,7 +10,7 @@ description: Schedule and defer work in Unreal C++ — FTimerManager (SetTimer w
   one frame, offloading CPU-heavy work to a background thread, or building a non-actor
   ticker. Cross-references actors-and-components (EndPlay cleanup) and delegates-and-events.
 metadata:
-  engine-version: "5.7"
+  engine-version: "5.8"
   category: gameplay-framework
 ---
 
@@ -372,26 +372,26 @@ subclass `UBlueprintAsyncActionBase` instead of implementing a raw `FPendingLate
 - `FTSTicker` replaced `FTicker` in UE5. Any UE4-era code using `FTicker::GetCoreTicker()`
   must be ported to `FTSTicker::GetCoreTicker()`.
 - The **UE Tasks System** (`UE::Tasks`) was introduced in UE 5.0. Prefer it over direct
-  task-graph usage (`TGraphTask`) for new code in 5.7.
+  task-graph usage (`TGraphTask`) for new code in 5.8.
 - Busy-waiting in `UE::Tasks` was deprecated in UE 5.5 and replaced by oversubscription
   (standby threads). Do not call the removed busy-wait APIs.
 
 ## References & source material
 
-Engine source (UE 5.7, under `Engine/Source/`):
+Engine source (UE 5.8, under `Engine/Source/`):
 - `Runtime/Engine/Classes/Engine/TimerHandle.h` — `FTimerHandle`:11.
-- `Runtime/Engine/Public/TimerManager.h` — `FTimerManager`:132, `SetTimer`:162,
-  `SetTimerForNextTick`:244, `ClearTimer`:276, `PauseTimer`:299, `UnPauseTimer`:306,
-  `IsTimerActive`:326, `GetTimerRemaining`:385, `ClearAllTimersForObject`:286,
-  `FTimerManagerTimerParameters`:122.
+- `Runtime/Engine/Public/TimerManager.h` — `FTimerManager`:137, `SetTimer`:167,
+  `SetTimerForNextTick`:249, `ClearTimer`:281, `PauseTimer`:304, `UnPauseTimer`:311,
+  `IsTimerActive`:331, `GetTimerRemaining`:444, `ClearAllTimersForObject`:291,
+  `FTimerManagerTimerParameters`:124.
 - `Runtime/Core/Public/Async/Async.h` — `EAsyncExecution`:27 (enum with `TaskGraph`,
   `Thread`, `ThreadPool`, `TaskGraphMainThread`, `TaskGraphMainTick`), `Async`:299,
   `AsyncTask`:463.
 - `Runtime/Core/Public/Async/AsyncWork.h` — `FAutoDeleteAsyncTask`:60,
-  `FAsyncTaskBase`:206, `FAsyncTask`:583, `FNonAbandonableTask`:662.
+  `FAsyncTaskBase`:208, `FAsyncTask`:587, `FNonAbandonableTask`:666.
 - `Runtime/Core/Public/Async/TaskGraphInterfaces.h` — `ENamedThreads`:54 (namespace,
   `GameThread`, `AnyThread`, `RHIThread`).
-- `Runtime/Core/Public/Async/Future.h` — `TFuture`:391, `TPromise`:540.
+- `Runtime/Core/Public/Async/Future.h` — `TFuture`:378, `TPromise`:527.
 - `Runtime/Core/Public/Tasks/Task.h` — `UE::Tasks::TTask`, `FTask` alias, `Launch`,
   `AddNested`, `Wait` in `namespace UE::Tasks`.
 - `Runtime/Core/Public/Tasks/Pipe.h` — `UE::Tasks::FPipe`:28.
@@ -403,7 +403,7 @@ Engine source (UE 5.7, under `Engine/Source/`):
   `UE::FPlatformRecursiveMutex`).
 - `Runtime/Core/Public/Misc/ScopeLock.h` — `FScopeLock`:140.
 
-Official docs (UE 5.7, verified):
+Official docs (UE 5.8, verified):
 - Gameplay Timers —
   <https://dev.epicgames.com/documentation/unreal-engine/gameplay-timers-in-unreal-engine>
 - Tasks System —

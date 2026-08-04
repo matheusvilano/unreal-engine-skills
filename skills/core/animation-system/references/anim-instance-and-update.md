@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the full per-frame update pipeline,
 the game-thread / worker-thread split, the `UAnimInstanceProxy`, Property Access, and
-writing thread-safe Blueprint functions. Grounded in UE 5.7
+writing thread-safe Blueprint functions. Grounded in UE 5.8
 (`Runtime/Engine/Classes/Animation/AnimInstance.h`,
 `Runtime/Engine/Public/Animation/AnimInstanceProxy.h`).
 
@@ -107,7 +107,7 @@ Most game projects do not need a custom proxy; use `NativeThreadSafeUpdateAnimat
 
 ## Related
 
-- Engine source: `AnimInstance.h` lines 1372–1391 — all `Native*` virtual overrides.
+- Engine source: `AnimInstance.h` lines 1436–1457 — all `Native*` virtual overrides.
 - Engine source: `AnimInstanceProxy.h` — `FAnimInstanceProxy`, `PreUpdate`, `Update`.
 - Official doc: [Animation Blueprints](https://dev.epicgames.com/documentation/unreal-engine/animation-blueprints-in-unreal-engine)
 - Official doc: [How to Get Animation Variables](https://dev.epicgames.com/documentation/unreal-engine/how-to-get-animation-variables-in-animation-blueprints-in-unreal-engine)

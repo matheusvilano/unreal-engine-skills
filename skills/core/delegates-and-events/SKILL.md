@@ -10,7 +10,7 @@ description: Wire up callbacks and events in Unreal C++ using delegates — sing
   observer pattern, exposing C++ events to Blueprints, decoupling game systems,
   binding overlap/hit/ability callbacks, or debugging delegate crashes and silent no-ops.
 metadata:
-  engine-version: "5.7"
+  engine-version: "5.8"
   category: cpp-foundations
 ---
 
@@ -188,7 +188,7 @@ For `AddLambda` and `AddRaw`, store the returned `FDelegateHandle` and call
 
 `DECLARE_EVENT(OwnerType, EventName)` creates a `TMulticastDelegate` subclass whose
 `Broadcast` is only accessible to `OwnerType` (friend). It is marked deprecated in
-the source comment (`DelegateCombinations.h:32`) — prefer plain `DECLARE_MULTICAST_DELEGATE`
+the source comment (`DelegateCombinations.h:30`) — prefer plain `DECLARE_MULTICAST_DELEGATE`
 with a private broadcast method for the same encapsulation pattern.
 
 ## Thread-safe multicast
@@ -229,26 +229,28 @@ separately. (`DelegateCombinations.h:26`)
 
 ## References & source material
 
-Engine source (UE 5.7, under `Engine/Source/Runtime/Core/Public/`):
+Engine source (UE 5.8, under `Engine/Source/Runtime/Core/Public/`):
 - `Delegates/DelegateCombinations.h` — all `DECLARE_*` macros: single-cast:20,
   multicast:23, TS multicast:26, event:32, dynamic:35, dynamic multicast:38.
 - `Delegates/Delegate.h` — `TDelegate`/`TMulticastDelegate` concepts, binding table,
-  payload variable documentation; `FUNC_DECLARE_DELEGATE`:208,
-  `FUNC_DECLARE_MULTICAST_DELEGATE`:212, `FUNC_DECLARE_EVENT`:224,
-  `FUNC_DECLARE_DYNAMIC_DELEGATE`:235, `FUNC_DECLARE_DYNAMIC_MULTICAST_DELEGATE`:296.
-- `Delegates/DelegateSignatureImpl.inl` — `TDelegateRegistration`/`TDelegate`:315,
-  `BindLambda`:126, `BindWeakLambda`:151, `BindUObject`:276; `TMulticastDelegateRegistration`:728,
-  `AddLambda`:802, `AddWeakLambda`:828, `AddUObject`:969, `Remove`:1003,
-  `TMulticastDelegate::Broadcast`:1074, `TBaseDynamicDelegate`:1093,
-  `TBaseDynamicMulticastDelegate`:1165.
-- `Delegates/MulticastDelegateBase.h` — `TMulticastDelegateBase`, `Clear`:79,
-  `IsBound`:91, `RemoveAll`:135.
-- `Delegates/IDelegateInstance.h` — `FDelegateHandle`:14 (the handle type returned
+  payload variable documentation; `UE_PRIVATE_DECLARE_DELEGATE`:205,
+  `UE_PRIVATE_DECLARE_MULTICAST_DELEGATE`:209, `UE_PRIVATE_DECLARE_EVENT`:221,
+  `UE_PRIVATE_DECLARE_DYNAMIC_DELEGATE`:231, `UE_PRIVATE_DECLARE_DYNAMIC_MULTICAST_DELEGATE`:239.
+  (The old `FUNC_DECLARE_*` forms are deprecated in 5.8, `:247`–`:252`.)
+- `Delegates/DelegateSignatureImpl.inl` — `TDelegateRegistration`/`TDelegate`:327,
+  `BindLambda`:138, `BindWeakLambda`:163, `BindUObject`:288; `TMulticastDelegateRegistration`:743,
+  `AddLambda`:823, `AddWeakLambda`:853, `AddUObject`:1020, `Remove`:1062,
+  `TMulticastDelegate::Broadcast`:1133, `TDynamicDelegate`:1161,
+  `TDynamicMulticastDelegate`:1288 (renamed from `TBaseDynamicDelegate`/
+  `TBaseDynamicMulticastDelegate` in 5.8).
+- `Delegates/MulticastDelegateBase.h` — `TMulticastDelegateBase`, `Clear`:119,
+  `IsBound`:131, `RemoveAll`:173.
+- `Delegates/IDelegateInstance.h` — `FDelegateHandle`:15 (the handle type returned
   by `Add*`; stores a `uint64` ID for O(N) lookup/removal).
 - `Templates/Function.h` — `TFunction<Ret(Args...)>` / `TUniqueFunction` for stored
   callables that are not event delegates.
 
-Official docs (UE 5.7):
+Official docs (UE 5.8):
 - Delegates (single-cast) —
   <https://dev.epicgames.com/documentation/unreal-engine/delegates-and-lambda-functions-in-unreal-engine>
 - Multicast Delegates —

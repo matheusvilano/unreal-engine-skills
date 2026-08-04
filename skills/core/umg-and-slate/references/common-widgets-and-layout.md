@@ -2,14 +2,14 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the leaf widget types, panel widgets and
 their slot system, dynamic widget construction from C++, the `UWidgetTree` API, and
-`UPanelWidget` child management. Grounded in UE 5.7
+`UPanelWidget` child management. Grounded in UE 5.8
 (`Engine/Source/Runtime/UMG/Public/Components/`).
 
 ## Widget type hierarchy
 
 ```
 UVisual
-  UWidget (Widget.h:215)            — base; wraps an SWidget
+  UWidget (Widget.h:216)            — base; wraps an SWidget
     UPanelWidget (PanelWidget.h:14) — has child Slots; layout containers
     UContentWidget                  — single-child panels (Border, Button, ScaleBox...)
     UTextLayoutWidget               — UTextBlock, UMultiLineEditableText...
@@ -37,7 +37,7 @@ the Slate widget synced through `SynchronizeProperties()`.
 ### UTextBlock
 
 `SetText` / `GetText` use `FText` (for localization). Direct access to the `Text` UPROPERTY
-is deprecated since 5.1 (`TextBlock.h`:28-30):
+is deprecated since 5.1 (`TextBlock.h`:28-31):
 
 ```cpp
 if (ScoreText)
@@ -98,12 +98,12 @@ if (Slot)
 `UWidgetTree` (`WidgetTree.h`:19) owns the widget instances for a `UUserWidget`. Its primary
 APIs:
 
-- `ConstructWidget<T>(Class, Name)` (:102) — create a widget owned by this tree. Use for
+- `ConstructWidget<T>(Class, Name)` (:106) — create a widget owned by this tree. Use for
   dynamically built sub-trees. For `UUserWidget` subclasses, redirects to `CreateWidget`.
-- `FindWidget(FName)` (:30) — find by name.
-- `ForEachWidget(Predicate)` (:74) — iterate all widgets in the tree.
-- `GetAllWidgets(Array)` (:61) — collect all widgets recursively.
-- `RootWidget` (:142) — the top-level widget of the tree.
+- `FindWidget(FName)` (:34) — find by name.
+- `ForEachWidget(Predicate)` (:78) — iterate all widgets in the tree.
+- `GetAllWidgets(Array)` (:65) — collect all widgets recursively.
+- `RootWidget` (:150) — the top-level widget of the tree.
 
 Direct use of `UWidgetTree` is only needed when building a widget hierarchy entirely from C++
 without a Widget Blueprint. The usual pattern is to author layout in the Widget Blueprint and

@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers `FRunnable` lifecycle, creating and
 stopping threads with `FRunnableThread`, thread priorities, safe stopping patterns, and
-when to prefer `FRunnable` over the Tasks System or `Async`. Grounded in UE 5.7:
+when to prefer `FRunnable` over the Tasks System or `Async`. Grounded in UE 5.8:
 `Runtime/Core/Public/HAL/Runnable.h` and `Runtime/Core/Public/HAL/RunnableThread.h`.
 
 ## When to use FRunnable
@@ -170,6 +170,6 @@ while (ResultQueue.Dequeue(R))
 ## Version notes
 
 The `FRunnable`/`FRunnableThread` API is stable across UE4 and UE5. No major changes in
-5.7. If you need a simpler dedicated-thread abstraction with less boilerplate, consider
+5.8. If you need a simpler dedicated-thread abstraction with less boilerplate, consider
 `Async(EAsyncExecution::Thread, ...)` which internally wraps a `FRunnableThread` for you
 (verified: `Async.h` line 324-336).

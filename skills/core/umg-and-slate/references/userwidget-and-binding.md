@@ -3,7 +3,7 @@
 Deep dive for [../SKILL.md](../SKILL.md). Covers the full `UUserWidget` lifecycle callback
 order, the internals of `BindWidget`/`BindWidgetOptional`/`BindWidgetAnim`, the
 `NativeOnInitialized` vs `NativeConstruct` distinction, widget ownership by the
-`GameViewportSubsystem`, and common initialization pitfalls. Grounded in UE 5.7
+`GameViewportSubsystem`, and common initialization pitfalls. Grounded in UE 5.8
 (`Engine/Source/Runtime/UMG/Public/Blueprint/UserWidget.h`).
 
 ## Full lifecycle order
@@ -13,21 +13,21 @@ to teardown is:
 
 1. **Class construction (CDO)** — object initialized; no world, no viewport. Avoid gameplay
    logic here.
-2. **`Initialize()`** (internal, `UserWidget.h`:300) — called once per instance when
+2. **`Initialize()`** (internal, `UserWidget.h`:297) — called once per instance when
    `CreateWidget` constructs the widget. Resolves the widget tree and calls
    **`NativeOnInitialized()`**.
-3. **`NativeOnInitialized()`** (`UserWidget.h`:1574) — runs after the widget tree is
+3. **`NativeOnInitialized()`** (`UserWidget.h`:1582) — runs after the widget tree is
    assembled and `BindWidget` pointers are populated. Safe for one-time setup that does not
    need a visible widget or world context (e.g. sub-widget ref caching, non-gameplay delegate
    registration). Runs **before** the widget is ever shown.
-4. **`NativePreConstruct()`** (`UserWidget.h`:1575) — runs in the editor designer and on
+4. **`NativePreConstruct()`** (`UserWidget.h`:1583) — runs in the editor designer and on
    every Blueprint compile. Used for design-time preview; do not do gameplay work here.
-5. **`NativeConstruct()`** (`UserWidget.h`:1576) — called when the widget is added to the
+5. **`NativeConstruct()`** (`UserWidget.h`:1584) — called when the widget is added to the
    viewport/player screen (i.e. when it becomes visible). Analogous to `BeginPlay`. Bind
    `OnClicked`, start timers, read game state.
-6. **`NativeTick(Geometry, DeltaTime)`** (`UserWidget.h`:1578) — called each frame if ticking
+6. **`NativeTick(Geometry, DeltaTime)`** (`UserWidget.h`:1586) — called each frame if ticking
    is enabled (see Tick section below).
-7. **`NativeDestruct()`** (`UserWidget.h`:1577) — called when the widget is removed from the
+7. **`NativeDestruct()`** (`UserWidget.h`:1585) — called when the widget is removed from the
    viewport. Clean up delegates, timers, and any resources created in `NativeConstruct`.
 
 `NativeConstruct`/`NativeDestruct` can be called multiple times if the same widget instance
@@ -80,11 +80,11 @@ when the widget becomes visible.
 
 ## Ticking
 
-`UUserWidget` carries `UCLASS(meta=(DisableNativeTick))` by default (`UserWidget.h`:282).
+`UUserWidget` carries `UCLASS(meta=(DisableNativeTick))` by default (`UserWidget.h`:280).
 Tick only runs if:
 - The widget has a Blueprint Tick event or latent Blueprint nodes, **or**
 - You override `NativeTick` in C++ (which automatically opts in), **and**
-- `TickFrequency` is `EWidgetTickFrequency::Auto` (`UserWidget.h`:119).
+- `TickFrequency` is `EWidgetTickFrequency::Auto` (`UserWidget.h`:127).
 
 Tick has a measurable per-widget cost on many active widgets. Prefer timer-based or push-based
 updates. If you need ticking, override `NativeTick` and call `Super::NativeTick` first.
@@ -99,7 +99,7 @@ virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override
 
 ## CreateWidget and ownership
 
-`CreateWidget<T>` (`UserWidget.h`:1811) accepts these owner types:
+`CreateWidget<T>` (`UserWidget.h`:1819) accepts these owner types:
 - `UWorld*` — widget owned by the world; any player can see it via `AddToViewport`.
 - `APlayerController*` — widget owned by that player; use `AddToPlayerScreen` for split-screen.
 - `UGameInstance*` — persists across level transitions.

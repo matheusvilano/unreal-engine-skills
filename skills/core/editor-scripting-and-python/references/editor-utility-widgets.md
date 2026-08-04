@@ -3,7 +3,7 @@
 Deep dive for [../SKILL.md](../SKILL.md). Covers the Blutility class hierarchy, how widget
 tabs are registered and closed, `UEditorUtilityTask` for background work, scripted actions
 (`UAssetActionUtility`, `UEditorUtilityObject`), and the "Call in Editor" button pattern.
-Grounded in UE 5.7 source under `Engine/Source/Editor/Blutility/`.
+Grounded in UE 5.8 source under `Engine/Source/Editor/Blutility/`.
 
 ## Blutility class hierarchy
 
@@ -36,25 +36,25 @@ Key members:
 
 | Member | Location | Notes |
 |---|---|---|
-| `Run()` | :33 | `BlueprintImplementableEvent`; called when auto-run or `bAutoRunDefaultAction` fires |
-| `TabDisplayName` | :73 | `UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)` — the panel's tab label |
-| `HelpText` | :76 | Shown in the tab's tooltip |
+| `Run()` | :34 | `BlueprintImplementableEvent`; called when auto-run or `bAutoRunDefaultAction` fires |
+| `TabDisplayName` | :74 | `UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)` — the panel's tab label |
+| `HelpText` | :77 | Shown in the tab's tooltip |
 | `FindChildWidgetByName(Name)` | :44 | Find a named widget in this utility's hierarchy |
 | `NativeOnInitialized()` | :70 | Override to fire an OnEditorToolStarted event |
 
-**Asset:** `UEditorUtilityWidgetBlueprint` (`:38` of `Classes/EditorUtilityWidgetBlueprint.h`)
+**Asset:** `UEditorUtilityWidgetBlueprint` (`:39` of `Classes/EditorUtilityWidgetBlueprint.h`)
 is the `.uasset` that generates the widget. It inherits `UWidgetBlueprint` and adds the
 tab-spawning plumbing used by `UEditorUtilitySubsystem`.
 
 **Tab lifecycle:**
 
 1. `UEditorUtilitySubsystem::SpawnAndRegisterTab(Blueprint)` registers a tab spawner and
-   immediately opens the tab (`:87`).
-2. Each tab is identified by a `FName` tab ID. Use `SpawnAndRegisterTabWithId` (`:96`) to
+   immediately opens the tab (`:88`).
+2. Each tab is identified by a `FName` tab ID. Use `SpawnAndRegisterTabWithId` (`:97`) to
    control the ID from Python or another system.
-3. To close: `CloseTabByID(Id)` (`:122`) or simply close the tab in the UI.
-4. To check if open: `DoesTabExist(Id)` (`:119`).
-5. `UnregisterTabByID(Id)` (`:127`) closes and removes the spawner registration.
+3. To close: `CloseTabByID(Id)` (`:124`) or simply close the tab in the UI.
+4. To check if open: `DoesTabExist(Id)` (`:120`).
+5. `UnregisterTabByID(Id)` (`:128`) closes and removes the spawner registration.
 
 ```cpp
 // C++ — open a widget from a soft object path at startup
@@ -106,7 +106,7 @@ assets automatically via the function parameter convention.
    show the menu entries (e.g. only `StaticMesh`). Leave empty to show for all asset types.
 3. Add `BlueprintCallable` functions. Each function's name becomes the menu entry label.
 
-**Deprecation note:** `GetSupportedClass()` (`:69`, deprecated UE 5.2) was the old way to
+**Deprecation note:** `GetSupportedClass()` (`:71`, deprecated UE 5.2) was the old way to
 restrict asset types. Use the `SupportedClasses` array in class defaults instead.
 
 ```cpp
@@ -142,7 +142,7 @@ Key methods:
 | `FinishExecutingTask(bSuccess)` | 56 | Call to signal completion; triggers cleanup |
 | `SetTaskNotificationText(Text)` | 59 | Update the async notification toast |
 
-Tasks are registered via `UEditorUtilitySubsystem::RegisterAndExecuteTask(Task, Parent)` (`:135`).
+Tasks are registered via `UEditorUtilitySubsystem::RegisterAndExecuteTask(Task, Parent)` (`:140`).
 Parent tasks can own child tasks; the subsystem tracks the active task stack via `ActiveTaskStack`.
 
 ---
@@ -158,7 +158,7 @@ UFUNCTION(BlueprintCallable, Category = "Debug", meta = (CallInEditor = "true"))
 void PrintDebugState();
 ```
 
-The specifier is defined at `Runtime/CoreUObject/Public/UObject/ObjectMacros.h:1005`.
+The specifier is defined at `Runtime/CoreUObject/Public/UObject/ObjectMacros.h:1047`.
 This does **not** make the function editor-only by itself — also guard with `WITH_EDITOR`
 if the body uses editor-only APIs.
 

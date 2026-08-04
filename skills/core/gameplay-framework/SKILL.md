@@ -7,7 +7,7 @@ description: Implement Unreal's gameplay framework in C++ — GameInstance, AGam
   classes, player login/spawn/possession, replicated game or player state, match-state machines,
   respawn logic, or deciding "where does this code live?"
 metadata:
-  engine-version: "5.7"
+  engine-version: "5.8"
   category: gameplay-framework
 ---
 
@@ -40,11 +40,11 @@ decision in UE gameplay code.
 | `ACharacter` | server + clients | bipedal pawn with movement, capsule, skeletal mesh | yes |
 | `AHUD` | owning client only | legacy canvas overlay (prefer UMG for real UI) | local |
 
-Class hierarchy (verified in 5.7 source):
+Class hierarchy (verified in 5.8 source):
 - `AGameModeBase : public AInfo` (`GameModeBase.h`:47); `AGameMode : public AGameModeBase` (`GameMode.h`:35).
 - `AGameStateBase : public AInfo` (`GameStateBase.h`:32); `AGameState : public AGameStateBase` (`GameState.h`:16).
-- `APlayerController : public AController` (`PlayerController.h`:260); `AController : public AActor` (`Controller.h`:40).
-- `APawn : public AActor` (`Pawn.h`:42); `ACharacter : public APawn` (`Character.h`:241).
+- `APlayerController : public AController` (`PlayerController.h`:262); `AController : public AActor` (`Controller.h`:40).
+- `APawn : public AActor` (`Pawn.h`:43); `ACharacter : public APawn` (`Character.h`:338).
 - `APlayerState : public AInfo` (`PlayerState.h`:41); `AHUD : public AActor` (`HUD.h`:36).
 - `UGameInstance : public UObject, public FExec` (`Engine/GameInstance.h`:151).
 
@@ -67,12 +67,12 @@ UGameInstance (persists across levels)
               └── PlayerState  (also in GameState.PlayerArray)
 ```
 
-Key accessors verified in 5.7 source:
+Key accessors verified in 5.8 source:
 - `GetWorld()->GetGameState<T>()` — replicated on all machines.
 - `GetWorld()->GetAuthGameMode<T>()` — **server only**; returns null on clients.
 - `GetGameInstance<T>()` — available via any `UObject` with a valid outer chain.
-- `AController::GetPawn()` (`Controller.h`:230); `APawn::GetController()` (`Pawn.h`:249).
-- `APawn::GetPlayerState<T>()` (`Pawn.h`:182); `AController::PlayerState` (`Controller.h`:50).
+- `AController::GetPawn()` (`Controller.h`:233); `APawn::GetController()` (`Pawn.h`:264).
+- `APawn::GetPlayerState<T>()` (`Pawn.h`:193); `AController::PlayerState` (`Controller.h`:50).
 
 ## Server spawn and login flow
 
@@ -82,16 +82,16 @@ On the server, `AGameModeBase` drives the sequence when a player joins:
 2. `PreLogin` (`GameModeBase.h`:293) — reject players by setting `ErrorMessage` before any state is allocated.
 3. `Login` (`GameModeBase.h`:323) — creates and returns the `APlayerController`; spawns `APlayerState`.
 4. `PostLogin(PC)` (`GameModeBase.h`:326) — first safe place to call replicated functions on the PC.
-5. `HandleStartingNewPlayer(PC)` (`GameModeBase.h`:367) — override in Blueprint or C++ to control what happens next.
-6. `RestartPlayer(PC)` (`GameModeBase.h`:441) → `FindPlayerStart` → `SpawnDefaultPawnAtTransform` → `PC->Possess(Pawn)`.
+5. `HandleStartingNewPlayer(PC)` (`GameModeBase.h`:361) — override in Blueprint or C++ to control what happens next.
+6. `RestartPlayer(PC)` (`GameModeBase.h`:435) → `FindPlayerStart` → `SpawnDefaultPawnAtTransform` → `PC->Possess(Pawn)`.
 
 Full login flow with seamless travel and `OnPostLogin` details:
 [references/init-and-login-flow.md](references/init-and-login-flow.md).
 
 ## Possession
 
-`AController::Possess(APawn*)` is `final` in 5.7; override `OnPossess` instead
-(`Controller.h`:296). The symmetric unpossess override is `OnUnPossess` (`Controller.h`:303).
+`AController::Possess(APawn*)` is `final` in 5.8; override `OnPossess` instead
+(`Controller.h`:299). The symmetric unpossess override is `OnUnPossess` (`Controller.h`:306).
 
 ```cpp
 // Override OnPossess to react to possession — NOT Possess() which is final
@@ -210,8 +210,8 @@ public:
 ```
 
 Built-in replicated fields on `APlayerState`: `Score` (getter `GetScore`, setter `SetScore`,
-`PlayerState.h`:309/315), `PlayerNamePrivate` (accessed via `GetPlayerName`/`SetPlayerName`,
-`PlayerState.h`:232/225), `PlayerId`, `CompressedPing`, `bIsSpectator`, `bIsABot`.
+`PlayerState.h`:312/318), `PlayerNamePrivate` (accessed via `GetPlayerName`/`SetPlayerName`,
+`PlayerState.h`:235/228), `PlayerId`, `CompressedPing`, `bIsSpectator`, `bIsABot`.
 
 ## Network roles
 
@@ -235,7 +235,7 @@ The idiomatic setup:
 ## Gotchas
 
 - **`GetAuthGameMode()` on a client** returns null; always guard with `HasAuthority()`.
-- **`Possess` is `final`** since UE 4.22; override `OnPossess`/`OnUnPossess` (`Controller.h`:296/303).
+- **`Possess` is `final`** since UE 4.22; override `OnPossess`/`OnUnPossess` (`Controller.h`:299/306).
 - **Persistent state on the Pawn** is lost on death/respawn; use `APlayerState` or `APlayerController`.
 - **Possession ≠ spawn**: a controller can possess different pawns over time; don't assume 1:1 lifetime.
 - **`AGameMode` vs `AGameModeBase` mismatch**: `MatchState` machinery only exists in `AGameMode`;
@@ -258,31 +258,31 @@ The idiomatic setup:
 
 ## References & source material
 
-Engine source (UE 5.7, under `Engine/Source/Runtime/Engine/Classes/`):
+Engine source (UE 5.8, under `Engine/Source/Runtime/Engine/Classes/`):
 - `GameFramework/GameModeBase.h` — `AGameModeBase`:47, `InitGame`:62, `InitGameState`:69,
   `DefaultPawnClass`:108, `PlayerControllerClass`:96, `PlayerStateClass`:100, `GameStateClass`:92,
   `HUDClass`:104, `PreLogin`:293, `Login`:323, `PostLogin`:326, `OnPostLogin`:334,
-  `HandleStartingNewPlayer`:367, `RestartPlayer`:441, `SpawnDefaultPawnAtTransform`:467,
-  `ChoosePlayerStart`:411, `GetDefaultPawnClassForController`:84.
-- `GameFramework/GameMode.h` — `AGameMode`:35, `MatchState` namespace:17, `GetMatchState`:43,
+  `HandleStartingNewPlayer`:361, `RestartPlayer`:435, `SpawnDefaultPawnAtTransform`:461,
+  `ChoosePlayerStart`:405, `GetDefaultPawnClassForController`:84.
+- `GameFramework/GameMode.h` — `AGameMode`:35, `MatchState` namespace:16, `GetMatchState`:43,
   `StartMatch`:51, `EndMatch`:55, `SetMatchState`:72.
 - `GameFramework/GameStateBase.h` — `AGameStateBase`:32, `PlayerArray`:55, `GetServerWorldTimeSeconds`:72,
   `HasBegunPlay`:76, `AddPlayerState`:112, `RemovePlayerState`:115.
 - `GameFramework/GameState.h` — `AGameState`:16, `MatchState`:35, `ElapsedTime`:57.
-- `GameFramework/Controller.h` — `AController`:40, `PlayerState`:50, `GetPawn()`:230,
-  `Possess` (final):281, `UnPossess` (final):285, `OnPossess`:296, `OnUnPossess`:303.
-- `GameFramework/PlayerController.h` — `APlayerController`:260, `PlayerCameraManager`:285,
-  `MyHUD`:278, `SetInputMode`:1644, `SetShowMouseCursor`:2134.
-- `GameFramework/Pawn.h` — `APawn`:42, `GetController()`:249, `GetPlayerState<T>()`:182,
-  `PossessedBy`:359, `UnPossessed`:366.
-- `GameFramework/Character.h` — `ACharacter`:241.
-- `GameFramework/PlayerState.h` — `APlayerState`:41, `Score`:48, `GetScore`:309, `SetScore`:315,
-  `PlayerNamePrivate`:162, `GetPlayerName`:232, `SetPlayerName`:225.
+- `GameFramework/Controller.h` — `AController`:40, `PlayerState`:50, `GetPawn()`:233,
+  `Possess` (final):284, `UnPossess` (final):288, `OnPossess`:299, `OnUnPossess`:306.
+- `GameFramework/PlayerController.h` — `APlayerController`:262, `PlayerCameraManager`:287,
+  `MyHUD`:280, `SetInputMode`:1649, `SetShowMouseCursor`:2168.
+- `GameFramework/Pawn.h` — `APawn`:43, `GetController()`:264, `GetPlayerState<T>()`:193,
+  `PossessedBy`:374, `UnPossessed`:381.
+- `GameFramework/Character.h` — `ACharacter`:338.
+- `GameFramework/PlayerState.h` — `APlayerState`:41, `Score`:49, `GetScore`:312, `SetScore`:318,
+  `PlayerNamePrivate`:162, `GetPlayerName`:235, `SetPlayerName`:228.
 - `GameFramework/HUD.h` — `AHUD`:36, `PlayerOwner`:42, `bShowHUD`:50.
 - `Engine/GameInstance.h` — `UGameInstance`:151, `Init`:217, `Shutdown`:224,
   `GetSubsystem<T>()`:440.
 
-Official docs (UE 5.7, all fetched and confirmed live):
+Official docs (UE 5.8, all fetched and confirmed live):
 - Gameplay Framework overview —
   <https://dev.epicgames.com/documentation/unreal-engine/gameplay-framework-in-unreal-engine>
 - Game Mode and Game State —

@@ -10,7 +10,7 @@ description: Work with static and skeletal meshes in Unreal C++ — UStaticMesh 
   components, attaching to mesh sockets, overriding material slots, querying LOD data,
   or debugging missing materials, wrong skeleton, or silent socket attachment failures.
 metadata:
-  engine-version: "5.7"
+  engine-version: "5.8"
   category: content-assets
 ---
 
@@ -212,7 +212,7 @@ for `UBodySetup` setup, adding convex shapes, and the `physics-and-chaos` cross-
 ## Nanite
 
 Nanite is enabled per-mesh via `FMeshNaniteSettings::bEnabled` on the `UStaticMesh`
-asset. In 5.7 skeletal meshes also expose a Nanite settings panel in the editor.
+asset. In 5.8 skeletal meshes also expose a Nanite settings panel in the editor.
 
 ```cpp
 // Enable Nanite on a static mesh asset at runtime (editor / cooking context):
@@ -268,9 +268,10 @@ ecosystem, leader-pose setup, bone queries, and `animation-system` cross-referen
 
 ## Version notes
 
-- In UE 5.7, `NaniteSettings` on `UStaticMesh` is deprecated for direct access
-  (`UE_DEPRECATED(5.7, ...)`). Use `GetNaniteSettings()` / `SetNaniteSettings()`.
-- Skeletal mesh Nanite (full Nanite skinning) is production-ready in 5.7 with a single
+- Since UE 5.7, `NaniteSettings` on `UStaticMesh` is deprecated for direct access
+  (`UE_DEPRECATED(5.7, ...)`, still in effect in 5.8). Use `GetNaniteSettings()` /
+  `SetNaniteSettings()`.
+- Skeletal mesh Nanite (full Nanite skinning) is production-ready since 5.7 with a single
   draw call per character and Virtual Shadow Map support; animation LODs still apply.
 - ISM LOD-per-instance (previously a HISM differentiator) is now also available on ISM
   since 5.3+. HISM retains its hierarchical culling tree advantage for very large static
@@ -278,25 +279,25 @@ ecosystem, leader-pose setup, bone queries, and `animation-system` cross-referen
 
 ## References & source material
 
-Engine source (UE 5.7, under `Engine/Source/Runtime/`):
-- `Engine/Classes/Engine/StaticMesh.h` — `UStaticMesh`, `NaniteSettings`:736,
-  `GetNaniteSettings()`:836, `SetNaniteSettings()`:845.
-- `Engine/Classes/Engine/SkeletalMesh.h` — `USkeletalMesh`, `GetSkeleton()`:740,
-  `GetPhysicsAsset()`:1514, `FindSocket()`:2637, `GetMaterials()`:913.
-- `Engine/Classes/Components/StaticMeshComponent.h` — `UStaticMeshComponent`:102,
-  `SetStaticMesh()`:431, `GetStaticMesh()`:434, `GetMaterial()`:636,
-  `GetSocketByName()`:892.
-- `Engine/Classes/Components/SkeletalMeshComponent.h` — `USkeletalMeshComponent`:317,
-  `SetSkeletalMesh()`:2052, `SetPhysicsAsset()`:2051, `SetAnimInstanceClass()`:1010.
+Engine source (UE 5.8, under `Engine/Source/Runtime/`):
+- `Engine/Classes/Engine/StaticMesh.h` — `UStaticMesh`, `NaniteSettings`:746,
+  `GetNaniteSettings()`:855, `SetNaniteSettings()`:864.
+- `Engine/Classes/Engine/SkeletalMesh.h` — `USkeletalMesh`, `GetSkeleton()`:747,
+  `GetPhysicsAsset()`:1538, `FindSocket()`:2658, `GetMaterials()`:933.
+- `Engine/Classes/Components/StaticMeshComponent.h` — `UStaticMeshComponent`:105,
+  `SetStaticMesh()`:450, `GetStaticMesh()`:453, `GetMaterial()`:665,
+  `GetSocketByName()`:921.
+- `Engine/Classes/Components/SkeletalMeshComponent.h` — `USkeletalMeshComponent`:341,
+  `SetSkeletalMesh()`:2198, `SetPhysicsAsset()`:2197, `SetAnimInstanceClass()`:1096.
 - `Engine/Classes/Components/SkinnedMeshComponent.h` — `USkinnedMeshComponent`,
-  `GetSocketByName()`:1849.
-- `Engine/Classes/Components/MeshComponent.h` — `UMeshComponent`, `SetMaterial()`:116,
-  `GetMaterial()`:114, `GetNumMaterials()`:113.
+  `GetSocketByName()`:1955.
+- `Engine/Classes/Components/MeshComponent.h` — `UMeshComponent`, `SetMaterial()`:121,
+  `GetMaterial()`:119, `GetNumMaterials()`:118.
 - `Engine/Classes/Components/InstancedStaticMeshComponent.h` —
-  `UInstancedStaticMeshComponent`:157, `AddInstance()`:261, `RemoveInstance()`:407,
-  `UpdateInstanceTransform()`:365, `GetInstanceCount()`:425.
+  `UInstancedStaticMeshComponent`:158, `AddInstance()`:271, `RemoveInstance()`:417,
+  `UpdateInstanceTransform()`:375, `GetInstanceCount()`:435.
 - `Engine/Classes/Components/HierarchicalInstancedStaticMeshComponent.h` — `UHISMC`.
-- `Engine/Classes/Engine/EngineTypes.h` — `FMeshNaniteSettings`:3039, `bEnabled`:3045.
+- `Engine/Classes/Engine/EngineTypes.h` — `FMeshNaniteSettings`:3280, `bEnabled`:3286.
 - `Engine/Classes/Engine/StaticMeshSocket.h` — `UStaticMeshSocket`:15.
 - `Engine/Classes/PhysicsEngine/BodySetup.h` — `UBodySetup`.
 - `PhysicsCore/Public/BodySetupCore.h` — `UBodySetupCore`, `CollisionTraceFlag`:37.
@@ -304,7 +305,7 @@ Engine source (UE 5.7, under `Engine/Source/Runtime/`):
   `CTF_UseSimpleAsComplex`:17, `CTF_UseComplexAsSimple`:19.
 - `Engine/Classes/PhysicsEngine/PhysicsAsset.h` — `UPhysicsAsset`.
 
-Official docs (UE 5.7, fetched and confirmed):
+Official docs (UE 5.8, fetched and confirmed):
 - Static Meshes — <https://dev.epicgames.com/documentation/unreal-engine/static-meshes>
 - Skeletal Mesh assets — <https://dev.epicgames.com/documentation/unreal-engine/skeletal-mesh-assets-in-unreal-engine>
 - Instanced Static Mesh Component — <https://dev.epicgames.com/documentation/unreal-engine/instanced-static-mesh-component-in-unreal-engine>

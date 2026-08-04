@@ -10,7 +10,7 @@ description: Add structured logging and runtime checks to Unreal C++ — UE_LOG 
   crashing and recovering on a bad assumption, printing transient values to screen during PIE,
   filtering log output by category, or debugging shipping-only crashes where ensures would help.
 metadata:
-  engine-version: "5.7"
+  engine-version: "5.8"
   category: cpp-foundations
 ---
 
@@ -201,7 +201,7 @@ this is PIE debugging only.
 
 ## Version notes
 
-- `UE_LOGFMT` and `UE_LOG_CONTEXT` were introduced in UE 5.2 and are stable through 5.7.
+- `UE_LOGFMT` and `UE_LOG_CONTEXT` were introduced in UE 5.2 and are stable through 5.8.
 - The `FStaticEnsureRecord` per-call-site mechanism (atomic `bGEnsureHasExecuted`) replaced
   a simpler boolean in UE 5.x; the user-facing macro signatures are unchanged.
 - `LowLevelFatalErrorHandler` was deprecated in 5.7; use `LowLevelFatalError` (macro).
@@ -213,21 +213,22 @@ this is PIE debugging only.
 
 ## References & source material
 
-Engine source (UE 5.7, under `Engine/Source/Runtime/Core/Public/`):
-- `Logging/LogMacros.h` — `UE_LOG`:270, `UE_CLOG`:298, `DECLARE_LOG_CATEGORY_EXTERN`:361,
-  `DEFINE_LOG_CATEGORY`:371, `DEFINE_LOG_CATEGORY_STATIC`:380, `FMsg::Logf`:60,
-  `FMsg::Logf_Internal`:70.
+Engine source (UE 5.8, under `Engine/Source/Runtime/Core/Public/`):
+- `Logging/LogMacros.h` — `UE_LOG`:278, `UE_CLOG`:325, `FMsg::Logf`:62,
+  `FMsg::Logf_Internal`:72.
+- `Logging/LogCategory.h` — `DECLARE_LOG_CATEGORY_EXTERN`:133, `DEFINE_LOG_CATEGORY`:140,
+  `DEFINE_LOG_CATEGORY_STATIC`:150 (moved here from `LogMacros.h` in 5.8).
 - `Logging/LogVerbosity.h` — `ELogVerbosity::Type` enum:16 (`Fatal`:22 through
-  `VeryVerbose`:52, `All`:57, `VerbosityMask`:58).
-- `Logging/LogCategory.h` — `FLogCategoryBase`:20, `FLogCategory<>` template:84,
-  `IsSuppressed`:44, `SetVerbosity`:58.
+  `VeryVerbose`:52, `All`:56, `VerbosityMask`:58).
+- `Logging/LogCategory.h` — `FLogCategoryBase`:21, `FLogCategory<>` template:86,
+  `IsSuppressed`:45, `SetVerbosity`:59.
 - `Logging/StructuredLog.h` — `UE_LOGFMT`:46, `UE_LOGFMT_EX`:64, `UE_LOG_CONTEXT`:143,
-  `FLogRecord`:183, `SerializeForLog`:289.
-- `Misc/AssertionMacros.h` — `check`:232, `verify`:229, `checkf`:258, `verifyf`:255,
-  `checkSlow`:328, `checkNoEntry`:278, `ensure`:456, `ensureMsgf`:457, `ensureAlways`:458,
-  `ensureAlwaysMsgf`:459, `FDebug`:68, `LowLevelFatalError`:554.
+  `FLogRecord`:181, `SerializeForLog`:297.
+- `Misc/AssertionMacros.h` — `check`:229, `verify`:226, `checkf`:259, `verifyf`:256,
+  `checkSlow`:333, `checkNoEntry`:283, `ensure`:461, `ensureMsgf`:462, `ensureAlways`:463,
+  `ensureAlwaysMsgf`:464, `FDebug`:68, `LowLevelFatalError`:591.
 
-Official docs (UE 5.7, fetched and confirmed):
+Official docs (UE 5.8, fetched and confirmed):
 - Logging in Unreal Engine —
   <https://dev.epicgames.com/documentation/unreal-engine/logging-in-unreal-engine>
 - Asserts in Unreal Engine —

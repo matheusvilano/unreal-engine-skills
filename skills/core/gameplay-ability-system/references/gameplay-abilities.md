@@ -1,6 +1,6 @@
 # Gameplay Abilities
 
-> Deep-dive reference for `UGameplayAbility`. Grounded in UE 5.7 source at
+> Deep-dive reference for `UGameplayAbility`. Grounded in UE 5.8 source at
 > `Engine/Plugins/Runtime/GameplayAbilities/Source/GameplayAbilities/Public/Abilities/GameplayAbility.h`.
 > Return to [../SKILL.md](../SKILL.md) for the entry-level overview.
 
@@ -36,15 +36,15 @@ void UGA_Spell::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 ```
 
 Key signatures (`GameplayAbility.h`):
-- `ActivateAbility`:597 — `(Handle, ActorInfo, ActivationInfo, TriggerEventData)`
-- `CommitAbility`:355 — returns bool; applies cost + cooldown
-- `EndAbility`:627 — `(Handle, ActorInfo, ActivationInfo, bReplicateEnd, bWasCancelled)`
-- `CanActivateAbility`:282
-- `CancelAbility`:318
+- `ActivateAbility`:574 — `(Handle, ActorInfo, ActivationInfo, TriggerEventData)`
+- `CommitAbility`:336 — returns bool; applies cost + cooldown
+- `EndAbility`:604 — `(Handle, ActorInfo, ActivationInfo, bReplicateEnd, bWasCancelled)`
+- `CanActivateAbility`:263
+- `CancelAbility`:299
 
 ## FGameplayAbilitySpec
 
-`FGameplayAbilitySpec` (`GameplayAbilitySpec.h:167`) describes a granted ability:
+`FGameplayAbilitySpec` (`GameplayAbilitySpec.h:168`) describes a granted ability:
 
 | Field | Purpose |
 |---|---|
@@ -65,12 +65,12 @@ Configured via `InstancingPolicy` (`UPROPERTY(EditDefaultsOnly)`) on the ability
 |---|---|
 | `InstancedPerExecution` | Default; safest; allocates a new instance per activation. Supports Blueprint graphs, RPCs, state. Replicated instance per execution is not supported — use `InstancedPerActor` for replication. |
 | `InstancedPerActor` | One instance per actor; reuses it across activations. Supports replication (replicated properties and RPCs work). Must manually reset state between activations. |
-| `NonInstanced` | Deprecated in 5.5 (`UE_DEPRECATED_FORGAME(5.5, ...)`); avoid in 5.7. |
+| `NonInstanced` | Deprecated in 5.5 (`UE_DEPRECATED_FORGAME(5.5, ...)`); avoid in 5.8. |
 
 For multiplayer abilities that need replicated variables or RPCs inside the ability, use
 `InstancedPerActor` with `ReplicationPolicy` set to replicate.
 
-`EGameplayAbilityInstancingPolicy` defined in `Abilities/GameplayAbilityTypes.h:35`.
+`EGameplayAbilityInstancingPolicy` defined in `Abilities/GameplayAbilityTypes.h:37`.
 
 ## Net execution policy
 
@@ -83,7 +83,7 @@ Configured via `NetExecutionPolicy` (`UPROPERTY(EditDefaultsOnly)`):
 | `ServerInitiated` | Server triggers, propagates to clients; client sees a delay |
 | `ServerOnly` | Runs only on server; cosmetic output replicates normally |
 
-`EGameplayAbilityNetExecutionPolicy` defined in `Abilities/GameplayAbilityTypes.h:57`.
+`EGameplayAbilityNetExecutionPolicy` defined in `Abilities/GameplayAbilityTypes.h:59`.
 
 ## Tag gating
 
@@ -130,9 +130,10 @@ In the ability, override `ActivateAbilityFromEvent` (Blueprint) or check `Trigge
 ## Checking and applying ability state from outside
 
 ```cpp
-// Check if any ability of a class is active
-bool bActive = ASC->IsAbilityActive(Handle);
+// Look up the granted spec, then check whether it is active
+FGameplayAbilitySpec* Spec = ASC->FindAbilitySpecFromHandle(Handle);
+bool bActive = Spec && Spec->IsActive();
 
 // Get the ability instance (InstancedPerActor only)
-UGameplayAbility* Instance = ASC->FindAbilityInstanceFromHandle(Handle);
+UGameplayAbility* Instance = Spec ? Spec->GetPrimaryInstance() : nullptr;
 ```

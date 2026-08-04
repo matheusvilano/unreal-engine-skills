@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the deferred rendering pass order, the
 scene view/render flow, post-process chain interaction with TSR, GPU Scene update semantics,
-and a practical cvar reference table. Grounded in UE 5.7
+and a practical cvar reference table. Grounded in UE 5.8
 (`Engine/Source/Runtime/Renderer/Private/DeferredShadingRenderer.h`,
 `Engine/Source/Runtime/Renderer/Private/SceneRendering.h`,
 `Engine/Source/Runtime/Engine/Classes/Engine/Scene.h`).
@@ -47,7 +47,7 @@ The key objects:
   thread frame.
 - **`FViewInfo`** — per-view data (projection, frustum, visibility) computed during
   `InitViews`. One `FViewInfo` per active camera/scene capture.
-- **`FGPUScene`** (`GPUScene.h`:216) — GPU-resident buffer of `FPrimitiveUniformShaderParameters`
+- **`FGPUScene`** (`GPUScene.h`:218) — GPU-resident buffer of `FPrimitiveUniformShaderParameters`
   and per-instance data. Updated by queued `FScenePreUpdateChangeSet` / `FScenePostUpdateChangeSet`
   at the render thread frame boundary.
 
@@ -57,7 +57,7 @@ into `FGPUScene`. The primitive is not GPU-visible until the next frame's `FGPUS
 
 ## FPostProcessSettings interaction with the pipeline
 
-`FPostProcessSettings` (`Scene.h`:692) fields are blended across all active Post Process
+`FPostProcessSettings` (`Scene.h`:711) fields are blended across all active Post Process
 Volumes and the camera. Each field has a paired `bOverride_<FieldName>` bit. When not
 overridden, the project default from `RendererSettings.h` applies (e.g.,
 `bDefaultFeatureBloom`, `bDefaultFeatureMotionBlur`).
@@ -81,7 +81,7 @@ pre-TSR view size.
 TSR renders the 3D scene at `r.ScreenPercentage / 100` of the output resolution. The
 temporal history accumulates sub-pixel jitter across frames, recovering near-native sharpness.
 
-`ITemporalUpscaler` (`TemporalUpscaler.h`:11) is the plugin interface for third-party
+`ITemporalUpscaler` (`TemporalUpscaler.h`:12) is the plugin interface for third-party
 upscalers. DLSS 3, FSR 2+, and XeSS register implementations at engine startup and are
 automatically used when the user selects them in project settings. From a C++ perspective,
 the active upscaler is transparent to rendering code.
@@ -120,7 +120,7 @@ matches how the traditional mesh rendering path works.
 | cvar | Default | Purpose |
 |---|---|---|
 | `r.Nanite.MaxPixelsPerEdge` | 1.0 | LOD threshold — lower = finer clusters (higher quality, more cost) |
-| `r.Nanite.Tessellation` | 0 | Enable runtime programmable tessellation |
+| `r.Nanite.Tessellation` | 1 | Enable runtime programmable tessellation (default on since 5.8) |
 | `r.Nanite.Visualize` | empty | Visualization mode (Triangles, Clusters, Primitives, …) |
 | `r.RayTracing.Nanite.Mode` | 0 | 0=fallback mesh RT, 1=native Nanite RT (experimental) |
 
@@ -137,7 +137,7 @@ matches how the traditional mesh rendering path works.
 
 | cvar | Default | Purpose |
 |---|---|---|
-| `r.VirtualTextures` | 0 | Enable VT globally (project restart required) |
+| `r.VirtualTextures` | 1 | Enable VT globally (project restart required) |
 | `r.VT.TileSize` | 128 | VT tile size in pixels |
 | `r.VT.AnisotropicFiltering` | 0 | Enable VT anisotropic filtering (adds shader cost) |
 

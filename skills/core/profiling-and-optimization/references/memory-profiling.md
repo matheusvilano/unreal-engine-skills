@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers `memreport`, LLM (Low Level Memory
 Tracker), and Insights Memory Insights — workflow, query rules, and leak hunting.
-Grounded in UE 5.7 source (`Runtime/Core/Public/HAL/LowLevelMemTracker.h`) and the
+Grounded in UE 5.8 source (`Runtime/Core/Public/HAL/LowLevelMemTracker.h`) and the
 official [Memory Insights](https://dev.epicgames.com/documentation/unreal-engine/memory-insights-in-unreal-engine)
 doc.
 
@@ -145,12 +145,14 @@ Sort the result table by **Size** descending to find the largest offenders.
 | Textures high | Too many streaming textures resident | Tune streaming pool size; use `stat streaming`; see `asset-management` |
 | Memory spike on level load | Hard references pulling large assets | Convert to soft references and async load; see `asset-management` |
 
-## Version notes (5.7)
+## Version notes (5.8)
 
 - `ENABLE_LOW_LEVEL_MEM_TRACKER` is derived from `LLM_ENABLED_IN_CONFIG && PLATFORM_SUPPORTS_LLM`
-  (line 20 of `LowLevelMemTracker.h`). Do not define it directly.
+  (line 19 of `LowLevelMemTracker.h`). Do not define it directly.
 - `LLM_ENABLED_ON_PLATFORM` macro is deprecated in 5.7; use `PLATFORM_SUPPORTS_LLM`
-  instead (line 15 of `LowLevelMemTracker.h`).
-- Memory Insights Android callstack support was added in 5.4 and is available in 5.7.
+  instead (line 14 of `LowLevelMemTracker.h`).
+- `LLM_ALLOW_ASSETS_TAGS` is deprecated in 5.8 — per-asset tagging is always available
+  when `ENABLE_LOW_LEVEL_MEM_TRACKER` is 1.
+- Memory Insights Android callstack support was added in 5.4 and is available in 5.8.
 - MemAlloc + Module channels must be active from process start (command-line only);
   they cannot be toggled on at runtime via the Trace widget.

@@ -1,7 +1,7 @@
 # Build.cs (ModuleRules) Reference
 
-Grounded in UE 5.7 engine source:
-`E:\Program Files\Epic Games\UE_5.7\Engine\Source\Programs\UnrealBuildTool\Configuration\ModuleRules.cs`
+Grounded in UE 5.8 engine source:
+`E:\Program Files\Epic Games\UE_5.8\Engine\Source\Programs\UnrealBuildTool\Configuration\Rules\ModuleRules.cs`
 
 See also: [../SKILL.md](../SKILL.md)
 
@@ -22,8 +22,8 @@ The `Target` parameter exposes platform, configuration, and target-type queries 
 
 | Property | Line | Purpose |
 |---|---|---|
-| `PublicDependencyModuleNames` | 1189 | Types from these modules appear in your public headers. Consumers of your module inherit these includes automatically. |
-| `PrivateDependencyModuleNames` | 1200 | Used only in `.cpp`/private headers. Not inherited by consuming modules. Prefer private to keep the public API surface lean. |
+| `PublicDependencyModuleNames` | 1259 | Types from these modules appear in your public headers. Consumers of your module inherit these includes automatically. |
+| `PrivateDependencyModuleNames` | 1270 | Used only in `.cpp`/private headers. Not inherited by consuming modules. Prefer private to keep the public API surface lean. |
 | `PublicIncludePathModuleNames` | (ModuleRules.cs) | Adds include paths from another module without linking — for forward-declaration-only includes. |
 | `PrivateIncludePathModuleNames` | (ModuleRules.cs) | Same as above, private scope. |
 | `DynamicallyLoadedModuleNames` | (ModuleRules.cs) | Modules this module may load at runtime via `FModuleManager`; not linked at compile time. |
@@ -36,11 +36,11 @@ Decision rule: if you forward-declare a type in your header and only use the ful
 
 | Property | Values | Notes |
 |---|---|---|
-| `PCHUsage` | `PCHUsageMode` enum (line 193) | Controls precompiled header sharing. |
+| `PCHUsage` | `PCHUsageMode` enum (line 195) | Controls precompiled header sharing. |
 | `UseExplicitOrSharedPCHs` | (recommended) | Enables IWYU compliance. Each `.cpp` must include its matching `.h` first. A private `PrivatePCHHeaderFile` generates an explicit PCH; otherwise shares one. |
 | `UseSharedPCHs` | (legacy) | Allows monolithic-style shared PCHs. Not IWYU-safe for new code. |
 | `NoPCHs` | (rare) | Disable all PCHs for this module. Slow but guarantees isolated compilation. |
-| `bEnforceIWYU` | bool | When `true` with `UseExplicitOrSharedPCHs`, warns on monolithic header includes. |
+| `IWYUSupport` | `IWYUSupport` enum (default `Full`) | IWYU enforcement level; with `UseExplicitOrSharedPCHs`, warns on monolithic header includes. Replaces `bEnforceIWYU` (deprecated in 5.2). |
 | `PrivatePCHHeaderFile` | string | Path to an explicit private PCH header (relative to module root). |
 
 ## Compile behavior
@@ -54,7 +54,7 @@ Decision rule: if you forward-declare a type in your header and only use the ful
 | `MinSourceFilesForUnityBuildOverride` | Unity kicks in only when file count exceeds this. |
 | `CppStandard` | Override C++ language standard (e.g. `CppStandardVersion.Cpp20`). |
 | `bWarningsAsErrors` | Treat all warnings as errors for this module. |
-| `ShadowVariableWarningLevel` | `WarningLevel` — default warns on shadowed variables. |
+| `CppCompileWarningSettings.ShadowVariableWarningLevel` | `WarningLevel` — default warns on shadowed variables. (The direct `ShadowVariableWarningLevel` property is deprecated since 5.6.) |
 
 ## Include paths
 
@@ -96,7 +96,7 @@ Key properties:
 ## Module type
 
 `Type = ModuleType.CPlusPlus` (default) or `ModuleType.External` (third-party without source).
-Set in `ModuleRules.cs`:108. For plugin-hosted external modules, set this in your plugin's
+Set in `ModuleRules.cs`:110. For plugin-hosted external modules, set this in your plugin's
 `Build.cs` rather than its descriptor; the descriptor's `"Type"` is the host type, not the
 module type.
 
@@ -131,14 +131,14 @@ rather than shipping separate files.
 
 ## Source references
 
-- `ModuleRules.cs`:103 — `public partial class ModuleRules`
-- `ModuleRules.cs`:108 — `public enum ModuleType`
-- `ModuleRules.cs`:193 — `public enum PCHUsageMode`
-- `ModuleRules.cs`:1189 — `PublicDependencyModuleNames`
-- `ModuleRules.cs`:1200 — `PrivateDependencyModuleNames`
+- `ModuleRules.cs`:105 — `public partial class ModuleRules`
+- `ModuleRules.cs`:110 — `public enum ModuleType`
+- `ModuleRules.cs`:195 — `public enum PCHUsageMode`
+- `ModuleRules.cs`:1259 — `PublicDependencyModuleNames`
+- `ModuleRules.cs`:1270 — `PrivateDependencyModuleNames`
 
 All paths under:
-`E:\Program Files\Epic Games\UE_5.7\Engine\Source\Programs\UnrealBuildTool\Configuration\`
+`E:\Program Files\Epic Games\UE_5.8\Engine\Source\Programs\UnrealBuildTool\Configuration\Rules\`
 
 Official docs:
 - Module Properties — <https://dev.epicgames.com/documentation/unreal-engine/module-properties-in-unreal-engine>

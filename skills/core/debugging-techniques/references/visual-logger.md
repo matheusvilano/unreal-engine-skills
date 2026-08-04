@@ -1,6 +1,6 @@
 # Visual Logger — full reference
 
-Deep dive for [../SKILL.md](../SKILL.md). Grounded in UE 5.7
+Deep dive for [../SKILL.md](../SKILL.md). Grounded in UE 5.8
 (`Engine/Source/Runtime/Engine/Public/VisualLogger/VisualLogger.h`).
 
 ## What the Visual Logger records
@@ -71,7 +71,7 @@ REDIRECT_OBJECT_TO_VLOG(SubsystemObj, ControllerActor);
 REDIRECT_TO_VLOG(ControllerActor);
 ```
 
-`FVisualLogger::Redirect` is the underlying call (`VisualLogger.h`:763). Redirection is
+`FVisualLogger::Redirect` is the underlying call (`VisualLogger.h`:587). Redirection is
 per-object and per-session; it does not persist between play sessions.
 
 ## Recording to file and Rewind Debugger
@@ -85,13 +85,13 @@ FVisualLogger::Get().SetIsRecordingToFile(true);   // also saves .vlog file
 if (FVisualLogger::IsRecording()) { /* ... */ }
 ```
 
-In UE 5.7 the Visual Logger can also stream to Unreal Insights for **Rewind Debugger** playback:
+In UE 5.8 the Visual Logger can also stream to Unreal Insights for **Rewind Debugger** playback:
 `FVisualLogger::Get().SetIsRecordingToTrace(true)`. This is the preferred workflow when you need
 to correlate Visual Logger data with CPU traces.
 
-Source: `Runtime/Engine/Public/VisualLogger/VisualLogger.h` — `SetIsRecording`:801,
-`IsRecording` (static inline):803, `SetIsRecordingToFile`:806, `SetIsRecordingToTrace`:813,
-`FVisualLogger::Get()`:746.
+Source: `Runtime/Engine/Public/VisualLogger/VisualLogger.h` — `SetIsRecording`:581,
+`IsRecording` (static inline):575, `SetIsRecordingToFile`:693, `SetIsRecordingToTrace`:584,
+`FVisualLogger::Get()`:567.
 
 ## Common mistakes
 
@@ -99,8 +99,8 @@ Source: `Runtime/Engine/Public/VisualLogger/VisualLogger.h` — `SetIsRecording`
   (usually `this` from an `AActor` or `UActorComponent`).
 - **Logging on a non-game thread** — `UE_VLOG*` macros are not thread-safe by default; call
   only from the game thread unless you know your log device is thread-safe.
-- **Using deprecated geometry macros** — `GeometryShapeLogf` variants (deprecated 5.4) and
-  `ArrowLogf`/`CircleLogf` (deprecated 5.6) still compile but emit warnings; use
+- **Using deprecated geometry functions** — `GeometryShapeLogf` variants (deprecated 5.4) and
+  `ArrowLogf`/`CircleLogf` (deprecated 5.6) have been removed in 5.8; use
   `SegmentLogf`, `ArrowLineLogf`, and `DiscLogf` respectively.
 - **`UE_VLOG` without a recording session started** — entries are dropped; the Visual Logger
   window must have recording active (or `SetIsRecording(true)` called) to capture anything.

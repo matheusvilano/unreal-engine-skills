@@ -2,28 +2,30 @@
 
 Deep dive for authoring custom `UBaseMovementMode`s, declarative mode
 transitions, and movement modifiers. Paths are relative to
-`Engine/Plugins/Experimental/Mover/Source/Mover/Public/` (UE 5.7).
+`Engine/Plugins/Experimental/Mover/Source/Mover/Public/` (UE 5.8).
 
 ## Anatomy of a movement mode
 
-`UBaseMovementMode` (`MovementMode.h:39`) is `Abstract, Within = MoverComponent,
+`UBaseMovementMode` (`MovementMode.h:40`) is `Abstract, Within = MoverComponent,
 Blueprintable, EditInlineNew, DefaultToInstanced`. Each simulation tick the
 active mode runs two phases, both `BlueprintNativeEvent`s:
 
-1. **`GenerateMove`** (`MovementMode.h:59`) — *pure planning*. Read the input
+1. **`GenerateMove`** (`MovementMode.h:60`; since 5.8 it takes a leading
+   `FMoverSimContext&` parameter) — *pure planning*. Read the input
    cmd + starting sync state, output an `FProposedMove`
    (`MoveLibrary/MovementUtilsTypes.h`): `LinearVelocity`,
    `AngularVelocityDegrees`, `DirectionIntent`/`bHasDirIntent`,
    optional `PreferredMode`, and a `MixMode`. Do **not** move anything here —
    the result is mixed with layered-move proposals before execution.
-2. **`SimulationTick`** (`MovementMode.h:62`) — *execution*. Receives
-   `FSimulationTickParams` (`MoverSimulationTypes.h:413`) containing the mixed
+2. **`SimulationTick`** (`MovementMode.h:63`) — *execution*. Receives
+   `FSimulationTickParams` (`MoverSimulationTypes.h:478`) containing the mixed
    `ProposedMove`, the components (`MovingComps`), blackboard, start state and
    timestep. Sweep the updated component, resolve hits, and write the resulting
    transform/velocity into `OutputState.SyncState`.
 
-Lifecycle hooks: `OnRegistered(ModeName)`/`OnUnregistered` (added to/removed
-from a MoverComponent — resolve shared settings here), `Activate`/`Deactivate`
+Lifecycle hooks: `OnRegistered(ModeName, SimContext)`/`OnUnregistered(SimContext)`
+(added to/removed from a MoverComponent — resolve shared settings here; the
+`FMoverSimContext&` parameters were added in 5.8), `Activate`/`Deactivate`
 (mode became current / stopped being current). BP events: `OnActivated`,
 `OnDeactivated`, `OnRegistered`, `OnUnregistered`.
 
@@ -31,10 +33,10 @@ Key properties (`MovementMode.h`):
 
 | Property | Line | Purpose |
 |----------|------|---------|
-| `SharedSettingsClasses` | 104 | settings classes this mode needs; MoverComponent auto-instances them into its `SharedSettings` array |
-| `Transitions` | 108 | mode-owned transition checks, evaluated in order |
-| `GameplayTags` | 112 | tags reported through `UMoverComponent::HasGameplayTag` while active (e.g. `Mover_IsOnGround`) |
-| `bSupportsAsync` | 119 | opt-in to async (off-game-thread) simulation |
+| `SharedSettingsClasses` | 106 | settings classes this mode needs; MoverComponent auto-instances them into its `SharedSettings` array |
+| `Transitions` | 110 | mode-owned transition checks, evaluated in order |
+| `GameplayTags` | 114 | tags reported through `UMoverComponent::HasGameplayTag` while active (e.g. `Mover_IsOnGround`) |
+| `bSupportsAsync` | 121 | opt-in to async (off-game-thread) simulation |
 
 ## Canonical custom mode (modeled on UFlyingMode)
 
@@ -54,20 +56,21 @@ public:
         GameplayTags.AddTag(Mover_IsInAir);
     }
 
-    virtual void OnRegistered(const FName ModeName) override
+    virtual void OnRegistered(const FName ModeName, const FMoverSimContext& SimContext) override
     {
-        Super::OnRegistered(ModeName);
+        Super::OnRegistered(ModeName, SimContext);
         CommonLegacySettings = GetMoverComponent()->FindSharedSettings<UCommonLegacyMovementSettings>();
         check(CommonLegacySettings);
     }
-    virtual void OnUnregistered() override
+    virtual void OnUnregistered(const FMoverSimContext& SimContext) override
     {
         CommonLegacySettings = nullptr;
-        Super::OnUnregistered();
+        Super::OnUnregistered(SimContext);
     }
 
-    virtual void GenerateMove_Implementation(const FMoverTickStartData& StartState,
-        const FMoverTimeStep& TimeStep, FProposedMove& OutProposedMove) const override
+    virtual void GenerateMove_Implementation(const FMoverSimContext& SimContext,
+        const FMoverTickStartData& StartState, const FMoverTimeStep& TimeStep,
+        FProposedMove& OutProposedMove) const override
     {
         const FCharacterDefaultInputs* Inputs =
             StartState.InputCmd.InputCollection.FindDataByType<FCharacterDefaultInputs>();
@@ -151,7 +154,7 @@ via `QueueNextMode(TEXT("Gliding"))`.
 
 ### Mid-tick mode switches & substepping
 
-`FMovementModeTickEndState` (`MoverSimulationTypes.h:46`): setting
+`FMovementModeTickEndState` (`MoverSimulationTypes.h:52`): setting
 `NextModeName` plus a non-zero `RemainingMs` lets the *next* mode consume the
 remainder of this tick (that's how Walking hands off to Falling the moment the
 floor disappears). Setting `bEndedWithNoChanges` enables idle optimizations.
@@ -167,7 +170,7 @@ All in `MoveLibrary/`:
   surface handling.
 - `UAirMovementUtils` (`AirMovementUtils.h`) — `ComputeControlledFreeMove`,
   falling with air control.
-- `UFloorQueryUtils` (`FloorQueryUtils.h:109`) — `FindFloor`,
+- `UFloorQueryUtils` (`FloorQueryUtils.h:133`) — `FindFloor`,
   `ComputeFloorDist`; results cached on the blackboard under
   `CommonBlackboard::LastFloorResult`.
 - `UWaterMovementUtils`, `UBasedMovementUtils` (dynamic bases),
@@ -178,7 +181,7 @@ All in `MoveLibrary/`:
 `UMoverBlackboard` (`MoveLibrary/MoverBlackboard.h`) is a name→value cache for
 passing data between decoupled systems (floor results, time-since-supported).
 Obtain with `GetSimBlackboard_Mutable()`; invalidate keys your mode makes stale
-(e.g. flying invalidates `CommonBlackboard::LastFloorResult`). 5.7 adds a
+(e.g. flying invalidates `CommonBlackboard::LastFloorResult`). 5.7 added a
 rollback-aware variant (`MoveLibrary/RollbackBlackboard.h`) whose entries
 rewind with corrections.
 
@@ -217,15 +220,16 @@ public:
 ```
 
 Evaluation order: the **active mode's own `Transitions` array first**
-(`MovementMode.h:108`), then the MoverComponent's global `Transitions`
-(`MoverComponent.h:194-196`); each list stops at the first success.
+(`MovementMode.h:110`), then the MoverComponent's global `Transitions`
+(`MoverComponent.h:215-217`); each list stops at the first success.
 Options: `bAllowModeReentry` (re-enter the current mode),
 `bFirstSubStepOnly` (skip when evaluating substeps after a mid-tick mode
-change), `bSupportsAsync`. Physics examples: `PhysicsMover/Transitions/
-PhysicsJumpCheck.h`, `PhysicsLaunchCheck.h`.
+change), `bSupportsAsync`. Physics examples (ChaosMover plugin in 5.8):
+`ChaosMover/Character/Transitions/ChaosCharacterJumpCheck.h`,
+`ChaosCharacterLaunchCheck.h`.
 
 `OnMovementTransitionTriggered` broadcasts on the component
-(`MoverComponent.h:127`).
+(`MoverComponent.h:153`).
 
 ## Movement modifiers
 
@@ -246,10 +250,10 @@ Queue/cancel via handle:
 ```cpp
 TSharedPtr<FMySlowModifier> Slow = MakeShared<FMySlowModifier>();
 Slow->DurationMs = -1.f;                       // until cancelled
-FMovementModifierHandle Handle = MoverComp->QueueMovementModifier(Slow);  // MoverComponent.h:300
+FMovementModifierHandle Handle = MoverComp->QueueMovementModifier(Slow);  // MoverComponent.h:352
 // later:
-MoverComp->CancelModifierFromHandle(Handle);   // MoverComponent.h:306
-MoverComp->IsModifierActiveOrQueued(Handle);   // :612
+MoverComp->CancelModifierFromHandle(Handle);   // MoverComponent.h:358
+MoverComp->IsModifierActiveOrQueued(Handle);   // :671
 ```
 
 ### FStanceModifier (crouch, the built-in example)
@@ -260,7 +264,7 @@ movement-settings changes on start, reverts on end, and reports the
 `Mover_IsCrouching` tag. `UCharacterMoverComponent::Crouch/UnCrouch`
 (`CharacterMoverComponent.h:95-99`) queue/cancel it and broadcast
 `OnStanceChanged` when `bHandleStanceChanges` is enabled. `EStanceMode::Prone`
-exists but is not implemented in 5.7. Note the modifier reads "standing" values
+exists but is not implemented in 5.8. Note the modifier reads "standing" values
 from the actor CDO when reverting — non-default capsule sizes set at runtime
 will not survive a crouch cycle.
 

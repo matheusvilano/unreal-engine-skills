@@ -1,6 +1,6 @@
 # Interchange framework — class map and data flow
 
-Grounded in UE 5.7 engine source under
+Grounded in UE 5.8 engine source under
 `Engine/Source/Runtime/Interchange/` and `Engine/Plugins/Interchange/`.
 See [../SKILL.md](../SKILL.md) for usage patterns and gotchas.
 
@@ -77,7 +77,7 @@ can fetch bulk data (geometry, pixel data) on demand without re-opening the file
 The FBX translator by default spawns an out-of-process `InterchangeWorker` via
 `UE::Interchange::FInterchangeDispatcher` to isolate the Autodesk FBX SDK from the editor
 process. Setting `bUseUfbxParser = true` bypasses this and uses the open-source ufbx library
-in-process (experimental in 5.7).
+in-process (still experimental in 5.8).
 
 ## Factory node types
 

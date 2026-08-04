@@ -12,7 +12,7 @@ description: Build abilities, attributes, and effects with Unreal's Gameplay Abi
   or networked server-authoritative ability activation with client prediction. GAS requires the
   GameplayAbilities plugin and AbilitySystemGlobals initialization.
 metadata:
-  engine-version: "5.7"
+  engine-version: "5.8"
   category: gameplay-framework
 ---
 
@@ -83,7 +83,7 @@ share one ASC (e.g. equipment routing to the character's ASC).
 ## Attributes
 
 Attributes are `FGameplayAttributeData` properties in a `UAttributeSet` subclass. Use the
-`ATTRIBUTE_ACCESSORS` macro pattern (documented in `AttributeSet.h:420`) to generate the four
+`ATTRIBUTE_ACCESSORS` macro pattern (documented in `AttributeSet.h:419`) to generate the four
 helpers: a static `FGameplayAttribute` getter, a float current-value getter, a setter that routes
 through the ASC, and a base-value initter.
 
@@ -283,7 +283,7 @@ Cue handlers are `UGameplayCueNotify_Static` (one-shot, `OnExecute`) or
   `APlayerState`.
 - **Missing module deps** (`GameplayAbilities`/`GameplayTags`/`GameplayTasks`) — link errors.
 - **`EndAbility` not called** — the ability stays "active" forever, blocking further uses.
-- **`NonInstanced` removed in 5.5** — `UE_DEPRECATED_FORGAME(5.5, ...)` in 5.7; use
+- **`NonInstanced` removed in 5.5** — `UE_DEPRECATED_FORGAME(5.5, ...)` in 5.8; use
   `InstancedPerActor` as the default.
 - **Wrong replication mode** — `Mixed` required for player-owned ASCs in multiplayer;
   `Minimal`-mode ASCs won't replicate GE data to simulated proxies.
@@ -300,22 +300,22 @@ Cue handlers are `UGameplayCueNotify_Static` (one-shot, `OnExecute`) or
 
 ## References & source material
 
-Engine source (UE 5.7, `Engine/Plugins/Runtime/GameplayAbilities/Source/GameplayAbilities/Public/`):
-- `AbilitySystemComponent.h` — `UAbilitySystemComponent`: `GiveAbility`:947,
-  `TryActivateAbility`:1038, `TryActivateAbilityByClass`:1030, `InitAbilityActorInfo`:1521,
-  `MakeOutgoingSpec`:362, `MakeEffectContext`:366, `ApplyGameplayEffectSpecToTarget`:329,
-  `SetReplicationMode`:258, `ExecuteGameplayCue`:881, `AddGameplayCue`:885, `RemoveGameplayCue`:892,
-  `EGameplayEffectReplicationMode` enum:80.
-- `AttributeSet.h` — `UAttributeSet`:186, `FGameplayAttributeData`:21,
-  `PreAttributeChange`:221, `PostGameplayEffectExecute`:207, `ATTRIBUTE_ACCESSORS` pattern:420,
-  `GAMEPLAYATTRIBUTE_PROPERTY_GETTER`:429, `GAMEPLAYATTRIBUTE_VALUE_GETTER`:436.
-- `Abilities/GameplayAbility.h` — `UGameplayAbility`:110, `ActivateAbility`:597,
-  `CommitAbility`:355, `EndAbility`:627, `CanActivateAbility`:282, `CancelAbility`:318,
-  `EGameplayAbilityInstancingPolicy`:36, `EGameplayAbilityNetExecutionPolicy`:58
+Engine source (UE 5.8, `Engine/Plugins/Runtime/GameplayAbilities/Source/GameplayAbilities/Public/`):
+- `AbilitySystemComponent.h` — `UAbilitySystemComponent`: `GiveAbility`:949,
+  `TryActivateAbility`:1040, `TryActivateAbilityByClass`:1032, `InitAbilityActorInfo`:1523,
+  `MakeOutgoingSpec`:372, `MakeEffectContext`:376, `ApplyGameplayEffectSpecToTarget`:339,
+  `SetReplicationMode`:268, `ExecuteGameplayCue`:887, `AddGameplayCue`:891, `RemoveGameplayCue`:898,
+  `EGameplayEffectReplicationMode` enum:81.
+- `AttributeSet.h` — `UAttributeSet`:185, `FGameplayAttributeData`:21,
+  `PreAttributeChange`:220, `PostGameplayEffectExecute`:206, `ATTRIBUTE_ACCESSORS` pattern:419,
+  `GAMEPLAYATTRIBUTE_PROPERTY_GETTER`:428, `GAMEPLAYATTRIBUTE_VALUE_GETTER`:435.
+- `Abilities/GameplayAbility.h` — `UGameplayAbility`:91, `ActivateAbility`:574,
+  `CommitAbility`:336, `EndAbility`:604, `CanActivateAbility`:263, `CancelAbility`:299,
+  `EGameplayAbilityInstancingPolicy`:37, `EGameplayAbilityNetExecutionPolicy`:59
   (in `Abilities/GameplayAbilityTypes.h`).
-- `GameplayAbilitySpec.h` — `FGameplayAbilitySpec`:167 (class, level, InputID, handle).
-- `GameplayEffect.h` — `UGameplayEffect`, `EGameplayEffectDurationType`:663
-  (Instant/Infinite/HasDuration), `EGameplayEffectVersion`:94 (Modular53).
+- `GameplayAbilitySpec.h` — `FGameplayAbilitySpec`:168 (class, level, InputID, handle).
+- `GameplayEffect.h` — `UGameplayEffect`, `EGameplayEffectDurationType`:686
+  (Instant/Infinite/HasDuration), `EGameplayEffectVersion`:95 (Modular53).
 - `AbilitySystemInterface.h` — `IAbilitySystemInterface::GetAbilitySystemComponent()`:30.
 - `AbilitySystemGlobals.h` — `UAbilitySystemGlobals::InitGlobalData()`:69.
 - `Abilities/Tasks/AbilityTask.h` — `UAbilityTask`:90, `NewAbilityTask<T>`:136.
@@ -325,7 +325,7 @@ Engine source (UE 5.7, `Engine/Plugins/Runtime/GameplayAbilities/Source/Gameplay
 Related skills: `gameplay-tags` (GAS is tag-driven throughout), `networking-and-replication`,
 `animation-system` (montage tasks).
 
-Official docs (UE 5.7):
+Official docs (UE 5.8):
 - Gameplay Ability System — <https://dev.epicgames.com/documentation/unreal-engine/gameplay-ability-system-for-unreal-engine>
 - ASC and Attributes — <https://dev.epicgames.com/documentation/unreal-engine/gameplay-ability-system-component-and-gameplay-attributes-in-unreal-engine>
 - Gameplay Ability — <https://dev.epicgames.com/documentation/unreal-engine/using-gameplay-abilities-in-unreal-engine>

@@ -10,7 +10,7 @@ description: Structure and stream Unreal worlds in C++ — UWorld (persistent le
   toggling content sets (day/night, quest states) at runtime, creating reusable instanced
   level chunks, or choosing between World Partition and explicit sublevels.
 metadata:
-  engine-version: "5.7"
+  engine-version: "5.8"
   category: world-building
 ---
 
@@ -102,7 +102,7 @@ if (UWorldPartition* WP = GetWorld()->GetWorldPartition())
 UDataLayerManager* DLM = GetWorld()->GetDataLayerManager(); // null for non-WP worlds
 ```
 
-Source: `Runtime/Engine/Classes/Engine/World.h`:2850 (`GetWorldPartition`), :2858 (`GetDataLayerManager`).
+Source: `Runtime/Engine/Classes/Engine/World.h`:2955 (`GetWorldPartition`), :2963 (`GetDataLayerManager`).
 
 ## Data Layers
 
@@ -130,7 +130,7 @@ if (DLM)
 ```
 
 `EDataLayerRuntimeState` values: `Unloaded`, `Loaded`, `Activated`
-(`Runtime/Engine/Public/WorldPartition/DataLayer/DataLayerInstance.h`:25).
+(`Runtime/Engine/Public/WorldPartition/DataLayer/DataLayerInstance.h`:23).
 
 `UDataLayerSubsystem` exists for Blueprint compatibility but is deprecated since 5.3.
 Prefer `UDataLayerManager` in new C++ code.
@@ -242,23 +242,23 @@ streaming.
 
 ## References & source material
 
-Engine source (UE 5.7, `Engine/Source/`):
-- `Runtime/Engine/Classes/Engine/World.h`:917 — `UWorld`; :939 `PersistentLevel`;
-  :987 `StreamingLevels`; :2850 `GetWorldPartition`; :2858 `GetDataLayerManager`.
-- `Runtime/Engine/Classes/Engine/Level.h`:422 — `ULevel`; :445 `bUseExternalActors` (OFPA).
+Engine source (UE 5.8, `Engine/Source/`):
+- `Runtime/Engine/Classes/Engine/World.h`:931 — `UWorld`; :953 `PersistentLevel`;
+  :1001 `StreamingLevels`; :2955 `GetWorldPartition`; :2963 `GetDataLayerManager`.
+- `Runtime/Engine/Classes/Engine/Level.h`:419 — `ULevel`; :445 `bUseExternalActors` (OFPA).
 - `Runtime/Engine/Classes/Engine/LevelStreaming.h`:138 — `ULevelStreaming`.
 - `Runtime/Engine/Classes/Kismet/GameplayStatics.h`:306 — `LoadStreamLevel`; :314 `UnloadStreamLevel`.
-- `Runtime/Engine/Public/WorldPartition/WorldPartition.h`:141 — `UWorldPartition`.
-- `Runtime/Engine/Public/WorldPartition/WorldPartitionSubsystem.h`:51 — `UWorldPartitionSubsystem`.
+- `Runtime/Engine/Public/WorldPartition/WorldPartition.h`:152 — `UWorldPartition`.
+- `Runtime/Engine/Public/WorldPartition/WorldPartitionSubsystem.h`:63 — `UWorldPartitionSubsystem`.
 - `Runtime/Engine/Public/WorldPartition/DataLayer/DataLayerAsset.h`:29 — `UDataLayerAsset`.
-- `Runtime/Engine/Public/WorldPartition/DataLayer/DataLayerInstance.h`:61 — `UDataLayerInstance`; :25 `EDataLayerRuntimeState`.
-- `Runtime/Engine/Public/WorldPartition/DataLayer/DataLayerManager.h`:47 — `UDataLayerManager`; :83 `SetDataLayerInstanceRuntimeState`.
-- `Runtime/Engine/Public/WorldPartition/DataLayer/DataLayerSubsystem.h`:27 — `UDataLayerSubsystem` (deprecated 5.3).
+- `Runtime/Engine/Public/WorldPartition/DataLayer/DataLayerInstance.h`:59 — `UDataLayerInstance`; :23 `EDataLayerRuntimeState`.
+- `Runtime/Engine/Public/WorldPartition/DataLayer/DataLayerManager.h`:46 — `UDataLayerManager`; :82 `SetDataLayerInstanceRuntimeState`.
+- `Runtime/Engine/Public/WorldPartition/DataLayer/DataLayerSubsystem.h`:26 — `UDataLayerSubsystem` (deprecated 5.3).
 - `Runtime/Engine/Classes/Components/WorldPartitionStreamingSourceComponent.h`:16 — `UWorldPartitionStreamingSourceComponent`.
 - `Runtime/Engine/Public/LevelInstance/LevelInstanceActor.h`:18 — `ALevelInstance`.
 - `Runtime/Engine/Public/PackedLevelActor/PackedLevelActor.h`:25 — `APackedLevelActor`.
 
-Official docs (UE 5.7, all fetched and confirmed):
+Official docs (UE 5.8, all fetched and confirmed):
 - World Partition — <https://dev.epicgames.com/documentation/unreal-engine/world-partition-in-unreal-engine>
 - World Partition Data Layers — <https://dev.epicgames.com/documentation/unreal-engine/world-partition---data-layers-in-unreal-engine>
 - Level Instancing — <https://dev.epicgames.com/documentation/unreal-engine/level-instancing-in-unreal-engine>

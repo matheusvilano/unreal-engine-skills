@@ -1,7 +1,7 @@
 # Instrumenting C++ — full reference
 
 Deep dive for [../SKILL.md](../SKILL.md). All C++ instrumentation macros: cycle counters,
-CPU profiler trace scopes, CSV profiler, and scoped timers. Grounded in UE 5.7 source
+CPU profiler trace scopes, CSV profiler, and scoped timers. Grounded in UE 5.8 source
 (`Runtime/Core/Public/Stats/Stats.h`, `ProfilingDebugging/CpuProfilerTrace.h`,
 `ProfilingDebugging/CsvProfiler.h`, `ProfilingDebugging/ScopedTimers.h`) and the official
 [Stats System Overview](https://dev.epicgames.com/documentation/unreal-engine/unreal-engine-stats-system-overview)
@@ -24,7 +24,7 @@ thread overhead). Use `SCOPE_CYCLE_COUNTER` when you also want the HUD overlay v
 
 Header: `ProfilingDebugging/CpuProfilerTrace.h`
 
-Enabled when `CPUPROFILERTRACE_ENABLED == 1` (Development and Test builds; line 15).
+Enabled when `CPUPROFILERTRACE_ENABLED == 1` (Development and Test builds; line 21).
 In Shipping the macros expand to nothing.
 
 ```cpp
@@ -54,8 +54,8 @@ TRACE_CPUPROFILER_EVENT_SCOPE_CONDITIONAL(AMySystem::ProcessItems, bProfilingEna
 TRACE_CPUPROFILER_EVENT_SCOPE_ON_CHANNEL(AMySystem::ProcessItems, MyCustomChannel);
 ```
 
-Key `FEventScope` constructors are at `CpuProfilerTrace.h:184-229`; the
-`TRACE_CPUPROFILER_EVENT_SCOPE(Name)` macro is at line 449.
+Key `FEventScope` constructors are at `CpuProfilerTrace.h:188-233`; the
+`TRACE_CPUPROFILER_EVENT_SCOPE(Name)` macro is at line 453.
 
 **Pitfall:** `TRACE_CPUPROFILER_EVENT_SCOPE("MyName")` — passing a quoted string literal
 wraps extra quotation marks around the name in Insights. Use the `_STR` variant for
@@ -77,7 +77,7 @@ void UMySubsystem::DoHeavyWork()
 }
 ```
 
-`DECLARE_CYCLE_STAT` (line 146) emits a `static DEFINE_STAT` and must appear in exactly
+`DECLARE_CYCLE_STAT` (line 130) emits a `static DEFINE_STAT` and must appear in exactly
 one translation unit. The stat appears in:
 - `stat MySubsystem` HUD overlay.
 - Insights `stats` channel (when enabled).
@@ -109,7 +109,7 @@ void UMySubsystem::DoHeavyWork()
 }
 ```
 
-Defined at `Stats.h:237`. Internally declares + immediately uses the counter.
+Defined at `Stats.h:221`. Internally declares + immediately uses the counter.
 
 ### QUICK_SCOPE_CYCLE_COUNTER (temporary profiling)
 
@@ -123,7 +123,7 @@ void UMySubsystem::Tick(float DeltaTime)
 }
 ```
 
-Defined at `Stats.h:242`. Remove before shipping; it's a development diagnostic.
+Defined at `Stats.h:226`. Remove before shipping; it's a development diagnostic.
 
 ### CONDITIONAL_SCOPE_CYCLE_COUNTER
 
@@ -133,7 +133,7 @@ Only accumulates time when a condition is true:
 CONDITIONAL_SCOPE_CYCLE_COUNTER(STAT_MySubsystem_HeavyWork, bDetailedProfiling);
 ```
 
-Defined at `Stats.h:251`.
+Defined at `Stats.h:235`.
 
 ## CSV profiler (`CSV_SCOPED_TIMING_STAT`)
 
@@ -162,11 +162,11 @@ Key macros (all in `CsvProfiler.h`):
 
 | Macro | Line | Purpose |
 |---|---|---|
-| `CSV_DEFINE_CATEGORY` | 51 | Define a CSV category in one .cpp |
-| `CSV_SCOPED_TIMING_STAT` | 95 | Scoped timing into a named column |
-| `CSV_SCOPED_TIMING_STAT_EXCLUSIVE` | 104 | Exclusive (not counting child scopes) |
-| `CSV_CUSTOM_STAT` | 130 | Write a float value to a named column |
-| `CSV_EVENT` | 57 | Log a string event marker |
+| `CSV_DEFINE_CATEGORY` | 50 | Define a CSV category in one .cpp |
+| `CSV_SCOPED_TIMING_STAT` | 120 | Scoped timing into a named column |
+| `CSV_SCOPED_TIMING_STAT_EXCLUSIVE` | 129 | Exclusive (not counting child scopes) |
+| `CSV_CUSTOM_STAT` | 155 | Write a float value to a named column |
+| `CSV_EVENT` | 56 | Log a string event marker |
 
 Start/stop CSV capture from the console: `CsvProfile.start` / `CsvProfile.finish`.
 Output path: `<Project>/Saved/Profiling/CSV/`.
@@ -197,7 +197,7 @@ BuildNavMesh();
 // Destructor prints: "NavMesh build: 0.xx secs"
 ```
 
-`UE_SCOPED_TIMER(Title, Category, Verbosity)` (line 341) is a macro wrapper that
+`UE_SCOPED_TIMER(Title, Category, Verbosity)` (line 342) is a macro wrapper that
 also accumulates a running total.
 
 ## Non-cycle stat updates

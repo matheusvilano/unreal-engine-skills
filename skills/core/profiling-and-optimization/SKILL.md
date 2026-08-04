@@ -10,7 +10,7 @@ description: Profile and optimize Unreal Engine performance — Unreal Insights 
   CPU/GPU bottlenecks, or memory growth, when adding timing instrumentation to find a
   hotspot, or when deciding on CPU vs GPU vs memory optimization levers.
 metadata:
-  engine-version: "5.7"
+  engine-version: "5.8"
   category: tooling
 ---
 
@@ -157,7 +157,7 @@ For a dynamic (runtime-determined) scope name use `TRACE_CPUPROFILER_EVENT_SCOPE
 TRACE_CPUPROFILER_EVENT_SCOPE_TEXT(*DynamicName);
 ```
 
-Scope variants (all in `CpuProfilerTrace.h:449`):
+Scope variants (all in `CpuProfilerTrace.h:453`):
 - `TRACE_CPUPROFILER_EVENT_SCOPE(Name)` — literal token, lowest overhead.
 - `TRACE_CPUPROFILER_EVENT_SCOPE_STR(NameStr)` — const string pointer.
 - `TRACE_CPUPROFILER_EVENT_SCOPE_TEXT(Name)` — dynamic `TCHAR*`/`FName`.
@@ -255,27 +255,27 @@ overdraw, post-process stack, screen percentage, too many dynamic lights.
 ## Version notes
 
 - `Stats2.h` is deprecated in 5.6 and redirects to `Stats.h`; include `Stats/Stats.h`.
-- `CPUPROFILERTRACE_ENABLED` evaluates to 0 in Shipping builds (5.7: `CpuProfilerTrace.h:15`).
-- Memory Insights Android callstack support was added in 5.4; available in 5.7.
+- `CPUPROFILERTRACE_ENABLED` evaluates to 0 in Shipping builds (5.8: `CpuProfilerTrace.h:21`).
+- Memory Insights Android callstack support was added in 5.4; available in 5.8.
 - Timing Insights gained a **Verse Sampling** track in 5.7.
 
 ## References & source material
 
-Engine source (UE 5.7, under `Engine/Source/Runtime/Core/Public/`):
-- `Stats/Stats.h` — `DECLARE_STATS_GROUP`:225, `DECLARE_CYCLE_STAT`:146,
-  `SCOPE_CYCLE_COUNTER`:245, `QUICK_SCOPE_CYCLE_COUNTER`:242,
-  `DECLARE_SCOPE_CYCLE_COUNTER`:237, `CONDITIONAL_SCOPE_CYCLE_COUNTER`:251.
+Engine source (UE 5.8, under `Engine/Source/Runtime/Core/Public/`):
+- `Stats/Stats.h` — `DECLARE_STATS_GROUP`:209, `DECLARE_CYCLE_STAT`:130,
+  `SCOPE_CYCLE_COUNTER`:229, `QUICK_SCOPE_CYCLE_COUNTER`:226,
+  `DECLARE_SCOPE_CYCLE_COUNTER`:221, `CONDITIONAL_SCOPE_CYCLE_COUNTER`:235.
 - `Stats/Stats2.h` — deprecated header; redirects to `Stats/Stats.h` since 5.6.
-- `ProfilingDebugging/CpuProfilerTrace.h` — `TRACE_CPUPROFILER_EVENT_SCOPE`:449,
-  `TRACE_CPUPROFILER_EVENT_SCOPE_STR`:404, `TRACE_CPUPROFILER_EVENT_SCOPE_TEXT`:485,
-  `CPUPROFILERTRACE_ENABLED`:15, `FCpuProfilerTrace::FEventScope`:181.
-- `ProfilingDebugging/CsvProfiler.h` — `CSV_SCOPED_TIMING_STAT`:95,
-  `CSV_DEFINE_CATEGORY`:51, `CSV_CUSTOM_STAT`:130.
-- `ProfilingDebugging/ScopedTimers.h` — `FDurationTimer`:32, `FScopedDurationTimer`:66,
+- `ProfilingDebugging/CpuProfilerTrace.h` — `TRACE_CPUPROFILER_EVENT_SCOPE`:453,
+  `TRACE_CPUPROFILER_EVENT_SCOPE_STR`:408, `TRACE_CPUPROFILER_EVENT_SCOPE_TEXT`:489,
+  `CPUPROFILERTRACE_ENABLED`:21, `FCpuProfilerTrace::FEventScope`:185.
+- `ProfilingDebugging/CsvProfiler.h` — `CSV_SCOPED_TIMING_STAT`:120,
+  `CSV_DEFINE_CATEGORY`:50, `CSV_CUSTOM_STAT`:155.
+- `ProfilingDebugging/ScopedTimers.h` — `FDurationTimer`:31, `FScopedDurationTimer`:65,
   `FScopedDurationTimeLogger`:193.
-- `HAL/LowLevelMemTracker.h` — `ENABLE_LOW_LEVEL_MEM_TRACKER`:20, LLM tag scopes.
+- `HAL/LowLevelMemTracker.h` — `ENABLE_LOW_LEVEL_MEM_TRACKER`:19, LLM tag scopes.
 
-Official docs (UE 5.7, fetched and confirmed live):
+Official docs (UE 5.8, fetched and confirmed live):
 - Unreal Insights — <https://dev.epicgames.com/documentation/unreal-engine/unreal-insights-in-unreal-engine>
 - Trace — <https://dev.epicgames.com/documentation/unreal-engine/trace-in-unreal-engine-5>
 - Timing Insights — <https://dev.epicgames.com/documentation/unreal-engine/timing-insights-in-unreal-engine-5>

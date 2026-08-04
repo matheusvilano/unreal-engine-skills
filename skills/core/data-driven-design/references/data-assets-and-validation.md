@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers `UDataAsset` vs `UPrimaryDataAsset`, the
 AssetManager relationship, Blueprint subclassing patterns, and the Data Validation system.
-Grounded in UE 5.7 (`Engine/Source/Runtime/Engine/Classes/Engine/DataAsset.h`) and the official
+Grounded in UE 5.8 (`Engine/Source/Runtime/Engine/Classes/Engine/DataAsset.h`) and the official
 [Data Assets](https://dev.epicgames.com/documentation/unreal-engine/data-assets-in-unreal-engine)
 and [Data Validation](https://dev.epicgames.com/documentation/unreal-engine/data-validation-in-unreal-engine)
 docs.
@@ -11,7 +11,7 @@ docs.
 
 Both live in `Engine/Source/Runtime/Engine/Classes/Engine/DataAsset.h`.
 
-### UDataAsset (line 20)
+### UDataAsset (line 17)
 
 `UDataAsset` is declared `UCLASS(abstract, MinimalAPI, Meta = (LoadBehavior = "LazyOnDemand"))`.
 It inherits from `UObject`. Key properties:
@@ -26,9 +26,9 @@ It inherits from `UObject`. Key properties:
 Use `UDataAsset` for single-instance or small-count configs that are always loaded with the
 level (e.g., a weapon's constant parameters, a character's ability loadout).
 
-### UPrimaryDataAsset (line 46)
+### UPrimaryDataAsset (line 47)
 
-`UPrimaryDataAsset` adds `GetPrimaryAssetId() const override`:52, which returns an
+`UPrimaryDataAsset` adds `GetPrimaryAssetId() const override`:53, which returns an
 `FPrimaryAssetId(PrimaryAssetType, AssetName)`. This lets `UAssetManager`:
 
 - Scan and register all instances at startup via the Asset Registry.
@@ -72,9 +72,8 @@ UPROPERTY(EditAnywhere, BlueprintReadOnly)
 TSoftObjectPtr<UWeaponData> EquippedWeapon;
 
 // Async load when the player equips:
-TAsyncLoadOptions<UWeaponData> Opts;
 StreamableManager.RequestAsyncLoad(EquippedWeapon.ToSoftObjectPath(),
-    [this]() { OnWeaponLoaded(); });
+    FStreamableDelegate::CreateUObject(this, &UMyComponent::OnWeaponLoaded));
 ```
 
 For `UPrimaryDataAsset`, use the `UAssetManager` bundle system for larger-scale lifecycle
@@ -82,7 +81,7 @@ management rather than manually calling `StreamableManager`. See `asset-manageme
 
 ## Asset bundles
 
-`UPrimaryDataAsset::UpdateAssetBundleData`:57 (editor-only) scans the class for `AssetBundles`
+`UPrimaryDataAsset::UpdateAssetBundleData`:58 (editor-only) scans the class for `AssetBundles`
 metadata on `TSoftObjectPtr`/`TSoftClassPtr` properties. A bundle groups a set of soft refs
 under a named tag; the AssetManager loads the entire bundle in one call.
 

@@ -12,7 +12,7 @@ description: Implement server-authoritative multiplayer in Unreal C++ — networ
   multiplayer authority bugs, choosing replication conditions, or diagnosing "works in single player
   but not multiplayer" issues.
 metadata:
-  engine-version: "5.7"
+  engine-version: "5.8"
   category: systems
 ---
 
@@ -51,7 +51,7 @@ bool bIsLocallyControlled = (GetLocalRole() == ROLE_AutonomousProxy);
 ```
 
 `HasAuthority()` inlines to `GetLocalRole() == ROLE_Authority`
-(`GameFramework/Actor.h`:1941, :4964).
+(`GameFramework/Actor.h`:1938, :4967).
 
 Server RPCs execute on the server; state changes must happen on the server and replicate down.
 Clients send *intent*, not *state*.
@@ -68,13 +68,13 @@ AMyActor::AMyActor()
 }
 ```
 
-`bReplicates` (`Actor.h`:556), `SetReplicates` (`Actor.h`:722), `NetDormancy` (`Actor.h`:832),
-`bAlwaysRelevant` (`Actor.h`:300), `NetUpdateFrequency`/`SetNetUpdateFrequency` (`Actor.h`:876,
-:4622).
+`bReplicates` (`Actor.h`:593), `SetReplicates` (`Actor.h`:759), `NetDormancy` (`Actor.h`:869),
+`bAlwaysRelevant` (`Actor.h`:333), `NetUpdateFrequency`/`SetNetUpdateFrequency` (`Actor.h`:905,
+:4624).
 
 Key actors by design: GameMode is server-only. GameState and PlayerState are built to replicate
 (`gameplay-framework`). `SetReplicates(true)` at runtime triggers a replication start callback
-— in 5.7 Iris projects, override `OnReplicationStartedForIris` rather than the deprecated
+— in Iris projects (5.7+), override `OnReplicationStartedForIris` rather than the deprecated
 `OnReplicationStarted`.
 
 ## Property replication
@@ -225,33 +225,34 @@ to simulate 100ms latency.
 ## Version notes
 
 - **5.5+**: `NetUpdateFrequency` direct write is deprecated; use `SetNetUpdateFrequency()` /
-  `GetNetUpdateFrequency()` (`Actor.h`:874).
-- **5.7 / Iris**: The Iris replication system is the new default in 5.7. It coexists with the
+  `GetNetUpdateFrequency()` (`Actor.h`:903).
+- **5.8 / Iris**: The Iris replication system remains beta and opt-in in 5.8
+  (`net.Iris.UseIrisReplication`, default off). It coexists with the
   existing property/RPC model — existing `DOREPLIFETIME` and RPC code continues to work. Iris
-  replaces `OnReplicationStarted` with `OnReplicationStartedForIris`. For Push Model with Iris,
-  use `DOREPLIFETIME_WITH_PARAMS_FAST` + `bIsPushBased = true`. See
+  replaces `OnReplicationStarted` (deprecated 5.7) with `OnReplicationStartedForIris`. For Push
+  Model with Iris, use `DOREPLIFETIME_WITH_PARAMS_FAST` + `bIsPushBased = true`. See
   [references/replication-conditions-and-push-model.md](references/replication-conditions-and-push-model.md).
 
 ## References & source material
 
-Engine source (UE 5.7, under `Engine/Source/`):
+Engine source (UE 5.8, under `Engine/Source/`):
 - `Runtime/Engine/Public/Net/UnrealNetwork.h` — `DOREPLIFETIME*` macros (:231–293),
   `FDoRepLifetimeParams` (:134), `DOREPLIFETIME_CONDITION_NOTIFY` (:286),
   `DOREPLIFETIME_ACTIVE_OVERRIDE` (:311), `RegisterReplicatedLifetimeProperty` (:360).
-- `Runtime/Engine/Classes/GameFramework/Actor.h` — `bReplicates`:556, `SetReplicates`:722,
-  `GetLocalRole`:739, `GetRemoteRole`:743, `HasAuthority`:1941 (inlined :4964),
-  `bAlwaysRelevant`:300, `NetDormancy`:832, `NetUpdateFrequency`:876,
-  `SetNetDormancy`:3173, `FlushNetDormancy`:3177.
-- `Runtime/CoreUObject/Public/UObject/CoreNetTypes.h` — `ELifetimeCondition` enum (:19),
-  `COND_None`–`COND_NetGroup` (:21–38), `ELifetimeRepNotifyCondition` (:42).
+- `Runtime/Engine/Classes/GameFramework/Actor.h` — `bReplicates`:593, `SetReplicates`:759,
+  `GetLocalRole`:776, `GetRemoteRole`:780, `HasAuthority`:1938 (inlined :4967),
+  `bAlwaysRelevant`:333, `NetDormancy`:869, `NetUpdateFrequency`:905,
+  `SetNetDormancy`:3174, `FlushNetDormancy`:3178.
+- `Runtime/CoreUObject/Public/UObject/CoreNetTypes.h` — `ELifetimeCondition` enum (:16),
+  `COND_None`–`COND_NetGroup` (:18–34), `ELifetimeRepNotifyCondition` (:39).
 - `Runtime/CoreUObject/Public/UObject/CoreNet.h` — `FLifetimeProperty` (:299).
 - `Runtime/Net/Core/Public/Net/Core/PushModel/PushModel.h` — `MARK_PROPERTY_DIRTY_FROM_NAME`
-  (:454), `MARK_PROPERTY_DIRTY_FROM_NAME_STATIC_ARRAY` (:460), `FNetPushObjectId` (:289).
+  (:454), `MARK_PROPERTY_DIRTY_FROM_NAME_STATIC_ARRAY` (:460), `FNetPushObjectId` (:288).
 - `Runtime/Net/Core/Public/Net/Core/PushModel/PushModelMacros.h` — `WITH_PUSH_MODEL` (:5).
 - `Runtime/Net/Core/Classes/Net/Serialization/FastArraySerializer.h` — `FFastArraySerializer`,
   `FFastArraySerializerItem`, usage pattern (:60–134).
 
-Official docs (UE 5.7, all fetched and verified):
+Official docs (UE 5.8, all fetched and verified):
 - Networking Overview —
   <https://dev.epicgames.com/documentation/unreal-engine/networking-overview-for-unreal-engine>
 - Networking and Multiplayer (index) —

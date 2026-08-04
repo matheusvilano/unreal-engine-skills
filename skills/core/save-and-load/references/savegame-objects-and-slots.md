@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers how `UGameplayStatics` dispatches to
 `ISaveGameSystem`, file locations on each tier, the binary save helpers added in UE 5.3, slot
-naming conventions, and the `UAsyncActionHandleSaveGame` Blueprint async node. Grounded in UE 5.7
+naming conventions, and the `UAsyncActionHandleSaveGame` Blueprint async node. Grounded in UE 5.8
 (`Engine/Source/Runtime/Engine/Classes/Kismet/GameplayStatics.h`,
 `Engine/Source/Runtime/Engine/Public/SaveGameSystem.h`).
 
@@ -10,7 +10,7 @@ naming conventions, and the `UAsyncActionHandleSaveGame` Blueprint async node. G
 
 When you call `SaveGameToSlot`, the chain is:
 
-1. `UGameplayStatics::SaveGameToSlot` (GameplayStatics.h:1168) serializes the `USaveGame` object
+1. `UGameplayStatics::SaveGameToSlot` (GameplayStatics.h:1167) serializes the `USaveGame` object
    into a `TArray<uint8>` using tagged property serialization (FObjectAndNameAsStringProxyArchive
    is **not** used here — all non-transient UPROPERTYs are written).
 2. The byte array is handed to `ISaveGameSystem::SaveGame` (SaveGameSystem.h:52).
@@ -59,23 +59,23 @@ Slot names are arbitrary strings. Use a consistent scheme:
 - `"AutoSave"`, `"Checkpoint_Forest"` — purpose-named slots.
 - Avoid platform path characters (`/`, `\`, `:`, `*`) — the slot name becomes the file name on PC.
 
-## UGameplayStatics free functions — complete set (5.7)
+## UGameplayStatics free functions — complete set (5.8)
 
 All declared in `Runtime/Engine/Classes/Kismet/GameplayStatics.h`:
 
 ```
-CreateSaveGameObject(Class)                              → USaveGame*      :1125
-SaveGameToMemory(SaveGameObject, OutSaveData)            → bool            :1135
-SaveDataToSlot(InSaveData, SlotName, UserIndex)          → bool            :1144
-AsyncSaveGameToSlot(Obj, Slot, User, Delegate)           → void            :1156
-SaveGameToSlot(Obj, Slot, User)                          → bool            :1168
-DoesSaveGameExist(Slot, User)                            → bool            :1176
-LoadGameFromMemory(InSaveData)                           → USaveGame*      :1183
-LoadDataFromSlot(OutSaveData, Slot, User)                → bool            :1192
-AsyncLoadGameFromSlot(Slot, User, Delegate)              → void            :1203
-LoadGameFromSlot(Slot, User)                             → USaveGame*      :1212
-StripSaveGameHeader(SaveData)                            → FMemoryReader   :1223
-DeleteGameInSlot(Slot, User)                             → bool            :1232
+CreateSaveGameObject(Class)                              → USaveGame*      :1124
+SaveGameToMemory(SaveGameObject, OutSaveData)            → bool            :1134
+SaveDataToSlot(InSaveData, SlotName, UserIndex)          → bool            :1143
+AsyncSaveGameToSlot(Obj, Slot, User, Delegate)           → void            :1155
+SaveGameToSlot(Obj, Slot, User)                          → bool            :1167
+DoesSaveGameExist(Slot, User)                            → bool            :1175
+LoadGameFromMemory(InSaveData)                           → USaveGame*      :1182
+LoadDataFromSlot(OutSaveData, Slot, User)                → bool            :1191
+AsyncLoadGameFromSlot(Slot, User, Delegate)              → void            :1202
+LoadGameFromSlot(Slot, User)                             → USaveGame*      :1211
+StripSaveGameHeader(SaveData)                            → FMemoryReader   :1222
+DeleteGameInSlot(Slot, User)                             → bool            :1231
 ```
 
 `StripSaveGameHeader` is useful for custom serialization pipelines: it returns an `FMemoryReader`

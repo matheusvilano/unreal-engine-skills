@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the `AFunctionalTest` lifecycle,
 C++ and Blueprint child-class authoring, Ground Truth Data, and common patterns.
-Grounded in UE 5.7
+Grounded in UE 5.8
 (`Developer/FunctionalTesting/Classes/FunctionalTest.h`).
 
 ## `AFunctionalTest` lifecycle
@@ -124,12 +124,12 @@ Place test maps in `Content/Tests/` and add the path to
 Testing Manager discovers them. The Functional Testing Editor plugin must be enabled
 for functional tests to appear in the Automation tab.
 
-## Source citations (UE 5.7)
+## Source citations (UE 5.8)
 
 `Developer/FunctionalTesting/Classes/FunctionalTest.h`:
 - `AFunctionalTest`:249 — base class declaration.
-- `PrepareTest`:779 — virtual setup function.
-- `IsReady` / `IsReady_Implementation`:814–816 — ready-check.
+- `PrepareTest`:777 — virtual setup function.
+- `IsReady` / `IsReady_Implementation`:812–814 — ready-check.
 - `FinishTest`:678 — `(EFunctionalTestResult, FString)`.
 - `AddError`:659 — non-fatal error record.
 - `TimeLimit` / `PreparationTimeLimit`:358–362 — timeout properties.
@@ -138,4 +138,4 @@ for functional tests to appear in the Automation tab.
   `Succeeded`.
 
 `Developer/FunctionalTesting/Classes/FunctionalTest.h` also declares
-`UAutomationPerformaceHelper`:99 for per-test frame-time and GPU-budget recording.
+`UAutomationPerformaceHelper`:100 for per-test frame-time and GPU-budget recording.

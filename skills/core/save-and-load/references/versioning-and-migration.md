@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers save versioning strategies, field migration
 patterns, `ULocalPlayerSaveGame` versioning hooks, backward compatibility rules, and platform
-considerations. Grounded in UE 5.7
+considerations. Grounded in UE 5.8
 (`Engine/Source/Runtime/Engine/Classes/GameFramework/SaveGame.h`).
 
 ## Why versioning is non-optional

@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the `UBlueprint` editor asset, the
 `UBlueprintGeneratedClass` runtime class, the skeleton class, the compilation pipeline, and
-what the compiled output actually contains. Grounded in UE 5.7
+what the compiled output actually contains. Grounded in UE 5.8
 (`Engine/Source/Runtime/Engine/Classes/Engine/Blueprint.h`,
 `Engine/Source/Runtime/Engine/Classes/Engine/BlueprintCore.h`,
 `Engine/Source/Runtime/Engine/Classes/Engine/BlueprintGeneratedClass.h`) and the official
@@ -15,7 +15,7 @@ Every Blueprint involves two cooperating objects:
 | Object | Header | Role |
 |---|---|---|
 | `UBlueprint` | `Engine/Blueprint.h`:402 | Editor-only asset; holds graphs, variable metadata, component templates, compile settings |
-| `UBlueprintGeneratedClass` | `Engine/BlueprintGeneratedClass.h`:432 | Runtime `UClass`; contains `FProperty`s, `UFunction`s, component template arrays, timelines |
+| `UBlueprintGeneratedClass` | `Engine/BlueprintGeneratedClass.h`:429 | Runtime `UClass`; contains `FProperty`s, `UFunction`s, component template arrays, timelines |
 
 `UBlueprint` inherits from `UBlueprintCore` (`Engine/BlueprintCore.h`:13), which holds two
 critical pointers:
@@ -39,7 +39,7 @@ like any other `UClass`.
 | `BPTYPE_MacroLibrary` (`:68`) | Blueprint Macro Library | Shared macro graphs, editor-only |
 | `BPTYPE_Interface` (`:70`) | Blueprint Interface | Function signatures only (no implementation) |
 | `BPTYPE_FunctionLibrary` (`:74`) | Blueprint Function Library | Static utility functions |
-| `BPTYPE_Const` (`:65`) | Const Blueprint Class | All methods treated as const; no state mutation |
+| `BPTYPE_Const` (`:66`) | Const Blueprint Class | All methods treated as const; no state mutation |
 
 The `EBlueprintType` is stored in `UBlueprint::BlueprintType` (`Blueprint.h`:416).
 
@@ -48,14 +48,14 @@ The `EBlueprintType` is stored in `UBlueprint::BlueprintType` (`Blueprint.h`:416
 Key fields of `UBlueprint` (all `WITH_EDITORONLY_DATA` where noted):
 
 - `ParentClass` (`:412`) — the C++ or Blueprint parent this BP derives from.
-- `UbergraphPages` (`:539`) — the event graph pages that get merged into a single uber-graph.
-- `FunctionGraphs` (`:543`) — user-authored function graphs.
-- `MacroGraphs` (`:551`) — macro graphs.
-- `SimpleConstructionScript` (`:534`) — the component tree authored in the Components panel.
-- `ComponentTemplates` (`:568`) — component template objects (also stored on `UBlueprintGeneratedClass`).
-- `bRunConstructionScriptOnDrag` (`:448`) — whether the Construction Script reruns while dragging
+- `UbergraphPages` (`:543`) — the event graph pages that get merged into a single uber-graph.
+- `FunctionGraphs` (`:547`) — user-authored function graphs.
+- `MacroGraphs` (`:555`) — macro graphs.
+- `SimpleConstructionScript` (`:538`) — the component tree authored in the Components panel.
+- `ComponentTemplates` (`:572`) — component template objects (also stored on `UBlueprintGeneratedClass`).
+- `bRunConstructionScriptOnDrag` (`:453`) — whether the Construction Script reruns while dragging
   the actor in the editor (can be expensive for heavy scripts).
-- `CompileMode` (`:500`) — `EBlueprintCompileMode`: Default, Development, or FinalRelease.
+- `CompileMode` (`:504`) — `EBlueprintCompileMode`: Default, Development, or FinalRelease.
 
 ## What UBlueprintGeneratedClass stores
 
@@ -104,11 +104,11 @@ current graph state.
 
 The generated class is named `<BlueprintName>_C`. Its CDO is `Default__<BlueprintName>_C`.
 These names appear in log output and are used by redirectors. The pattern is baked into
-`UBlueprint::GetBlueprintClassNames()` (`Blueprint.h`:812).
+`UBlueprint::GetBlueprintClassNames()` (`Blueprint.h`:817).
 
 ## Version notes
 
 - `UBlueprint` and `UBlueprintGeneratedClass` are stable across UE5. The field layout above is
-  from the UE 5.7 headers; line numbers drift across patch releases but class/field names are stable.
+  from the UE 5.8 headers; line numbers drift across patch releases but class/field names are stable.
 - Blueprint nativization (converting BPs to C++) was removed starting in UE 5.0. The
   `EKismetCompileType::Cpp` entry in the compile type enum was also removed at that point.

@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the `SWidget` class hierarchy, declarative
 syntax (`SLATE_BEGIN_ARGS`/`SNew`), authoring `SCompoundWidget` subclasses, the layout and
-paint model, invalidation, and guidance on when to use Slate vs UMG. Grounded in UE 5.7
+paint model, invalidation, and guidance on when to use Slate vs UMG. Grounded in UE 5.8
 (`Engine/Source/Runtime/SlateCore/Public/Widgets/`).
 
 ## The Slate widget hierarchy
@@ -21,13 +21,13 @@ SWidget (SWidget.h)               — abstract base; every Slate widget
 
 ## Key SWidget virtuals
 
-Declared in `SWidget.h` (verified 5.7):
+Declared in `SWidget.h` (verified 5.8):
 
 | Virtual | Line | Purpose |
 |---|---|---|
-| `ComputeDesiredSize(float Scale)` | :731 | Return the widget's preferred size. Called during the layout prepass. |
-| `GetChildren()` | :856 | Return `FChildren*` — all direct child slots. Slate iterates this for layout and hit-testing. |
-| `OnPaint(...)` | :1650 | Emit draw elements into `FSlateWindowElementList`. Pure virtual on `SWidget`. |
+| `ComputeDesiredSize(float Scale)` | :774 | Return the widget's preferred size. Called during the layout prepass. |
+| `GetChildren()` | :899 | Return `FChildren*` — all direct child slots. Slate iterates this for layout and hit-testing. |
+| `OnPaint(...)` | :1771 | Emit draw elements into `FSlateWindowElementList`. Pure virtual on `SWidget`. |
 | `OnArrangeChildren(...)` | (SPanel) | Compute child positions given the allotted geometry. |
 
 `OnPaint` in `SWidget.h` is the *pure virtual*; the non-virtual public `SWidget::Paint()`
@@ -175,4 +175,4 @@ the render thread via `FSlateWindowElementList`.
   been stable throughout UE5.
 - `TSharedRef<SWidget>` / `TSharedPtr<SWidget>` semantics are unchanged across 5.x.
 - Slate's declarative macros (`SLATE_BEGIN_ARGS`) are stable and generated code unchanged
-  in 5.7.
+  in 5.8.

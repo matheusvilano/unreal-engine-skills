@@ -3,7 +3,7 @@
 Deep dive for [../SKILL.md](../SKILL.md). Covers common patterns for driving gameplay
 with tags: tag-based state machines, effect/ability gating, GAS integration points,
 animation layer selection, config/ini organisation, and the `IGameplayTagAssetInterface`
-pattern. Grounded in UE 5.7 source and the official
+pattern. Grounded in UE 5.8 source and the official
 [Gameplay Tags](https://dev.epicgames.com/documentation/unreal-engine/using-gameplay-tags-in-unreal-engine)
 documentation.
 
@@ -166,7 +166,7 @@ Config/
 ```
 
 Each file under `Config/Tags/` is auto-discovered when `ImportTagsFromConfig` is enabled
-(`UGameplayTagsSettings`, `GameplayTagsSettings.h`:108). Teams work in separate files,
+(`UGameplayTagsSettings`, `GameplayTagsSettings.h`:109). Teams work in separate files,
 reducing merge conflicts.
 
 **Restricted tags** — mark a tag subtree as restricted in Project Settings so only listed
@@ -180,7 +180,7 @@ automatically fixed up:
 
 ```ini
 ; Config/DefaultGameplayTags.ini
-[/Script/GameplayTags.GameplayTagsList]
+[/Script/GameplayTags.GameplayTagsSettings]
 +GameplayTagRedirects=(OldTagName="OldName.Foo",NewTagName="NewName.Bar")
 ```
 

@@ -52,21 +52,21 @@ Order skills roughly like this. Omit sections that don't apply.
 1. **When to use this skill** — 2-4 bullet triggers (mirror/expand the description).
 2. **Mental model** — the few concepts the agent must hold to not make mistakes.
 3. **Core workflow / steps** — numbered, imperative, copy-pasteable.
-4. **C++ patterns** — minimal correct snippets that compile against 5.7.
+4. **C++ patterns** — minimal correct snippets that compile against 5.8.
 5. **Worked example** — a realistic example tying the patterns together (when it helps).
 6. **Gotchas & edge cases** — the mistakes this skill exists to prevent.
 7. **References & source material** *(required)* — real `Engine/Source/...` paths and verified
-   official UE 5.7 doc URLs, plus links to any `references/*.md`.
+   official UE 5.8 doc URLs, plus links to any `references/*.md`.
 
 ## 4. Repo-specific rules
 
-- **Target UE 5.7.** Snippets must be valid against 5.7. When an API differs across 5.x,
+- **Target UE 5.8.** Snippets must be valid against 5.8. When an API differs across 5.x,
   add a short *Version note*.
 - **Ground in real source, and always reference it.** Cite verified paths under
-  `E:\Program Files\Epic Games\UE_5.7\Engine\Source\...`. Prefer naming the header and class
+  `E:\Program Files\Epic Games\UE_5.8\Engine\Source\...`. Prefer naming the header and class
   (e.g. `GameFramework/Actor.h` → `AActor`) over vague references. If unsure of a signature,
   read the header before asserting it. **Every skill must include a "References & source
-  material" section** with at least one verified engine-source path (and official UE 5.7 doc
+  material" section** with at least one verified engine-source path (and official UE 5.8 doc
   URLs where confirmed — never guess a URL).
 - **No tooling/automation instructions.** Skills are pure UE domain knowledge. Do **not**
   describe how to drive the editor, MCP, or any specific tool — the consuming agent handles
@@ -93,8 +93,8 @@ Order skills roughly like this. Omit sections that don't apply.
 - [ ] Folder name == `name` frontmatter; passes naming rules.
 - [ ] `description` says what + when, with keywords; ≤1024 chars.
 - [ ] Body ≤ ~500 lines; deep material moved to `references/`.
-- [ ] Every cited source path exists in the 5.7 tree.
-- [ ] C++ snippets compile against 5.7 (correct includes, macros, module deps).
+- [ ] Every cited source path exists in the 5.8 tree.
+- [ ] C++ snippets compile against 5.8 (correct includes, macros, module deps).
 - [ ] Has a "References & source material" section with ≥1 verified engine source path.
 - [ ] No MCP/tooling/automation instructions.
 - [ ] `skills-ref validate ./skills/<name>` passes (when available).

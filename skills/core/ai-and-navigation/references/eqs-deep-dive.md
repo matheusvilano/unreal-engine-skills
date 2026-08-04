@@ -1,7 +1,7 @@
 # EQS deep dive
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers EQS generators, tests, contexts, run modes,
-the C++ `FEnvQueryRequest` pattern, and the EQS Testing Pawn. Grounded in UE 5.7
+the C++ `FEnvQueryRequest` pattern, and the EQS Testing Pawn. Grounded in UE 5.8
 (`Engine/Source/Runtime/AIModule/Classes/EnvironmentQuery/`).
 
 ## What EQS produces

@@ -1,7 +1,7 @@
 # Movie Render Queue — full reference
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers Movie Render Pipeline concepts, scripting
-renders via Blueprint/Python/C++, runtime build usage, and render passes. Grounded in UE 5.7
+renders via Blueprint/Python/C++, runtime build usage, and render passes. Grounded in UE 5.8
 (`Engine/Plugins/MovieScene/MovieRenderPipeline/Source/MovieRenderPipelineCore/Public/`).
 
 ## Why MRQ over the legacy Render Movie button
@@ -107,7 +107,7 @@ OutSetting->OutputDirectory.Path = TEXT("/Game/Renders/");
 ## Movie Render Graph (MRG)
 
 UE 5.4 introduced **Movie Render Graph** as a node-graph successor to the linear MRQ config.
-In UE 5.7, MRG is the recommended path for new pipelines. MRQ configs still work and are
+In UE 5.8, MRG is the recommended path for new pipelines. MRQ configs still work and are
 auto-converted by the "Transitioning to MRG" workflow. See:
 
 - [Transitioning to Movie Render Graph from Movie Render Queue](
@@ -145,7 +145,7 @@ https://dev.epicgames.com/documentation/unreal-engine/using-command-line-renderi
 ## Version notes
 
 - UE 5.4+: Movie Render Graph (`UMovieGraphConfig`) is the successor to `UMoviePipelinePrimaryConfig`.
-  Both are supported in 5.7; MRG is preferred for new work.
+  Both are supported in 5.8; MRG is preferred for new work.
 - `UMoviePipelineQueueSubsystem` is editor-only; never call it in packaged-game code.
 - The `MovieRenderPipelineEditor` module (and all `WITH_EDITOR`-gated subsystem code) must not
   be linked from a `Runtime` module.

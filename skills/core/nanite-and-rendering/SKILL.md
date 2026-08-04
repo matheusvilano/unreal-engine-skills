@@ -9,7 +9,7 @@ description: Configure Nanite virtualized geometry (FMeshNaniteSettings on stati
   post-process in code or volumes, rendering to a texture (minimap, mirror, portal), tuning
   scalability cvars, or understanding the deferred/forward rendering split.
 metadata:
-  engine-version: "5.7"
+  engine-version: "5.8"
   category: world-building
 ---
 
@@ -38,7 +38,7 @@ draw-call-per-mesh path with a GPU-driven visibility and rasterization pass.
 ### FMeshNaniteSettings — the control struct
 
 `FMeshNaniteSettings` (defined in
-`Runtime/Engine/Classes/Engine/EngineTypes.h`:3039) holds all per-mesh Nanite build
+`Runtime/Engine/Classes/Engine/EngineTypes.h`:3280) holds all per-mesh Nanite build
 parameters. Key fields:
 
 | Field | Type | Default | Purpose |
@@ -53,9 +53,9 @@ parameters. Key fields:
 | `DisplacementMaps` | `TArray<FMeshDisplacementMap>` | empty | Offline tessellation/displacement maps |
 | `PositionPrecision` | `int32` | `MIN_int32` (auto) | Vertex position quantization |
 
-`UStaticMesh` exposes `GetNaniteSettings()`/`SetNaniteSettings()` (`StaticMesh.h`:836–848)
-and `IsNaniteEnabled()` (`:1030`). `USkeletalMesh` has the same accessor pair
-(`SkeletalMesh.h`:950–957).
+`UStaticMesh` exposes `GetNaniteSettings()`/`SetNaniteSettings()` (`StaticMesh.h`:855–868)
+and `IsNaniteEnabled()` (`:1049`). `USkeletalMesh` has the same accessor pair
+(`SkeletalMesh.h`:970–977).
 
 > **5.7 deprecation note:** Direct member access to `UStaticMesh::NaniteSettings` is
 > deprecated (`UE_DEPRECATED(5.7, ...)`). Use the accessor functions instead.
@@ -85,7 +85,7 @@ void EnableNaniteOnMesh(UStaticMesh* Mesh)
 ### Where Nanite applies — and where it doesn't
 
 Nanite works on **opaque and masked** materials. Translucent materials fall back to the
-fallback mesh. In UE 5.7 Nanite also supports:
+fallback mesh. In UE 5.8 Nanite also supports:
 - **Skeletal meshes** (animation LODs only; no geometry LODs).
 - **Spline mesh components** — `MaxEdgeLengthFactor > 0` prevents over-simplification.
 - **Foliage**, including WPO wind animation (clamp displacement to avoid culling drift).
@@ -100,15 +100,15 @@ Nanite is **not** supported for:
 - **Lighting channels** and **minimum screen radius / distance culling** per-object overrides.
 
 On `UStaticMeshComponent`, `bDisallowNanite` and `bForceNaniteForMasked` let you opt
-individual component instances in or out at runtime (`StaticMeshComponent.h`:157–161).
-`WorldPositionOffsetDisableDistance` (`:153`) stops WPO evaluation past a given screen
+individual component instances in or out at runtime (`StaticMeshComponent.h`:162–166).
+`WorldPositionOffsetDisableDistance` (`:158`) stops WPO evaluation past a given screen
 distance, which also helps Nanite cluster culling.
 
 ### Fallback mesh
 
 The fallback mesh is a conventional LOD mesh rendered on platforms that don't support
 Nanite (DX11, mobile, ray-tracing passes). `HasNaniteFallbackMesh(EShaderPlatform)`
-(`StaticMesh.h`:2170) queries its presence. Set `FallbackPercentTriangles` < 1.0 to reduce
+(`StaticMesh.h`:2192) queries its presence. Set `FallbackPercentTriangles` < 1.0 to reduce
 its cost. For ray tracing, the fallback is used by default; lower `FallbackRelativeError`
 for higher-fidelity RT shadows/reflections.
 
@@ -129,15 +129,15 @@ UE defaults to **deferred shading** (desktop/console). The G-buffer stores mater
 properties (base color, normals, roughness, metallic) in the depth pass and base pass; the
 lighting pass reads them. This enables many dynamic lights at low per-light cost.
 
-**Forward shading** (`r.ForwardShading 1`, `RendererSettings.h`:698) renders lighting in a
+**Forward shading** (`r.ForwardShading 1`, `RendererSettings.h`:736) renders lighting in a
 single pass per draw. It supports MSAA but does not support Nanite, has fewer features
 (no deferred decals, no light functions by default), and is mainly used for VR.
 
-Mobile has its own forward and deferred paths (`EMobileShadingPath`, `RendererSettings.h`:219–224).
+Mobile has its own forward and deferred paths (`EMobileShadingPath`, `RendererSettings.h`:220–229).
 
 ### GPU Scene and instancing
 
-`FGPUScene` (`Renderer/Private/GPUScene.h`:216) is a GPU-resident buffer of per-primitive
+`FGPUScene` (`Renderer/Private/GPUScene.h`:218) is a GPU-resident buffer of per-primitive
 and per-instance data updated each frame. It enables Nanite's GPU-driven culling/rasterization
 and UE5's instanced rendering path — all `UStaticMeshComponent` and HISM instances share
 this buffer, eliminating per-draw-call CPU overhead. Adding or removing primitives from the
@@ -147,7 +147,7 @@ scene queues updates through `FGPUScene`; do not assume immediate GPU visibility
 
 Virtual Shadow Maps (VSM) are UE5's high-resolution shadow system, designed to pair with
 Nanite's pixel-scale detail. VSMs use a 16k virtual address space paged into 128x128
-physical pages (`VirtualShadowMapArray.h`:72–77). Only pages that cover visible shadowed
+physical pages (`VirtualShadowMapArray.h`:73–79). Only pages that cover visible shadowed
 surfaces are allocated and rendered, making the per-frame cost roughly proportional to the
 number of unique shadow-casting surfaces visible, rather than a fixed resolution texture.
 
@@ -173,13 +173,13 @@ Screen percentage (`r.ScreenPercentage`) is the primary resolution lever: 50–7
 still produces near-native quality. Third-party temporal upscalers (DLSS, FSR 2+, XeSS)
 plug in via the `ITemporalUpscaler` interface (`Renderer/Public/TemporalUpscaler.h`).
 
-`RendererSettings.h`:829–832 maps `r.AntiAliasingMethod` to `EAntiAliasingMethod` (project
+`RendererSettings.h`:863–866 maps `r.AntiAliasingMethod` to `EAntiAliasingMethod` (project
 setting `DefaultFeatureAntiAliasing`). Forward shading forces FXAA or MSAA; TSR/TAAU
 require deferred.
 
 ## Post process (FPostProcessSettings)
 
-`FPostProcessSettings` (`Engine/Classes/Engine/Scene.h`:692–2596) is the single struct that
+`FPostProcessSettings` (`Engine/Classes/Engine/Scene.h`:711–2712) is the single struct that
 controls all post-process overrides. Apply it via:
 - An unbound **Post Process Volume** (global baseline).
 - A bounded volume with a Blend Radius (local override).
@@ -288,44 +288,44 @@ hardcode `GConsoleManager->FindTConsoleVariableDataFloat` calls in game logic.
 
 ## Version notes
 
-- **Nanite skeletal mesh** is production-ready in 5.5+ and fully supported in 5.7; uses
+- **Nanite skeletal mesh** is production-ready in 5.5+ and fully supported in 5.8; uses
   animation LODs (not geometry LODs).
-- **Nanite spline meshes** work in 5.7 by default; set `MaxEdgeLengthFactor` for road/rail
+- **Nanite spline meshes** work in 5.8 by default; set `MaxEdgeLengthFactor` for road/rail
   splines with significant curvature.
 - **Nanite tessellation** (runtime programmable displacement) is experimental/beta in 5.5–5.6
-  and production-track in 5.7; check project settings to enable.
+  and production-track in 5.7; in 5.8 `r.Nanite.Tessellation` defaults to 1 (on).
 - `UStaticMesh::NaniteSettings` direct-access is `UE_DEPRECATED(5.7)` — use accessors.
-- `TSR` is `EAntiAliasingMethod::AAM_TSR` in `EAntiAliasingMethod` enum (5.7); earlier
+- `TSR` is `EAntiAliasingMethod::AAM_TSR` in `EAntiAliasingMethod` enum (5.8); earlier
   builds spelled it `TemporalSuperResolution`.
 
 ## References & source material
 
-Engine source (UE 5.7, under `Engine/Source/`):
-- `Runtime/Engine/Classes/Engine/EngineTypes.h` — `FMeshNaniteSettings`:3039,
-  `ENaniteGenerateFallback`:2972, `ENaniteFallbackTarget`:2981.
-- `Runtime/Engine/Classes/Engine/StaticMesh.h` — `GetNaniteSettings`:836,
-  `SetNaniteSettings`:845, `IsNaniteEnabled`:1030, `HasNaniteFallbackMesh`:2170;
-  `NaniteSettings` member deprecated at 5.7:734.
-- `Runtime/Engine/Classes/Engine/SkeletalMesh.h` — `FMeshNaniteSettings NaniteSettings`:944,
-  `GetNaniteSettings`:950, `SetNaniteSettings`:954.
-- `Runtime/Engine/Classes/Components/StaticMeshComponent.h` — `bDisallowNanite`:161,
-  `bForceNaniteForMasked`:157, `WorldPositionOffsetDisableDistance`:153,
-  `bEvaluateWorldPositionOffset`:171.
-- `Runtime/Engine/Classes/Engine/Scene.h` — `FPostProcessSettings`:692.
-- `Runtime/Engine/Classes/Engine/RendererSettings.h` — `DefaultFeatureAntiAliasing`:832,
-  `bForwardShading`:702, `bVirtualTextures`:388, `MobileShadingPath`:316.
-- `Runtime/Engine/Public/Rendering/NaniteResources.h` — `Nanite::FResources`:409
+Engine source (UE 5.8, under `Engine/Source/`):
+- `Runtime/Engine/Classes/Engine/EngineTypes.h` — `FMeshNaniteSettings`:3280,
+  `ENaniteGenerateFallback`:3213, `ENaniteFallbackTarget`:3222.
+- `Runtime/Engine/Classes/Engine/StaticMesh.h` — `GetNaniteSettings`:855,
+  `SetNaniteSettings`:864, `IsNaniteEnabled`:1049, `HasNaniteFallbackMesh`:2192;
+  `NaniteSettings` member deprecated at 5.7:744.
+- `Runtime/Engine/Classes/Engine/SkeletalMesh.h` — `FMeshNaniteSettings NaniteSettings`:964,
+  `GetNaniteSettings`:970, `SetNaniteSettings`:974.
+- `Runtime/Engine/Classes/Components/StaticMeshComponent.h` — `bDisallowNanite`:166,
+  `bForceNaniteForMasked`:162, `WorldPositionOffsetDisableDistance`:158,
+  `bEvaluateWorldPositionOffset`:176.
+- `Runtime/Engine/Classes/Engine/Scene.h` — `FPostProcessSettings`:711.
+- `Runtime/Engine/Classes/Engine/RendererSettings.h` — `DefaultFeatureAntiAliasing`:866,
+  `bForwardShading`:736, `bVirtualTextures`:417, `MobileShadingPath`:342.
+- `Runtime/Engine/Public/Rendering/NaniteResources.h` — `Nanite::FResources`:452
   (streaming pages, cluster hierarchy, position/normal precision stored here).
-- `Runtime/Renderer/Private/GPUScene.h` — `FGPUScene`:216 (GPU-resident primitive/instance
+- `Runtime/Renderer/Private/GPUScene.h` — `FGPUScene`:218 (GPU-resident primitive/instance
   buffer driving Nanite and instanced rendering).
-- `Runtime/Renderer/Private/VirtualShadowMaps/VirtualShadowMapArray.h` — `FVirtualShadowMap`:66,
-  page size/dim constants :72–77.
-- `Runtime/Renderer/Public/TemporalUpscaler.h` — `ITemporalUpscaler`:11 (plugin interface
+- `Runtime/Renderer/Private/VirtualShadowMaps/VirtualShadowMapArray.h` — `FVirtualShadowMap`:67,
+  page size/dim constants :73–79.
+- `Runtime/Renderer/Public/TemporalUpscaler.h` — `ITemporalUpscaler`:12 (plugin interface
   for third-party upscalers: DLSS, FSR, XeSS).
 - `Runtime/Renderer/Private/DeferredShadingRenderer.h` — deferred renderer entry; includes
   Nanite, VSM, and Lumen integration headers.
 
-Official docs (UE 5.7, all fetched and confirmed):
+Official docs (UE 5.8, all fetched and confirmed):
 - Nanite Virtualized Geometry Overview —
   <https://dev.epicgames.com/documentation/unreal-engine/nanite-virtualized-geometry-in-unreal-engine>
 - Nanite (index) — <https://dev.epicgames.com/documentation/unreal-engine/nanite-in-unreal-engine>

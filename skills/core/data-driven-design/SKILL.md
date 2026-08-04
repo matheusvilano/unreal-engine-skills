@@ -9,7 +9,7 @@ description: Drive Unreal gameplay from externally-editable data instead of hard
   magic numbers with editable assets, or layering data across DLC/platforms with composite
   tables.
 metadata:
-  engine-version: "5.7"
+  engine-version: "5.8"
   category: content-assets
 ---
 
@@ -75,9 +75,9 @@ ItemTable->GetAllRows<FItemRow>(TEXT("All"), All);
 ```
 
 Key macro rule: the struct needs `USTRUCT(BlueprintType)` so Blueprint graphs can read rows;
-`FTableRowBase` is the mandatory base (`DataTable.h`:36).
+`FTableRowBase` is the mandatory base (`DataTable.h`:33).
 
-**`FDataTableRowHandle`** (`DataTable.h`:395) — a two-field struct (table + row name) you expose
+**`FDataTableRowHandle`** (`DataTable.h`:424) — a two-field struct (table + row name) you expose
 as a `UPROPERTY` so designers pick the exact row in the Details panel, eliminating string typos.
 
 ```cpp
@@ -114,9 +114,9 @@ public:
 };
 ```
 
-- `UDataAsset` (`DataAsset.h`:20) — base; creates assets in the Content Browser, hard-loaded
+- `UDataAsset` (`DataAsset.h`:17) — base; creates assets in the Content Browser, hard-loaded
   when the outer object is loaded.
-- `UPrimaryDataAsset` (`DataAsset.h`:46) — adds `GetPrimaryAssetId()` for `UAssetManager`
+- `UPrimaryDataAsset` (`DataAsset.h`:47) — adds `GetPrimaryAssetId()` for `UAssetManager`
   discovery, async loading, and bundle-based streaming. Use when you need lifecycle control or
   have many instances (hundreds of items). See `asset-management`.
 
@@ -273,7 +273,7 @@ assets that override it.
 ## Version notes
 
 - `UCompositeDataTable` has been stable since UE4. The `AppendParentTables`/`RemoveParentTable`
-  runtime API (CompositeDataTable.h:59–63) allows dynamic parent modification, but the comment in
+  runtime API (CompositeDataTable.h:59–62) allows dynamic parent modification, but the comment in
   the header warns this can cause hitches during gameplay.
 - `UDeveloperSettings` is in its own module (`DeveloperSettings`) since UE5; in UE4 it was part
   of `Engine`. Update `Build.cs` accordingly.
@@ -284,22 +284,22 @@ assets that override it.
 
 ## References & source material
 
-Engine source (UE 5.7, under `Engine/Source/Runtime/`):
-- `Engine/Classes/Engine/DataTable.h` — `FTableRowBase`:36, `UDataTable`:79,
-  `FindRow<T>`:224, `GetAllRows<T>`:204, `ForeachRow<T>`:237,
-  `FDataTableRowHandle`:395, `FDataTableCategoryHandle`:468.
+Engine source (UE 5.8, under `Engine/Source/Runtime/`):
+- `Engine/Classes/Engine/DataTable.h` — `FTableRowBase`:33, `UDataTable`:76,
+  `FindRow<T>`:219, `GetAllRows<T>`:199, `ForeachRow<T>`:232,
+  `FDataTableRowHandle`:424, `FDataTableCategoryHandle`:497.
 - `Engine/Classes/Engine/CompositeDataTable.h` — `UCompositeDataTable`:13,
-  `ParentTables`:81, `AppendParentTables`:59.
-- `Engine/Classes/Engine/DataAsset.h` — `UDataAsset`:20, `UPrimaryDataAsset`:46,
-  `GetPrimaryAssetId()`:52.
-- `Engine/Classes/Engine/CurveTable.h` — `UCurveTable`:40, `FindCurve`:129,
-  `FindRichCurve`:148, `FCurveTableRowHandle`:260.
+  `ParentTables`:83, `AppendParentTables`:59.
+- `Engine/Classes/Engine/DataAsset.h` — `UDataAsset`:17, `UPrimaryDataAsset`:47,
+  `GetPrimaryAssetId()`:53.
+- `Engine/Classes/Engine/CurveTable.h` — `UCurveTable`:40, `FindCurve`:131,
+  `FindRichCurve`:150, `FCurveTableRowHandle`:262.
 - `Engine/Classes/Curves/CurveFloat.h` — `FRuntimeFloatCurve`:12,
   `UCurveFloat`:30, `GetFloatValue`:44.
 - `DeveloperSettings/Public/Engine/DeveloperSettings.h` — `UDeveloperSettings`:23,
   `GetContainerName`:31, `GetCategoryName`:33, `GetSectionName`:35.
 
-Official docs (UE 5.7):
+Official docs (UE 5.8):
 - Data Assets — <https://dev.epicgames.com/documentation/unreal-engine/data-assets-in-unreal-engine>
 - Configuration Files — <https://dev.epicgames.com/documentation/unreal-engine/configuration-files-in-unreal-engine>
 - Data Validation — <https://dev.epicgames.com/documentation/unreal-engine/data-validation-in-unreal-engine>

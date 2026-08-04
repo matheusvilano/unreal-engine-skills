@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers `FRootMotionSource` types,
 `LaunchCharacter`, animation-driven root motion, and network considerations.
-Grounded in UE 5.7
+Grounded in UE 5.8
 (`Engine/Source/Runtime/Engine/Classes/GameFramework/RootMotionSource.h` and
 `CharacterMovementComponent.h`).
 
@@ -10,27 +10,27 @@ Grounded in UE 5.7
 
 | System | What drives it | Replicated? |
 |--------|---------------|-------------|
-| **Anim root motion** | Animation clip with root bone motion | Yes — via `RepRootMotion` montage struct (`Character.h:1037`) |
+| **Anim root motion** | Animation clip with root bone motion | Yes — via `RepRootMotion` montage struct (`Character.h:1160`) |
 | **Root motion sources (RMS)** | `FRootMotionSource` objects applied to CMC | Yes — via `FRootMotionSourceGroup` in `FSavedMove_Character` |
 
 Both systems feed into `UCharacterMovementComponent::CurrentRootMotion`
-(`CMC.h:2727`) which CMC evaluates inside `PerformMovement` (`CMC.h:2252`).
+(`CMC.h:2795`) which CMC evaluates inside `PerformMovement` (`CMC.h:2291`).
 
 ## Animation root motion
 
 Animation clips with root bone motion extracted will be applied when the
 montage's `RootMotionMode` is not `ERootMotionMode::NoRootMotionExtraction`.
 
-- For networked characters, `IsPlayingNetworkedRootMotionMontage()` (`Character.h:1070`)
+- For networked characters, `IsPlayingNetworkedRootMotionMontage()` (`Character.h:1193`)
   indicates that CMC's prediction loop accounts for the montage.
-- `AnimRootMotionTranslationScale` (`Character.h:481`, `Replicated`) scales the
+- `AnimRootMotionTranslationScale` (`Character.h:582`, `Replicated`) scales the
   translation component of anim root motion — useful for speed multipliers without
   changing the animation.
-- `HasAnyRootMotion()` (`Character.h:1063`) returns true for both anim and source
+- `HasAnyRootMotion()` (`Character.h:1186`) returns true for both anim and source
   root motion.
 
 Anim root motion on **simulated proxies** is handled via `SimulatedRootMotionPositionFixup`
-(`Character.h:1052`) and the `RepRootMotion` replicated struct (`Character.h:1037`).
+(`Character.h:1175`) and the `RepRootMotion` replicated struct (`Character.h:1160`).
 
 ## FRootMotionSource types
 
@@ -62,19 +62,19 @@ MoveSource->Duration         = 0.35f;
 MoveSource->bRestrictSpeedToExpected = true;   // clamp to keep arc clean
 
 uint16 SourceID = GetCharacterMovement()->ApplyRootMotionSource(MoveSource);
-// CMC.h:2739 — returns ID for later removal
+// CMC.h:2807 — returns ID for later removal
 ```
 
 Remove when cancelled:
 ```cpp
-GetCharacterMovement()->RemoveRootMotionSourceByID(SourceID); // CMC.h:2754
+GetCharacterMovement()->RemoveRootMotionSourceByID(SourceID); // CMC.h:2822
 // OR by name:
-GetCharacterMovement()->RemoveRootMotionSource(FName("DodgeRoll")); // CMC.h:2751
+GetCharacterMovement()->RemoveRootMotionSource(FName("DodgeRoll")); // CMC.h:2819
 ```
 
 ## LaunchCharacter
 
-`ACharacter::LaunchCharacter` (`Character.h:791`) sets a pending launch velocity
+`ACharacter::LaunchCharacter` (`Character.h:908`) sets a pending launch velocity
 on CMC, which is applied in the next `PerformMovement` tick and transitions the
 character to `MOVE_Falling`:
 
@@ -89,7 +89,7 @@ LaunchCharacter(FVector(0.f, 0.f, 800.f),
 - `bXYOverride = false` — adds the XY component to current velocity.
 - `bZOverride = true` — replaces Z velocity (avoids doubling up on jump force).
 
-`LaunchCharacter` fires `OnLaunched` Blueprint event (`Character.h:795`) after
+`LaunchCharacter` fires `OnLaunched` Blueprint event (`Character.h:912`) after
 setting the velocity. It is replicated via CMC's prediction — do not manually
 set `Velocity` on the client for launches.
 
@@ -97,8 +97,8 @@ set `Velocity` on the client for launches.
 
 When a server applies a root motion source, CMC synchronizes it to the client
 via the `FSavedMove_Character` serialization path:
-- Server sends `ServerCorrectionRootMotion` (`CMC.h:2730`) in corrections.
-- Client applies `ConvertRootMotionServerIDsToLocalIDs` (`CMC.h:2757`) to
+- Server sends `ServerCorrectionRootMotion` (`CMC.h:2798`) in corrections.
+- Client applies `ConvertRootMotionServerIDsToLocalIDs` (`CMC.h:2825`) to
   reconcile server-assigned IDs with locally assigned ones after replay.
 
 Because IDs can differ between server and client, always look up sources by
@@ -126,5 +126,5 @@ gravity if using `FRootMotionSource_MoveToForce`.
 - `FRootMotionSource_MoveToDynamicForce` was added in UE 4.20 and is stable
   in 5.x; the `bTargetBasedPosition` flag distinguishes absolute world space
   from relative-to-base-component targets.
-- `AnimRootMotionTranslationScale` (`Character.h:481`) is replicated, so scaling
+- `AnimRootMotionTranslationScale` (`Character.h:582`) is replicated, so scaling
   root motion translation on the server propagates correctly to simulated proxies.

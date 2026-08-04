@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the BT execution model, node instancing,
 task node memory, composite abort modes, decorator conditions, and service tick intervals.
-Grounded in UE 5.7 (`Engine/Source/Runtime/AIModule/Classes/BehaviorTree/`).
+Grounded in UE 5.8 (`Engine/Source/Runtime/AIModule/Classes/BehaviorTree/`).
 
 ## Execution model
 

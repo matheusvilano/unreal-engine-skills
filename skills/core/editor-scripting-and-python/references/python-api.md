@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers name translation rules, type coercions,
 `get_editor_subsystem`, editor property access, transactions, progress feedback, logging,
-commandlet invocation, and how to expose C++ to Python. Grounded in UE 5.7 source under
+commandlet invocation, and how to expose C++ to Python. Grounded in UE 5.8 source under
 `Engine/Plugins/Experimental/PythonScriptPlugin/`.
 
 ## How the `unreal` module is generated
@@ -13,7 +13,7 @@ to Blueprints. It is **not** pre-generated; it automatically includes any class 
 that is `BlueprintCallable`, `BlueprintPure`, `BlueprintAssignable`, `BlueprintReadWrite`,
 or `EditAnywhere` in any enabled plugin or project module.
 
-The plugin embeds Python 3.11.8 (UE 5.7, aligned with VFX Reference Platform CY2024).
+The plugin embeds Python 3.11.8 (UE 5.8, aligned with VFX Reference Platform CY2024).
 It runs in isolated mode by default — `PYTHONPATH`/`PYTHONHOME` are ignored; only
 `UE_PYTHONPATH` is added to `sys.path` regardless of isolation setting.
 (`PythonScriptPluginSettings.h:81` `bIsolateInterpreterEnvironment`).
@@ -34,7 +34,7 @@ It runs in isolated mode by default — `PYTHONPATH`/`PYTHONHOME` are ignored; o
 | `FString` / `FName` / `FText` | `str` | Transparent bidirectional |
 
 Override the generated Python name with `meta = (ScriptName = "my_name")`
-(`ObjectMacros.h:1243`).
+(`ObjectMacros.h:1285`).
 
 ---
 
@@ -138,7 +138,7 @@ unreal.log_error("Fatal script error")
 
 ## Running Python from C++
 
-`IPythonScriptPlugin::ExecPythonCommand(Command)` (`:49`) executes a Python string
+`IPythonScriptPlugin::ExecPythonCommand(Command)` (`:54`) executes a Python string
 synchronously. For richer control use `ExecPythonCommandEx(FPythonCommandEx&)` which
 exposes `EPythonCommandExecutionMode` and `EPythonFileExecutionScope`.
 
@@ -189,7 +189,7 @@ Scripts can be registered to run every time the editor loads the project:
   (`UPythonScriptPluginSettings::StartupScripts`, `PythonScriptPluginSettings.h:67`)
 - **`init_unreal.py`** placed in any `Content/Python` folder of the project or an enabled
   plugin — auto-detected and run before startup scripts.
-- **Additional paths** for `sys.path`: `AdditionalPaths` setting (`:70`) or the
+- **Additional paths** for `sys.path`: `AdditionalPaths` setting (`:71`) or the
   `UE_PYTHONPATH` environment variable (always parsed, even in isolation mode).
 
 ---
@@ -205,10 +205,10 @@ static FVector ScaleUniform(const FVector& V, float Scale);
 // Python: my_vec.scale_uniform(2.0)   — method on FVector
 ```
 
-`ScriptMethodSelfReturn` (`ObjectMacros.h:1674`): for structs, indicates the function
+`ScriptMethodSelfReturn` (`ObjectMacros.h:1726`): for structs, indicates the function
 overwrites the calling struct value (equivalent to `UPARAM(ref)` semantics).
 
-`ScriptMethodMutable` (`ObjectMacros.h:1677`): treat the first const-ref argument as
+`ScriptMethodMutable` (`ObjectMacros.h:1729`): treat the first const-ref argument as
 mutable (equivalent to `UPARAM(ref)` for the struct input).
 
 ---
@@ -228,8 +228,8 @@ See `PythonScriptPluginSettings.h:91` (`bDeveloperMode`) and the README in
 
 ## Key source files
 
-- `Engine/Plugins/Experimental/PythonScriptPlugin/Source/PythonScriptPlugin/Public/IPythonScriptPlugin.h` — `IPythonScriptPlugin`:11, `ExecPythonCommand`:49, `IsPythonInitialized`:36
-- `Engine/Plugins/Experimental/PythonScriptPlugin/Source/PythonScriptPlugin/Public/PythonScriptTypes.h` — `EPythonCommandExecutionMode`:36, `EPythonFileExecutionScope`:47, `FPythonCommandEx`:72
+- `Engine/Plugins/Experimental/PythonScriptPlugin/Source/PythonScriptPlugin/Public/IPythonScriptPlugin.h` — `IPythonScriptPlugin`:11, `ExecPythonCommand`:54, `IsPythonInitialized`:36
+- `Engine/Plugins/Experimental/PythonScriptPlugin/Source/PythonScriptPlugin/Public/PythonScriptTypes.h` — `EPythonCommandExecutionMode`:36, `EPythonFileExecutionScope`:48, `FPythonCommandEx`:72
 - `Engine/Plugins/Experimental/PythonScriptPlugin/Source/PythonScriptPlugin/Private/PythonScriptCommandlet.h` — `UPythonScriptCommandlet`:10
-- `Engine/Plugins/Experimental/PythonScriptPlugin/Source/PythonScriptPlugin/Private/PythonScriptPluginSettings.h` — `StartupScripts`:67, `AdditionalPaths`:70, `bIsolateInterpreterEnvironment`:81, `bDeveloperMode`:91
-- `Engine/Source/Runtime/CoreUObject/Public/UObject/ObjectMacros.h` — `ScriptName`:1243, `ScriptMethod`:1671, `ScriptMethodSelfReturn`:1674, `ScriptMethodMutable`:1677
+- `Engine/Plugins/Experimental/PythonScriptPlugin/Source/PythonScriptPlugin/Private/PythonScriptPluginSettings.h` — `StartupScripts`:67, `AdditionalPaths`:71, `bIsolateInterpreterEnvironment`:81, `bDeveloperMode`:91
+- `Engine/Source/Runtime/CoreUObject/Public/UObject/ObjectMacros.h` — `ScriptName`:1285, `ScriptMethod`:1723, `ScriptMethodSelfReturn`:1726, `ScriptMethodMutable`:1729

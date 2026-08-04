@@ -1,7 +1,7 @@
 # Attributes and Gameplay Effects
 
 > Deep-dive reference for `UAttributeSet`, `FGameplayAttributeData`, and `UGameplayEffect`.
-> Grounded in UE 5.7 source at `Engine/Plugins/Runtime/GameplayAbilities/Source/GameplayAbilities/Public/`.
+> Grounded in UE 5.8 source at `Engine/Plugins/Runtime/GameplayAbilities/Source/GameplayAbilities/Public/`.
 > Return to [../SKILL.md](../SKILL.md) for the entry-level overview.
 
 ## FGameplayAttributeData
@@ -17,7 +17,7 @@ the aggregation system and should only be called during initialization (`InitFro
 
 ## ATTRIBUTE_ACCESSORS macro
 
-Defined by convention in `AttributeSet.h:420` as a composite of four internal macros:
+Defined by convention in `AttributeSet.h:419` as a composite of four internal macros:
 
 ```cpp
 #define ATTRIBUTE_ACCESSORS(ClassName, PropertyName)         \
@@ -36,14 +36,14 @@ Generated API for `ATTRIBUTE_ACCESSORS(UMySet, Health)`:
 | `SetHealth(float)` | `void` | Routes through ASC `SetNumericAttributeBase`; safe to call at runtime |
 | `InitHealth(float)` | `void` | Sets both Base and Current; initialization only |
 
-`ATTRIBUTE_ACCESSORS_BASIC` is an alias defined at `AttributeSet.h:466` for projects that have not
+`ATTRIBUTE_ACCESSORS_BASIC` is an alias defined at `AttributeSet.h:465` for projects that have not
 copied the macro. Use either consistently.
 
 ## Attribute set callbacks
 
 Override these on `UAttributeSet` to control attribute modification behavior:
 
-### PreAttributeChange (`AttributeSet.h:221`)
+### PreAttributeChange (`AttributeSet.h:220`)
 Called before any modification to `CurrentValue`. Use **only** for clamping; do not trigger game
 logic here (this fires from many paths, not just GE execution):
 
@@ -57,10 +57,10 @@ void UMyAttributeSet::PreAttributeChange(const FGameplayAttribute& Attr, float& 
 }
 ```
 
-### PreAttributeBaseChange (`AttributeSet.h:232`)
+### PreAttributeBaseChange (`AttributeSet.h:231`)
 Same purpose but for `BaseValue` changes. Override both for complete clamping coverage.
 
-### PostGameplayEffectExecute (`AttributeSet.h:207`)
+### PostGameplayEffectExecute (`AttributeSet.h:206`)
 Called after an Instant GE modifies `BaseValue`. Use this to react to confirmed changes: trigger
 death, notify UI, or apply overflow into another attribute (meta-attribute pattern).
 
@@ -126,7 +126,7 @@ predictions can be reconciled correctly.
 `UGameplayEffect` (`GameplayEffect.h`) is a `UObject` asset — immutable at runtime. Its fields
 and behavior are increasingly expressed via `UGameplayEffectComponent` subclasses (since 5.3):
 
-### Duration policy (`EGameplayEffectDurationType`, `GameplayEffect.h:663`)
+### Duration policy (`EGameplayEffectDurationType`, `GameplayEffect.h:686`)
 
 | Value | Behavior |
 |---|---|
@@ -189,7 +189,7 @@ ASC->ApplyGameplayEffectSpecToTarget(*Spec.Data.Get(), TargetASC);
 Spec.Data->SetSetByCallerMagnitude(FGameplayTag::RequestGameplayTag("Data.Damage"), DamageAmount);
 ```
 
-`MakeOutgoingSpec` (`AbilitySystemComponent.h:362`), `ApplyGameplayEffectSpecToTarget` (`:329`).
+`MakeOutgoingSpec` (`AbilitySystemComponent.h:372`), `ApplyGameplayEffectSpecToTarget` (`:339`).
 
 ### Stacking
 

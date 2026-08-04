@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the ISM vs. HISM decision, bulk
 instance APIs, per-instance custom data, Nanite interaction, and runtime-add patterns.
-Grounded in UE 5.7
+Grounded in UE 5.8
 (`Engine/Source/Runtime/Engine/Classes/Components/InstancedStaticMeshComponent.h`,
 `Engine/Source/Runtime/Engine/Classes/Components/HierarchicalInstancedStaticMeshComponent.h`).
 
@@ -40,7 +40,7 @@ each frame) the BVH rebuild cost negates the benefit — use plain ISM.
 
 ```cpp
 // Single instance (local space by default):
-int32 Idx = ISMC->AddInstance(FTransform(Rot, Loc, Scale));  // line 261
+int32 Idx = ISMC->AddInstance(FTransform(Rot, Loc, Scale));  // line 271
 
 // Batch add (preferred for large counts — avoids per-add render state rebuild):
 TArray<FTransform> Transforms;
@@ -70,10 +70,10 @@ ISMC->UpdateInstanceTransform(
     /*bTeleport=*/false);
 
 // Remove by index (swaps with last, so indices can shift):
-ISMC->RemoveInstance(5);   // line 407
+ISMC->RemoveInstance(5);   // line 417
 
 // Query count:
-int32 N = ISMC->GetInstanceCount();   // line 425
+int32 N = ISMC->GetInstanceCount();   // line 435
 ```
 
 Calling `UpdateInstanceTransform` with `bMarkRenderStateDirty = false` batches

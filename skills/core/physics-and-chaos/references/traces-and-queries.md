@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the full trace/sweep/overlap API,
 ByChannel vs ByObjectType, `FCollisionQueryParams`, async traces, UV from hits, and debug
-draw helpers. Grounded in UE 5.7 (`Engine/Source/Runtime/Engine/Classes/Engine/World.h`
+draw helpers. Grounded in UE 5.8 (`Engine/Source/Runtime/Engine/Classes/Engine/World.h`
 and `Engine/Source/Runtime/Engine/Public/CollisionQueryParams.h`) and the official
 [Traces Overview](https://dev.epicgames.com/documentation/unreal-engine/traces-in-unreal-engine---overview)
 doc.

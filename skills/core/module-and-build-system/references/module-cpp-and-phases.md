@@ -1,9 +1,9 @@
 # Module C++ & Loading Phases Reference
 
-Grounded in UE 5.7 engine source:
-- `E:\Program Files\Epic Games\UE_5.7\Engine\Source\Runtime\Core\Public\Modules\ModuleInterface.h`
-- `E:\Program Files\Epic Games\UE_5.7\Engine\Source\Runtime\Core\Public\Modules\ModuleManager.h`
-- `E:\Program Files\Epic Games\UE_5.7\Engine\Source\Programs\UnrealBuildTool\System\ModuleDescriptor.cs`
+Grounded in UE 5.8 engine source:
+- `E:\Program Files\Epic Games\UE_5.8\Engine\Source\Runtime\Core\Public\Modules\ModuleInterface.h`
+- `E:\Program Files\Epic Games\UE_5.8\Engine\Source\Runtime\Core\Public\Modules\ModuleManager.h`
+- `E:\Program Files\Epic Games\UE_5.8\Engine\Source\Programs\UnrealBuildTool\Configuration\Descriptors\ModuleDescriptor.cs`
 
 See also: [../SKILL.md](../SKILL.md)
 
@@ -14,12 +14,12 @@ hooks:
 
 | Method | Line | When called |
 |---|---|---|
-| `StartupModule()` | 31 | Immediately after the module DLL is loaded and the module object is constructed. |
-| `PreUnloadCallback()` | 38 | Called before the module is unloaded; runs before `ShutdownModule`. |
-| `ShutdownModule()` | 55 | Just before the module object is destroyed. Guaranteed to be called in reverse startup order when modules list each other in `StartupModule`. |
-| `PostLoadCallback()` | 45 | Called after the module has been reloaded (hot-reload / Live Coding). |
-| `SupportsDynamicReloading()` | 64 | Return `false` to prevent dynamic unloading of this module. |
-| `IsGameModule()` | 84 | Return `true` if this module hosts gameplay code (set automatically by `FDefaultGameModuleImpl`). |
+| `StartupModule()` | 49 | Immediately after the module DLL is loaded and the module object is constructed. |
+| `PreUnloadCallback()` | 59 | Called before the module is unloaded; runs before `ShutdownModule`. |
+| `ShutdownModule()` | 79 | Just before the module object is destroyed. Guaranteed to be called in reverse startup order when modules list each other in `StartupModule`. |
+| `PostLoadCallback()` | 68 | Called after the module has been reloaded (hot-reload / Live Coding). |
+| `SupportsDynamicReloading()` | 88 | Return `false` to prevent dynamic unloading of this module. |
+| `IsGameModule()` | 108 | Return `true` if this module hosts gameplay code (set automatically by `FDefaultGameModuleImpl`). |
 
 All methods have empty default implementations, so you only override what you need.
 
@@ -33,7 +33,7 @@ within the same phase.
 
 ## Concrete implementation classes
 
-### `FDefaultModuleImpl` (`ModuleManager.h`:871)
+### `FDefaultModuleImpl` (`ModuleManager.h`:884)
 
 ```cpp
 class FDefaultModuleImpl : public IModuleInterface { };
@@ -42,7 +42,7 @@ class FDefaultModuleImpl : public IModuleInterface { };
 Empty: no startup/shutdown. Used for modules that only need to expose headers and compiled
 code without any explicit initialization sequence.
 
-### `FDefaultGameModuleImpl` (`ModuleManager.h`:879)
+### `FDefaultGameModuleImpl` (`ModuleManager.h`:892)
 
 ```cpp
 class FDefaultGameModuleImpl : public FDefaultModuleImpl
@@ -100,13 +100,13 @@ void FMyModule::ShutdownModule()
 
 | Macro | Line | Use |
 |---|---|---|
-| `IMPLEMENT_MODULE(Impl, Name)` | 933 | Standard modules and plugin modules. |
-| `IMPLEMENT_PRIMARY_GAME_MODULE(Impl, Name, GameName)` | 1081 | The one module whose name matches the `.uproject`. Sets `GInternalProjectName` in monolithic builds. In modular builds it is equivalent to `IMPLEMENT_MODULE`. |
+| `IMPLEMENT_MODULE(Impl, Name)` | 946 | Standard modules and plugin modules. |
+| `IMPLEMENT_PRIMARY_GAME_MODULE(Impl, Name, GameName)` | 1100 | The one module whose name matches the `.uproject`. Sets `GInternalProjectName` in monolithic builds. In modular builds it is equivalent to `IMPLEMENT_MODULE`. |
 
 There must be exactly one call per module `.cpp` translation unit. Placing it in a `.h` or
 calling it twice in the same module → linker error.
 
-## FModuleManager (`ModuleManager.h`:170)
+## FModuleManager (`ModuleManager.h`:163)
 
 `FModuleManager` is the singleton that tracks loaded modules. Common methods:
 
@@ -124,14 +124,14 @@ already been unloaded.
 
 ## IMPLEMENT_MODULE and PER_MODULE_BOILERPLATE
 
-`IMPLEMENT_MODULE` includes `PER_MODULE_BOILERPLATE` (`ModuleBoilerplate.h`:114), which
+`IMPLEMENT_MODULE` includes `PER_MODULE_BOILERPLATE` (`ModuleBoilerplate.h`:115), which
 overrides `new`/`delete` to route through Unreal's `FMemory` allocator. This is why every UE
 module must use `IMPLEMENT_MODULE` (or the engine equivalent) — without it, memory allocated
 in the module is freed by a different heap than the one that allocated it.
 
 ## Loading phases deep-dive
 
-Defined in `ModuleDescriptor.cs`:104 as `public enum ModuleLoadingPhase`.
+Defined in `ModuleDescriptor.cs`:102 as `public enum ModuleLoadingPhase`.
 
 | Phase | Notes |
 |---|---|
@@ -158,15 +158,15 @@ Symptom: the editor complains "could not find class X" or "plugin module not loa
 
 ## Source references
 
-- `ModuleInterface.h` — `IModuleInterface`: full interface (91 lines).
-- `ModuleManager.h`:170 — `FModuleManager` class.
-- `ModuleManager.h`:871 — `FDefaultModuleImpl`.
-- `ModuleManager.h`:879 — `FDefaultGameModuleImpl`.
-- `ModuleManager.h`:933 — `IMPLEMENT_MODULE` (modular build variant).
-- `ModuleManager.h`:1081–1123 — `IMPLEMENT_PRIMARY_GAME_MODULE`.
-- `Boilerplate/ModuleBoilerplate.h`:114 — `PER_MODULE_BOILERPLATE` macro.
-- `ModuleDescriptor.cs`:104 — `public enum ModuleLoadingPhase`.
-- `ModuleDescriptor.cs`:18 — `public enum ModuleHostType`.
+- `ModuleInterface.h` — `IModuleInterface`: full interface (101 lines).
+- `ModuleManager.h`:163 — `FModuleManager` class.
+- `ModuleManager.h`:884 — `FDefaultModuleImpl`.
+- `ModuleManager.h`:892 — `FDefaultGameModuleImpl`.
+- `ModuleManager.h`:946 — `IMPLEMENT_MODULE` (modular build variant).
+- `ModuleManager.h`:1100–1136 — `IMPLEMENT_PRIMARY_GAME_MODULE`.
+- `Boilerplate/ModuleBoilerplate.h`:115 — `PER_MODULE_BOILERPLATE` macro.
+- `ModuleDescriptor.cs`:102 — `public enum ModuleLoadingPhase`.
+- `ModuleDescriptor.cs`:16 — `public enum ModuleHostType`.
 
 Official docs:
 - Unreal Engine Modules — <https://dev.epicgames.com/documentation/unreal-engine/unreal-engine-modules>

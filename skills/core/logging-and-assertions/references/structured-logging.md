@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers `UE_LOGFMT` field styles, the
 `UE_LOG_CONTEXT` thread-local scope, `FLogRecord`, and custom `SerializeForLog`
-overloads. Grounded in UE 5.7
+overloads. Grounded in UE 5.8
 (`Engine/Source/Runtime/Core/Public/Logging/StructuredLog.h`). Introduced in UE 5.2.
 
 ## Why structured logging
@@ -92,11 +92,11 @@ the log call takes precedence over the context. Context names are collected into
 `$Context` array field on the `FLogRecord`.
 
 Multiple contexts can be stacked; they are unregistered in LIFO order by `FLogContext`
-destructor (`StructuredLog.h`:509).
+destructor (`StructuredLog.h`:533).
 
 ## FLogRecord
 
-`UE_LOGFMT` constructs an `FLogRecord` (`StructuredLog.h`:183) which is dispatched to
+`UE_LOGFMT` constructs an `FLogRecord` (`StructuredLog.h`:181) which is dispatched to
 output devices. Fields of interest for custom output devices or log output device subclasses:
 
 ```cpp
@@ -131,7 +131,7 @@ inline void SerializeForLog(FCbWriter& Writer, const FMyStruct& Value)
 
 The `$text` field in an object overrides the default JSON serialization for the
 human-readable message. Without it, the object is rendered as JSON. Declared in
-`StructuredLog.h`:289.
+`StructuredLog.h`:288.
 
 ## Conditional structured log — UE_CLOGFMT
 

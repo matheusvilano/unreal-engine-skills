@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers `FTimerManager` internals, delegate
 variants, the `FTimerManagerTimerParameters` struct, pausing, time-dilation interaction,
-and the global vs. world timer manager distinction. Grounded in UE 5.7
+and the global vs. world timer manager distinction. Grounded in UE 5.8
 (`Engine/Source/Runtime/Engine/Public/TimerManager.h` and
 `Engine/Source/Runtime/Engine/Classes/Engine/TimerHandle.h`) and the official
 [Gameplay Timers](https://dev.epicgames.com/documentation/unreal-engine/gameplay-timers-in-unreal-engine)
@@ -17,7 +17,7 @@ delegates to `UWorld::GetTimerManager()`). A separate global instance lives on
 `FTimerManager::Tick(float DeltaTime)` is called by `UWorld::Tick` every frame. It
 maintains three internal collections — `ActiveTimerHeap`, `PausedTimerSet`, and
 `PendingTimerSet` — backed by a `TSparseArray<FTimerData>` (verified: `TimerManager.h`
-lines 450-456). New timers go into `PendingTimerSet` first; they are moved to the active
+lines 542-548). New timers go into `PendingTimerSet` first; they are moved to the active
 heap after the current tick completes, so a timer set inside a timer callback is safe.
 
 `FTimerData` holds the rate, expire time, loop flag, and the unified delegate. The handle
@@ -29,7 +29,7 @@ with a previous timer.
 
 All `SetTimer` overloads resolve to `InternalSetTimer`, which accepts an
 `FTimerUnifiedDelegate`. The delegate is a `TVariant` over three forms (verified:
-`TimerManager.h` lines 22-24):
+`TimerManager.h` line 25):
 
 | Overload | Delegate form |
 |---|---|
@@ -50,7 +50,7 @@ cleanup in `EndPlay` is required.
 ## FTimerManagerTimerParameters
 
 A newer, preferred form of `SetTimer` accepts `FTimerManagerTimerParameters` for richer
-control (verified: `TimerManager.h` line 122):
+control (verified: `TimerManager.h` line 124):
 
 ```cpp
 FTimerManagerTimerParameters Params;
@@ -76,7 +76,7 @@ zero and timers effectively freeze. The `PauseTimer`/`UnPauseTimer` API lets you
 individual timer independently of world pause.
 
 When a timer is paused, `ExpireTime` is rebased to represent remaining time rather than an
-absolute clock value (verified: `TimerManager.h` lines 96-99). On `UnPauseTimer`, the
+absolute clock value (verified: `TimerManager.h` lines 98-99). On `UnPauseTimer`, the
 remaining time is added back to `InternalTime` to restore the absolute expire time.
 
 ## Accessing elapsed / remaining time
@@ -101,14 +101,14 @@ GetWorldTimerManager().ClearAllTimersForObject(this);
 ```
 
 `FTimerManager` maintains a `TMap<const void*, TSet<FTimerHandle>> ObjectToTimers`
-(verified: `TimerManager.h` line 458) for `O(1)` lookup of all timers belonging to a
+(verified: `TimerManager.h` line 550) for `O(1)` lookup of all timers belonging to a
 given object. `ClearAllTimersForObject` is useful in a component's `OnUnregister` or an
 actor's `EndPlay` when the actor owns many timers.
 
 ## Debugging
 
 In non-shipping builds (`UE_ENABLE_TRACKING_TIMER_SOURCES`), `FTimerManager` records the
-source code location that created each timer (verified: `TimerManager.h` line 26). Call
+source code location that created each timer (verified: `TimerManager.h` line 28). Call
 `GetWorldTimerManager().ListTimers()` from the console or a command handler to dump active
 timers to the log.
 

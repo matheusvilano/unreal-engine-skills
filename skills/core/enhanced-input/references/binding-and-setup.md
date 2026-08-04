@@ -2,7 +2,7 @@
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the full `BindAction` overload set, lambda
 bindings, removing bindings, the `FInputActionInstance` handler signature, per-project class
-defaults, and the world-subsystem for non-player actors. Grounded in UE 5.7
+defaults, and the world-subsystem for non-player actors. Grounded in UE 5.8
 (`Engine/Plugins/EnhancedInput/Source/EnhancedInput/Public/`).
 
 ## Project Settings: default class configuration
@@ -52,7 +52,7 @@ EIC->BindAction(JumpAction, ETriggerEvent::Started, this, &AMyActor::OnJump);
 ```
 
 Delegate signature: `FEnhancedInputActionHandlerSignature` (no parameters).
-Source: `EnhancedInputComponent.h`:475.
+Source: `EnhancedInputComponent.h`:490.
 
 ### 2. Value handler (most common)
 
@@ -65,7 +65,7 @@ EIC->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AMyActor::OnMove);
 ```
 
 Delegate signature: `FEnhancedInputActionHandlerValueSignature(const FInputActionValue&)`.
-Source: `EnhancedInputComponent.h`:476.
+Source: `EnhancedInputComponent.h`:491.
 
 ### 3. Instance handler (richest — includes timing)
 
@@ -79,7 +79,7 @@ EIC->BindAction(HoldAction, ETriggerEvent::Ongoing, this, &AMyActor::OnHold);
 ```
 
 Delegate signature: `FEnhancedInputActionHandlerInstanceSignature(const FInputActionInstance&)`.
-Source: `EnhancedInputComponent.h`:477.
+Source: `EnhancedInputComponent.h`:492.
 
 ### 4. UFUNCTION / dynamic form (for Blueprint-callable handlers)
 
@@ -90,7 +90,7 @@ EIC->BindAction(Action, ETriggerEvent::Triggered, this, TEXT("MyBlueprintCallabl
 Signature: `DECLARE_DYNAMIC_DELEGATE_FourParams(FEnhancedInputActionHandlerDynamicSignature,
 FInputActionValue, ActionValue, float, ElapsedTime, float, TriggeredTime, const UInputAction*,
 SourceAction)` — the bound UFUNCTION must match this signature.
-Source: `EnhancedInputComponent.h`:33, 482–488.
+Source: `EnhancedInputComponent.h`:33, 497–503.
 
 ### Lambda binding
 
@@ -106,7 +106,7 @@ EIC->BindActionInstanceLambda(HoldAction, ETriggerEvent::Ongoing,
     [](const FInputActionInstance& Inst) { /* use Inst.GetElapsedTime() */ });
 ```
 
-Source: `EnhancedInputComponent.h`:502–531.
+Source: `EnhancedInputComponent.h`:517–546.
 
 ## Removing a binding
 
@@ -124,7 +124,7 @@ EIC->RemoveBindingByHandle(Handle);
 EIC->RemoveBinding(Binding);
 ```
 
-Source: `EnhancedInputComponent.h`:450–460.
+Source: `EnhancedInputComponent.h`:465–475.
 
 ## BindActionValue (polling)
 
@@ -138,7 +138,7 @@ FVector2D Dir = ValueBinding.GetValue().Get<FVector2D>();
 ```
 
 This does not fire a delegate; it just keeps `CurrentValue` updated.
-Source: `EnhancedInputComponent.h`:538–547.
+Source: `EnhancedInputComponent.h`:553–562.
 
 ## Possession / input setup sequence
 
@@ -188,7 +188,7 @@ The world subsystem has its own `UEnhancedPlayerInput` (configured via
 `UEnhancedInputDeveloperSettings::DefaultWorldInputClass`) and processes key events from a
 global `FEnhancedInputWorldProcessor` input preprocessor.
 
-Source: `EnhancedInputSubsystems.h`:107–186 (`UEnhancedInputWorldSubsystem`).
+Source: `EnhancedInputSubsystems.h`:108–187 (`UEnhancedInputWorldSubsystem`).
 
 ## Input injection (testing / debug)
 
@@ -209,7 +209,7 @@ Sub->StopContinuousInputInjectionForAction(MoveAction);
 ```
 
 Console equivalent: `Input.+key Gamepad_Left2D X=0.5 Y=1.0` / `Input.-key Gamepad_Left2D`.
-Source: `EnhancedInputSubsystemInterface.h`:147–240.
+Source: `EnhancedInputSubsystemInterface.h`:153–237.
 
 ## Debug commands
 
