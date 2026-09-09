@@ -288,7 +288,7 @@ Deep-dive references in this skill:
 - [references/unreal-insights-and-trace.md](references/unreal-insights-and-trace.md) —
   trace channels, session workflow, Timing Insights anatomy, GPU track.
 - [references/stat-commands.md](references/stat-commands.md) — full stat command table,
-  reading `stat unit`, stat groups for custom ue-subsystems.
+  reading `stat unit`, stat groups for custom subsystems.
 - [references/instrumenting-cpp.md](references/instrumenting-cpp.md) — all instrumentation
   macros, CSV profiler, cross-file stat patterns, `DEFINE_STAT` pitfalls.
 - [references/memory-profiling.md](references/memory-profiling.md) — LLM, memreport,

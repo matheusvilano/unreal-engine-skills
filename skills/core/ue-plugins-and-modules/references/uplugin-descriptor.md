@@ -103,7 +103,7 @@ Each entry in `"Modules"` corresponds to `FModuleDescriptor`
 | `PreDefault` | Just before `Default`; use when other `Default`-phase modules depend on your types |
 | `Default` | Standard (after game modules in earlier phases); use for nearly all plugin code |
 | `PostDefault` | Just after `Default` |
-| `PostEngineInit` | After engine fully initialized; use when you need all ue-subsystems available |
+| `PostEngineInit` | After engine fully initialized; use when you need all subsystems available |
 | `None` | Not loaded automatically; load on demand via `FModuleManager` |
 
 ## Plugin reference descriptor (`FPluginReferenceDescriptor`)

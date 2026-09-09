@@ -13,7 +13,7 @@ description: Implement actor movement with Unreal's experimental Mover plugin
   ProduceInput, or debugging Mover prediction/rollback behavior.
 metadata:
   engine-version: "5.8"
-  category: ue-gameplay-framework
+  category: gameplay-framework
 ---
 
 # Mover movement system

@@ -82,8 +82,11 @@ Order skills roughly like this. Omit sections that don't apply.
 
 ## 5. Naming
 
-- Skill folder = `name`. Use the action/domain, lowercase-hyphenated:
+- Skill folder = `name`. Use the `ue-` prefix followed by the action/domain, lowercase-hyphenated:
   `ue-gameplay-framework`, `ue-enhanced-input`, `ue-networking-and-replication`.
+- Apply the prefix only to skill identifiers, folders, and references to those
+  skills. Keep category IDs, ordinary Unreal terminology, external URLs, and
+  reference filenames unchanged.
 - Reference files: `references/REFERENCE.md` for the main deep-dive, or topic files like
   `references/replication-conditions.md`.
 - Scripts: name by what they do, e.g. `scripts/create_widget_blueprint.py`.

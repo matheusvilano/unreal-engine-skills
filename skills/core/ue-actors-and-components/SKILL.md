@@ -9,7 +9,7 @@ description: Build and compose gameplay objects from Actors and Components in Un
   attachment/overlap issues.
 metadata:
   engine-version: "5.8"
-  category: ue-gameplay-framework
+  category: gameplay-framework
 ---
 
 # Actors & components

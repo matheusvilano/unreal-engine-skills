@@ -4,7 +4,7 @@ Deep dive for [../SKILL.md](../SKILL.md). Covers common patterns for driving gam
 with tags: tag-based state machines, effect/ability gating, GAS integration points,
 animation layer selection, config/ini organisation, and the `IGameplayTagAssetInterface`
 pattern. Grounded in UE 5.8 source and the official
-[Gameplay Tags](https://dev.epicgames.com/documentation/unreal-engine/using-ue-gameplay-tags-in-unreal-engine)
+[Gameplay Tags](https://dev.epicgames.com/documentation/unreal-engine/using-gameplay-tags-in-unreal-engine)
 documentation.
 
 ## Tag-based state tracking

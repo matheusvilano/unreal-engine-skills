@@ -249,7 +249,7 @@ Engine source (UE 5.8, under `Engine/Source/`):
   `FClassFinder`:157.
 
 Official docs (UE 5.8):
-- Asset Management — <https://dev.epicgames.com/documentation/unreal-engine/ue-asset-management-in-unreal-engine>
+- Asset Management — <https://dev.epicgames.com/documentation/unreal-engine/asset-management-in-unreal-engine>
 - Async Asset Loading — <https://dev.epicgames.com/documentation/unreal-engine/asynchronous-asset-loading-in-unreal-engine>
 - Referencing Assets — <https://dev.epicgames.com/documentation/unreal-engine/referencing-assets-in-unreal-engine>
 - Asset Registry — <https://dev.epicgames.com/documentation/unreal-engine/asset-registry-in-unreal-engine>

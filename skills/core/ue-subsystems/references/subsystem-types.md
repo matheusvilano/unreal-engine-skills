@@ -15,7 +15,7 @@ collection already exists at module-load time, the instance is created immediate
 is created during engine initialization. `Initialize` is called after the module's
 `StartupModule()` returns. `Deinitialize` is called after `ShutdownModule()` returns.
 
-**World access:** none — `GetWorld()` returns null. Engine ue-subsystems have no concept of a
+**World access:** none — `GetWorld()` returns null. Engine subsystems have no concept of a
 specific world.
 
 **Access:**
@@ -23,7 +23,7 @@ specific world.
 UMyEngineSubsystem* Sub = GEngine->GetEngineSubsystem<UMyEngineSubsystem>();
 ```
 
-**Dynamic loading:** `UEngineSubsystem` (and `UEditorSubsystem`) are *dynamic* ue-subsystems via
+**Dynamic loading:** `UEngineSubsystem` (and `UEditorSubsystem`) are *dynamic* subsystems via
 `UDynamicSubsystem` (`Subsystem.h`:80). If a plugin containing a `UEngineSubsystem` subclass is
 loaded at runtime, the collection instantiates the subsystem automatically. Similarly, unloading
 the plugin calls `Deinitialize` and removes the instance. Use
@@ -73,7 +73,7 @@ cross-level player progression, plugin feature flags.
 Destroyed before the world is torn down.
 
 **Creation timing:** during `UWorld` initialization. `Initialize` (inherited from
-`USubsystem`) is followed by `PostInitialize` (`WorldSubsystem.h`:37) once all world ue-subsystems
+`USubsystem`) is followed by `PostInitialize` (`WorldSubsystem.h`:37) once all world subsystems
 have been initialized — use `PostInitialize` for cross-subsystem setup within the world scope.
 `OnWorldBeginPlay` (`:43`) is called when gameplay starts, mirroring `AActor::BeginPlay`.
 

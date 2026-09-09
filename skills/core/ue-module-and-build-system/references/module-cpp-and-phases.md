@@ -142,7 +142,7 @@ Defined in `ModuleDescriptor.cs`:102 as `public enum ModuleLoadingPhase`.
 | `PreDefault` | Just before the Default phase. Plugins providing base types or factories that `Default`-phase modules depend on. |
 | `Default` | Standard phase; after all game modules in earlier phases are initialized. Correct for nearly all gameplay code. |
 | `PostDefault` | Just after Default; for modules that post-process something registered during Default. |
-| `PostEngineInit` | After the engine is fully initialized. For systems that need all engine ue-subsystems available. |
+| `PostEngineInit` | After the engine is fully initialized. For systems that need all engine subsystems available. |
 | `None` | Module is declared but not loaded automatically; must be loaded on demand via `FModuleManager`. |
 
 ### Diagnosing phase problems

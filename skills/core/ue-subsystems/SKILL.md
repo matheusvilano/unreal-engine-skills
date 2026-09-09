@@ -11,7 +11,7 @@ description: >
   subsystem, a manager actor, or a GameInstance override.
 metadata:
   engine-version: "5.8"
-  category: ue-gameplay-framework
+  category: gameplay-framework
 ---
 
 # Subsystems
@@ -134,7 +134,7 @@ UMyWorldSub& WS = *GetWorld()->GetSubsystemChecked<UMyWorldSub>();
 UMyLPSub* S = ULocalPlayer::GetSubsystemFromController<UMyLPSub>(this);
 ```
 
-In **Blueprints**, ue-subsystems appear as typed auto-context getter nodes — no casting required.
+In **Blueprints**, subsystems appear as typed auto-context getter nodes — no casting required.
 The node is available for any subsystem that is a `UCLASS()` (even without `BlueprintType`), as
 long as the function is marked `BlueprintCallable`. `USubsystemBlueprintLibrary` provides the
 static getters that Blueprint graph searches surface.
@@ -187,7 +187,7 @@ Rules:
 | Need | Recommendation |
 |---|---|
 | Stateless utility functions | Free functions or a `BlueprintFunctionLibrary` |
-| Replicated state (HP, score) | `AGameState`, `APlayerState` (ue-subsystems do not replicate) |
+| Replicated state (HP, score) | `AGameState`, `APlayerState` (subsystems do not replicate) |
 | Single placed world object (obstacle spawner) | Manager actor placed in the level |
 | Per-actor behavior/data | Component on the actor |
 | Cross-level session state | `UGameInstanceSubsystem` |
@@ -196,14 +196,14 @@ Rules:
 | Plugin initialization | `UEngineSubsystem` or `UGameInstanceSubsystem` |
 
 **Subsystems do not replicate.** Keep authoritative networked state on `GameState`,
-`PlayerState`, or replicated actors. Use ue-subsystems on the local side for coordination,
+`PlayerState`, or replicated actors. Use subsystems on the local side for coordination,
 caching, and UI logic. See `ue-networking-and-replication` and `ue-gameplay-framework`.
 
 ## Gotchas
 
 - **No world access in GameInstance/Engine Initialize** — `GetWorld()` on a
   `UGameInstanceSubsystem` returns null during `Initialize`; use a `UWorldSubsystem` or defer
-  world-dependent work to `OnWorldBeginPlay` (world ue-subsystems) or a timer.
+  world-dependent work to `OnWorldBeginPlay` (world subsystems) or a timer.
 - **Wrong scope** — session-persistent data in a `UWorldSubsystem` is wiped on level change;
   per-level data in a `UGameInstanceSubsystem` accumulates across travels.
 - **`ShouldCreateSubsystem` returns false, but caller doesn't null-check** — `GetSubsystem<T>`
@@ -244,14 +244,14 @@ Engine source (UE 5.8, `Engine/Source/Runtime/Engine/Classes/Engine/`):
 
 Official docs (UE 5.8):
 - Programming Subsystems —
-  <https://dev.epicgames.com/documentation/unreal-engine/programming-ue-subsystems-in-unreal-engine>
+  <https://dev.epicgames.com/documentation/unreal-engine/programming-subsystems-in-unreal-engine>
 
 Deep-dive references in this skill:
 - [references/subsystem-types.md](references/subsystem-types.md) — per-type detail: creation
-  timing, valid `GetWorld()` availability, `DoesSupportWorldType`, dynamic ue-subsystems,
+  timing, valid `GetWorld()` availability, `DoesSupportWorldType`, dynamic subsystems,
   `UEditorSubsystem`.
 - [references/lifecycle-and-access.md](references/lifecycle-and-access.md) — full
-  Initialize/Deinitialize sequence, dependency ordering, accessing ue-subsystems from C++ and
+  Initialize/Deinitialize sequence, dependency ordering, accessing subsystems from C++ and
   Blueprints, collection internals.
 - [references/choosing-a-subsystem.md](references/choosing-a-subsystem.md) — decision guide:
   subsystem vs manager actor vs GameInstance override vs component; networking constraints;

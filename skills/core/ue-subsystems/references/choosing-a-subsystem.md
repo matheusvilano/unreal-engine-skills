@@ -15,7 +15,7 @@ Before picking a subsystem type, answer these two questions:
    - Belongs to one player → `ULocalPlayerSubsystem`
 
 2. **Does this data need to be replicated to other machines?**
-   - Yes → put it on `AGameState`, `APlayerState`, or a replicated actor; ue-subsystems are local-only.
+   - Yes → put it on `AGameState`, `APlayerState`, or a replicated actor; subsystems are local-only.
 
 ## Decision table
 
@@ -45,7 +45,7 @@ The subsystem pattern is the preferred replacement for "put everything in `UGame
 
 ## Subsystem vs manager actor
 
-A manager actor placed in the level has some advantages ue-subsystems lack:
+A manager actor placed in the level has some advantages subsystems lack:
 - It can be configured per-level from the editor (properties set in the level).
 - It participates in actor replication.
 - It receives `Tick` automatically without inheriting `UTickableWorldSubsystem`.
@@ -56,7 +56,7 @@ A subsystem is better when:
 - The service must not be visible in Outliner / selectable by designers.
 - The service needs to survive level streaming without being placed in a persistent level.
 
-Practical rule: **prefer ue-subsystems for invisible infrastructure; prefer actors for content
+Practical rule: **prefer subsystems for invisible infrastructure; prefer actors for content
 that designers configure per level**.
 
 ## Subsystem vs component
@@ -73,7 +73,7 @@ Subsystems are local. They run on the machine that owns the outer object:
 - `UWorldSubsystem` exists on server and client separately.
 - `ULocalPlayerSubsystem` only exists on the client (or listen server for the hosting player).
 
-There is no built-in RPC mechanism for ue-subsystems. To drive server-side behavior, use RPCs on
+There is no built-in RPC mechanism for subsystems. To drive server-side behavior, use RPCs on
 an actor or `AGameMode` / `AGameState`. Call the subsystem on the server side from those RPCs.
 
 Pattern:
@@ -122,7 +122,7 @@ bool UMySubsystem::ShouldCreateSubsystem(UObject* Outer) const
 
 `ShouldCreateSubsystem` is called on the CDO with the **outer object** (the owning
 `UGameInstance`, `UWorld`, etc.) as the argument. You can inspect the outer to make decisions,
-but you cannot call `GetSubsystem` on it during this call — other ue-subsystems may not yet be
+but you cannot call `GetSubsystem` on it during this call — other subsystems may not yet be
 created.
 
 ## Version notes
@@ -130,5 +130,5 @@ created.
 - World subsystem `DoesSupportWorldType` (added alongside `UWorldSubsystem`) is the cleanest
   way to exclude a subsystem from editor preview worlds — prefer it over `ShouldCreateSubsystem`
   for world-type gating, since it is called per-world rather than once on the CDO.
-- Dynamic ue-subsystems (`UEngineSubsystem`, `UEditorSubsystem`) support late module loading; if
+- Dynamic subsystems (`UEngineSubsystem`, `UEditorSubsystem`) support late module loading; if
   your plugin is loaded after engine init, the subsystem is still created correctly.

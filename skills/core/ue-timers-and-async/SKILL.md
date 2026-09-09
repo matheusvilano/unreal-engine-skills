@@ -11,7 +11,7 @@ description: Schedule and defer work in Unreal C++ — FTimerManager (SetTimer w
   ticker. Cross-references ue-actors-and-components (EndPlay cleanup) and ue-delegates-and-events.
 metadata:
   engine-version: "5.8"
-  category: ue-gameplay-framework
+  category: gameplay-framework
 ---
 
 # Timers & async work
@@ -291,7 +291,7 @@ Full reference: [references/threads-and-runnables.md](references/threads-and-run
 
 ## FTSTicker — non-actor periodic ticking
 
-`FTSTicker` provides a periodic callback for ue-subsystems and objects that do not have a
+`FTSTicker` provides a periodic callback for subsystems and objects that do not have a
 `UActorComponent`. It replaces the older `FTicker` (removed in UE5).
 
 ```cpp

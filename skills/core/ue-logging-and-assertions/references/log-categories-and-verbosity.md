@@ -136,7 +136,7 @@ module-specific headers):
 | `LogNet` | Engine | Warning |
 
 Use `LogTemp` only for throwaway debugging. Give production code its own category so team
-members can filter and silence unrelated ue-subsystems.
+members can filter and silence unrelated subsystems.
 
 ## Output log destinations
 

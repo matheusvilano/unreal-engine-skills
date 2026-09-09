@@ -71,7 +71,7 @@ if (SomeGlobal) { SomeGlobal->OnEvent.Remove(LambdaHandle); }
 
 `AddRaw` is the fastest form (no indirection), but has no safety net. Appropriate
 only for objects with a lifetime guaranteed to exceed the delegate's — e.g., engine
-singletons, ue-subsystems, or stack-allocated objects in tight inner loops. In all other
+singletons, subsystems, or stack-allocated objects in tight inner loops. In all other
 cases prefer `AddUObject` or `AddWeakLambda`.
 
 ## Payload variable syntax

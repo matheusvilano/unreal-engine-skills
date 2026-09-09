@@ -78,7 +78,7 @@ Status: ✅ built · 🟡 planned. (Planned skills are tracked as tasks and buil
 - ✅ `ue-actors-and-components` — `AActor` lifecycle, components, attachment, spawning
 - ✅ `ue-character-and-movement` — `ACharacter`, `UCharacterMovementComponent`
 - ✅ `ue-enhanced-input` — Enhanced Input actions, mapping contexts, bindings
-- ✅ `ue-subsystems` — Engine/GameInstance/World/LocalPlayer ue-subsystems
+- ✅ `ue-subsystems` — Engine/GameInstance/World/LocalPlayer subsystems
 - ✅ `ue-timers-and-async` — `FTimerManager`, async tasks, latent actions
 - ✅ `ue-gameplay-tags` — `FGameplayTag`, containers, tag-driven logic
 - ✅ `ue-gameplay-ability-system` — GAS abilities, attributes, effects, tasks
@@ -153,6 +153,17 @@ pseudocode for packs that have no public C++ API.
 - ✅ `ue-udw-spatial-weather` — Weather Override Volumes, Radial Storms, Weather Above Volumetric Clouds, Weather Mask Brush / Projection Box
 - ✅ `ue-udw-particles-lightning-wind-sounds` — rain/snow/dust particles, collision modes, lightning (incl. strikable actor interface), wind systems, sounds, environment sounds (5.1 metasound)
 - ✅ `ue-udw-material-and-screen-effects` — Surface Weather Effects, DLWE V3, Glass Rain Drips, Foliage Wind, Water Ripples, screen droplets/frost/distortion, Puddle Fluid Volume, drip splines, breath, icicles
+
+## Updating existing installations
+
+Skill names and folders now use the `ue-` prefix so they are easier to identify
+alongside skills for other tools. For example, `enhanced-input` is now
+`ue-enhanced-input`. Names that already had the prefix, such as
+`ue-cpp-fundamentals`, are unchanged.
+
+After updating, replace previously copied skill folders instead of keeping both
+versions. Update explicit skill invocations, configured paths, and saved discovery
+URLs to use the new names. Category IDs and reference filenames are unchanged.
 
 ## Authoring conventions
 

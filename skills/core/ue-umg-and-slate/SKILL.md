@@ -402,7 +402,7 @@ Engine source (UE 5.8, under `Engine/Source/`):
 
 Official docs (UE 5.8, verified):
 - Creating User Interfaces —
-  <https://dev.epicgames.com/documentation/unreal-engine/creating-user-interfaces-with-ue-umg-and-slate-in-unreal-engine>
+  <https://dev.epicgames.com/documentation/unreal-engine/creating-user-interfaces-with-umg-and-slate-in-unreal-engine>
 - Slate UI Framework —
   <https://dev.epicgames.com/documentation/unreal-engine/slate-user-interface-programming-framework-for-unreal-engine>
 - Widget Type Reference —

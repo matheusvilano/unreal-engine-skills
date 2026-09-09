@@ -201,7 +201,7 @@ MyActor->Destroy();
 
 ## Non-UObject memory — plain C++ smart pointers
 
-These are for `F*` structs, engine ue-subsystems, and anything that is *not* a UObject. Never wrap a
+These are for `F*` structs, engine subsystems, and anything that is *not* a UObject. Never wrap a
 UObject in a `TSharedPtr` — the reference count is invisible to the GC and the two ownership
 models fight each other.
 

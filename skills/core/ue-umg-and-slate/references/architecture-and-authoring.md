@@ -62,7 +62,7 @@ Widgets are views. Best-practice boundaries that keep them testable and reusable
   `ABP_MyHero_v2_Final` dies with that class.
 - **UI state lives outside widgets.** Which screen is open, selected loadout, unread
   notifications — keep in a `ULocalPlayerSubsystem` or `UGameInstanceSubsystem`; widgets
-  read/observe it. Widgets are recreated on level travel; ue-subsystems are not.
+  read/observe it. Widgets are recreated on level travel; subsystems are not.
 - **Initial state + change events.** Every "bind to delegate" must also pull current
   state once on construct, or the widget shows stale defaults until the first change.
 

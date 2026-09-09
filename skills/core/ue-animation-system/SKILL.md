@@ -320,7 +320,7 @@ Engine source (UE 5.8):
 
 Official docs (UE 5.8):
 - Skeletal Mesh Animation System —
-  <https://dev.epicgames.com/documentation/unreal-engine/skeletal-mesh-ue-animation-system-in-unreal-engine>
+  <https://dev.epicgames.com/documentation/unreal-engine/skeletal-mesh-animation-system-in-unreal-engine>
 - Animation Blueprints —
   <https://dev.epicgames.com/documentation/unreal-engine/animation-blueprints-in-unreal-engine>
 - Animation Assets and Features —

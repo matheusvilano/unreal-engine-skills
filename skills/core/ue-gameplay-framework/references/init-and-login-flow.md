@@ -177,7 +177,7 @@ void AMyActor::TryRespawnPlayer(APlayerController* PC)
 `UGameInstance` lifecycle hooks:
 - `Init()` (`GameInstance.h`:217) — called once when the game instance is created (after engine
   init, before the first map loads). Set up cross-session systems, load config, initialize
-  ue-subsystems manually if needed.
+  subsystems manually if needed.
 - `Shutdown()` (`GameInstance.h`:224) — called on clean exit; release resources, flush saves.
 - `ReceiveInit` / `ReceiveShutdown` — Blueprint-callable equivalents (UFUNCTION
   BlueprintImplementableEvent).

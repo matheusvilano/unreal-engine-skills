@@ -12,7 +12,7 @@ description: Implement player input with Unreal's Enhanced Input system — UInp
   migrating from legacy BindAxis/BindAction input.
 metadata:
   engine-version: "5.8"
-  category: ue-gameplay-framework
+  category: gameplay-framework
 ---
 
 # Enhanced Input
@@ -303,7 +303,7 @@ Engine source (UE 5.8, plugin path prefix:
   (`DefaultMappingContexts`, `bEnableInputModeFiltering`, `DefaultInputMode`).
 
 Official docs (UE 5.8):
-- Enhanced Input — <https://dev.epicgames.com/documentation/unreal-engine/ue-enhanced-input-in-unreal-engine>
+- Enhanced Input — <https://dev.epicgames.com/documentation/unreal-engine/enhanced-input-in-unreal-engine>
 - Input overview — <https://dev.epicgames.com/documentation/unreal-engine/input-in-unreal-engine>
 
 Deep-dive references in this skill:

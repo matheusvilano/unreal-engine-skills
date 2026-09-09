@@ -59,7 +59,7 @@ types or when the feature crosses networking, persistence, UI, or level travel.
 ### 1. Establish the decision-changing constraints
 
 Inspect the existing project first when it is available. Reuse its modules, base classes,
-ue-subsystems, naming, asset patterns, and networking model unless there is a concrete reason to
+subsystems, naming, asset patterns, and networking model unless there is a concrete reason to
 change them.
 
 Clarify only facts that would materially change the architecture. If safe assumptions allow

@@ -38,7 +38,7 @@ Override the generated Python name with `meta = (ScriptName = "my_name")`
 
 ---
 
-## Accessing editor ue-subsystems from Python
+## Accessing editor subsystems from Python
 
 ```python
 import unreal

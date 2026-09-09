@@ -10,7 +10,7 @@ description: Implement player/AI characters in Unreal C++ with ACharacter and
   smoothing and prediction on a character.
 metadata:
   engine-version: "5.8"
-  category: ue-gameplay-framework
+  category: gameplay-framework
 ---
 
 # Characters & movement
@@ -354,7 +354,7 @@ Plugin source (UE 5.8):
 
 Official docs (UE 5.8):
 - Characters — <https://dev.epicgames.com/documentation/unreal-engine/characters-in-unreal-engine>
-- Gameplay Framework — <https://dev.epicgames.com/documentation/unreal-engine/ue-gameplay-framework-in-unreal-engine>
+- Gameplay Framework — <https://dev.epicgames.com/documentation/unreal-engine/gameplay-framework-in-unreal-engine>
 - Mover — <https://dev.epicgames.com/documentation/unreal-engine/mover-in-unreal-engine>
 - Mover vs CMC — <https://dev.epicgames.com/documentation/unreal-engine/comparing-mover-and-character-movement-component-in-unreal-engine>
 - Networking & Multiplayer — <https://dev.epicgames.com/documentation/unreal-engine/networking-and-multiplayer-in-unreal-engine>

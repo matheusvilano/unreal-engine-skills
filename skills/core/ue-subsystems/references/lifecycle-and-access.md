@@ -1,10 +1,10 @@
 # Subsystem lifecycle and access — full reference
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers the initialization sequence, dependency
-ordering, collection internals, and how to access ue-subsystems from C++ and Blueprints. Grounded
+ordering, collection internals, and how to access subsystems from C++ and Blueprints. Grounded
 in UE 5.8 (`Engine/Source/Runtime/Engine/Public/Subsystems/SubsystemCollection.h`,
 `Subsystem.h`, `GameInstanceSubsystem.h`, `WorldSubsystem.h`) and the official
-[Programming Subsystems](https://dev.epicgames.com/documentation/unreal-engine/programming-ue-subsystems-in-unreal-engine) doc.
+[Programming Subsystems](https://dev.epicgames.com/documentation/unreal-engine/programming-subsystems-in-unreal-engine) doc.
 
 ## Initialization sequence
 
@@ -19,7 +19,7 @@ collection's owner type:
 3. **`Initialize(Collection)`** — called on the new instance. Inside `Initialize`, the subsystem
    may call `Collection.InitializeDependency<T>()` to ensure another subsystem in the same
    collection is initialized first.
-4. All ue-subsystems are initialized before the owner's post-init callbacks proceed.
+4. All subsystems are initialized before the owner's post-init callbacks proceed.
 
 ### Ordering with InitializeDependency
 
@@ -36,14 +36,14 @@ void UMySubsystem::Initialize(FSubsystemCollectionBase& Collection)
 
 `InitializeDependency` (`SubsystemCollection.h`:35, template form :42) initializes the named
 class immediately if not already done, then returns its pointer. It only works within the same
-collection — world and game-instance ue-subsystems cannot declare dependencies on each other.
+collection — world and game-instance subsystems cannot declare dependencies on each other.
 Circular dependency cycles are detected at runtime and result in an assertion failure.
 
 ### Deinitialization sequence
 
 `FSubsystemCollectionBase::Deinitialize` calls `USubsystem::Deinitialize()` on each active
 subsystem, in **reverse** initialization order (LIFO). Dependencies are therefore deinitialized
-after the ue-subsystems that depend on them.
+after the subsystems that depend on them.
 
 ## UWorldSubsystem extended lifecycle
 
@@ -52,10 +52,10 @@ after the ue-subsystems that depend on them.
 | Callback | When | Use for |
 |---|---|---|
 | `Initialize(Collection)` | World created, before actors initialize | subsystem setup, registering delegates |
-| `PostInitialize()` | After all world ue-subsystems are initialized | cross-subsystem references within the world |
+| `PostInitialize()` | After all world subsystems are initialized | cross-subsystem references within the world |
 | `OnWorldBeginPlay(World)` | Just before `BeginPlay` on actors | work that needs the world fully initialized |
 | `OnWorldEndPlay(World)` | After `EndPlay` on actors, before deinitialization | pre-teardown logic |
-| `PreDeinitialize()` | Just before `Deinitialize` | last-chance cleanup that needs peer ue-subsystems |
+| `PreDeinitialize()` | Just before `Deinitialize` | last-chance cleanup that needs peer subsystems |
 | `Deinitialize()` | World torn down | release references, cancel async work |
 
 `OnWorldBeginPlay` is the correct place for world-subsystem logic that would otherwise go in a
@@ -68,14 +68,14 @@ holds a `TMap<UClass*, USubsystem*>` internally. Each owner type (`UGameInstance
 `ULocalPlayer`, `UEngine`) owns one typed `FSubsystemCollection<TBaseType>` or
 `FObjectSubsystemCollection<TBaseType>` member.
 
-The GC sees the collection via `AddReferencedObjects`; the ue-subsystems themselves are
+The GC sees the collection via `AddReferencedObjects`; the subsystems themselves are
 `UObject`s owned by the outer, so the outer's lifetime governs theirs.
 
 `ForEachSubsystem` and `ForEachSubsystemOfClass` on the collection allow iterating all active
-ue-subsystems (e.g. to broadcast an event to every world subsystem). Removal during iteration is
+subsystems (e.g. to broadcast an event to every world subsystem). Removal during iteration is
 not permitted and is checked in debug builds.
 
-## Accessing ue-subsystems — all forms
+## Accessing subsystems — all forms
 
 ### C++ accessors on the owner
 
@@ -103,7 +103,7 @@ TSubsystem* S = GEngine->GetEngineSubsystem<TSubsystem>();                // Eng
 Subsystems can share an interface base. Retrieve all implementations via `GetSubsystemArrayCopy`:
 
 ```cpp
-// All GameInstance ue-subsystems derived from IMyInterface:
+// All GameInstance subsystems derived from IMyInterface:
 TArray<UMyIfaceSubsystem*> All = GI->GetSubsystemArrayCopy<UMyIfaceSubsystem>();
 ```
 

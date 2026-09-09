@@ -13,7 +13,7 @@ description: Build abilities, attributes, and effects with Unreal's Gameplay Abi
   GameplayAbilities plugin and AbilitySystemGlobals initialization.
 metadata:
   engine-version: "5.8"
-  category: ue-gameplay-framework
+  category: gameplay-framework
 ---
 
 # Gameplay Ability System (GAS)
@@ -338,13 +338,13 @@ Related skills: `ue-gameplay-tags` (GAS is tag-driven throughout), `ue-networkin
 `ue-animation-system` (montage tasks).
 
 Official docs (UE 5.8):
-- Gameplay Ability System — <https://dev.epicgames.com/documentation/unreal-engine/ue-gameplay-ability-system-for-unreal-engine>
-- ASC and Attributes — <https://dev.epicgames.com/documentation/unreal-engine/ue-gameplay-ability-system-component-and-gameplay-attributes-in-unreal-engine>
+- Gameplay Ability System — <https://dev.epicgames.com/documentation/unreal-engine/gameplay-ability-system-for-unreal-engine>
+- ASC and Attributes — <https://dev.epicgames.com/documentation/unreal-engine/gameplay-ability-system-component-and-gameplay-attributes-in-unreal-engine>
 - Gameplay Ability — <https://dev.epicgames.com/documentation/unreal-engine/using-gameplay-abilities-in-unreal-engine>
-- Gameplay Attributes and Attribute Sets — <https://dev.epicgames.com/documentation/unreal-engine/gameplay-attributes-and-attribute-sets-for-the-ue-gameplay-ability-system-in-unreal-engine>
-- Gameplay Effects — <https://dev.epicgames.com/documentation/unreal-engine/gameplay-effects-for-the-ue-gameplay-ability-system-in-unreal-engine>
+- Gameplay Attributes and Attribute Sets — <https://dev.epicgames.com/documentation/unreal-engine/gameplay-attributes-and-attribute-sets-for-the-gameplay-ability-system-in-unreal-engine>
+- Gameplay Effects — <https://dev.epicgames.com/documentation/unreal-engine/gameplay-effects-for-the-gameplay-ability-system-in-unreal-engine>
 - Ability Tasks — <https://dev.epicgames.com/documentation/unreal-engine/gameplay-ability-tasks-in-unreal-engine>
-- GAS Overview — <https://dev.epicgames.com/documentation/unreal-engine/understanding-the-unreal-engine-ue-gameplay-ability-system>
+- GAS Overview — <https://dev.epicgames.com/documentation/unreal-engine/understanding-the-unreal-engine-gameplay-ability-system>
 
 Deep-dive references in this skill:
 - [references/ability-system-component.md](references/ability-system-component.md) — ASC setup,

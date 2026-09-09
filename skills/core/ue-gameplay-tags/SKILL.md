@@ -13,7 +13,7 @@ description: Use Gameplay Tags in Unreal C++ — hierarchical FName-based labels
   with GAS, AI behavior trees, animation, or UI systems that gate behavior on tags.
 metadata:
   engine-version: "5.8"
-  category: ue-gameplay-framework
+  category: gameplay-framework
 ---
 
 # Gameplay Tags
@@ -271,7 +271,7 @@ Engine source (UE 5.8, `Engine/Source/Runtime/GameplayTags/`):
   `GameplayTagTableList`:145.
 
 Official docs (UE 5.8):
-- Gameplay Tags — <https://dev.epicgames.com/documentation/unreal-engine/using-ue-gameplay-tags-in-unreal-engine>
+- Gameplay Tags — <https://dev.epicgames.com/documentation/unreal-engine/using-gameplay-tags-in-unreal-engine>
 - Gameplay Systems — <https://dev.epicgames.com/documentation/unreal-engine/gameplay-systems-in-unreal-engine>
 
 Deep-dive references in this skill:

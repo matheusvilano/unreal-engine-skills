@@ -4,7 +4,7 @@ description: >
   Automate and extend the Unreal Editor using Python (the `unreal` module, startup scripts,
   commandlets), Editor Utility Widgets/Blueprints (Blutility — UEditorUtilityWidget,
   UEditorUtilityObject, UEditorUtilityWidgetBlueprint, UAssetActionUtility), the editor
-  scripting ue-subsystems (UEditorActorSubsystem, UEditorAssetSubsystem, ULevelEditorSubsystem,
+  scripting subsystems (UEditorActorSubsystem, UEditorAssetSubsystem, ULevelEditorSubsystem,
   UAssetEditorSubsystem, UEditorUtilitySubsystem), and how C++ UFUNCTION specifiers
   (BlueprintCallable, CallInEditor, ScriptMethod, ScriptName) control which APIs surface in
   Python and Blueprints. Use when batch-processing assets, building in-editor tools or
@@ -145,9 +145,9 @@ Widget setup, tab lifecycle, `UEditorUtilityTask`, and scripted-actions detail.
 
 ---
 
-## Editor scripting ue-subsystems
+## Editor scripting subsystems
 
-All ue-subsystems inherit `UEditorSubsystem`. Access them via
+All subsystems inherit `UEditorSubsystem`. Access them via
 `GEditor->GetEditorSubsystem<T>()` in C++ or `unreal.get_editor_subsystem(T)` in Python.
 
 ### `UEditorActorSubsystem` (`Editor/UnrealEd/Public/Subsystems/EditorActorSubsystem.h:49`)
@@ -198,7 +198,7 @@ Open assets in their specialized asset editors programmatically.
 Viewport camera query/set (`GetLevelViewportCameraInfo`, `SetLevelViewportCameraInfo`)
 and `GetEditorWorld()`.
 
-See [references/editor-ue-subsystems.md](references/editor-ue-subsystems.md) for all subsystem
+See [references/editor-subsystems.md](references/editor-subsystems.md) for all subsystem
 methods and Python equivalents.
 
 ---
@@ -287,7 +287,7 @@ Engine source (UE 5.8):
 - `Classes/EditorUtilityTask.h` — `UEditorUtilityTask`:32, `FinishExecutingTask()`:56
 - `Public/EditorUtilitySubsystem.h` — `UEditorUtilitySubsystem`:47, `SpawnAndRegisterTab`:88, `RegisterAndExecuteTask`:140, `TryRun`:76
 
-**Editor ue-subsystems** (`Engine/Source/Editor/UnrealEd/Public/Subsystems/`):
+**Editor subsystems** (`Engine/Source/Editor/UnrealEd/Public/Subsystems/`):
 - `EditorActorSubsystem.h` — `UEditorActorSubsystem`:49, `GetAllLevelActors`:166, `SpawnActorFromClass`:228, `DestroyActor`:236
 - `EditorAssetSubsystem.h` — `UEditorAssetSubsystem`:38, `LoadAsset`:54, `SaveAsset`:296, `DuplicateAsset`:185, `RenameAsset`:215, `DeleteAsset`:155
 - `AssetEditorSubsystem.h` — `UAssetEditorSubsystem`:112
@@ -304,7 +304,7 @@ Engine source (UE 5.8):
 **Reflection/meta specifiers** (`Engine/Source/Runtime/CoreUObject/Public/UObject/ObjectMacros.h`):
 - `CallInEditor`:1005, `ScriptName`:1243, `ScriptMethod`:1671, `ScriptMethodSelfReturn`:1674, `ScriptMethodMutable`:1677
 
-**Deprecated (EditorScriptingUtilities plugin, prefer ue-subsystems)**:
+**Deprecated (EditorScriptingUtilities plugin, prefer subsystems)**:
 - `Engine/Plugins/Editor/EditorScriptingUtilities/Source/EditorScriptingUtilities/Public/EditorAssetLibrary.h`
 - `Engine/Plugins/Editor/EditorScriptingUtilities/Source/EditorScriptingUtilities/Public/EditorLevelLibrary.h` (deprecated UE 5.0)
 
@@ -315,7 +315,7 @@ Official docs (UE 5.8):
 - Python API Reference — <https://dev.epicgames.com/documentation/unreal-engine/PythonAPI>
 
 Deep-dive references in this skill:
-- [references/editor-ue-subsystems.md](references/editor-ue-subsystems.md) — all subsystem classes,
+- [references/editor-subsystems.md](references/editor-subsystems.md) — all subsystem classes,
   their methods, and Python equivalents.
 - [references/editor-utility-widgets.md](references/editor-utility-widgets.md) — Blutility
   class hierarchy, tab lifecycle, `UEditorUtilityTask`, scripted actions.

@@ -8,7 +8,7 @@ description: Implement Unreal's gameplay framework in C++ — GameInstance, AGam
   respawn logic, or deciding "where does this code live?"
 metadata:
   engine-version: "5.8"
-  category: ue-gameplay-framework
+  category: gameplay-framework
 ---
 
 # Gameplay framework
@@ -29,7 +29,7 @@ decision in UE gameplay code.
 
 | Class | Lives where | Core responsibility | Replicated? |
 |---|---|---|---|
-| `UGameInstance` | one per game, persists across level loads | app-lifetime state, ue-subsystems, online sessions | no |
+| `UGameInstance` | one per game, persists across level loads | app-lifetime state, subsystems, online sessions | no |
 | `AGameModeBase` | **server only** | rules, default classes, login/spawn flow | no |
 | `AGameMode` | **server only** | adds match-state machine on top of Base | no |
 | `AGameStateBase` | server + all clients | game-wide visible state (score, timer, match phase) | yes |
@@ -164,7 +164,7 @@ Then wire the GameMode per-project (Project Settings → Maps & Modes →
 If it must survive a level load → `UGameInstance` or `UGameInstanceSubsystem`
 (see `ue-subsystems`). If only the server may decide it → `AGameModeBase`.
 
-## GameInstance and ue-subsystems
+## GameInstance and subsystems
 
 `UGameInstance` is created once on engine launch and destroyed when the application exits,
 surviving all level transitions. Override `Init` (`GameInstance.h`:217) and
@@ -284,7 +284,7 @@ Engine source (UE 5.8, under `Engine/Source/Runtime/Engine/Classes/`):
 
 Official docs (UE 5.8, all fetched and confirmed live):
 - Gameplay Framework overview —
-  <https://dev.epicgames.com/documentation/unreal-engine/ue-gameplay-framework-in-unreal-engine>
+  <https://dev.epicgames.com/documentation/unreal-engine/gameplay-framework-in-unreal-engine>
 - Game Mode and Game State —
   <https://dev.epicgames.com/documentation/unreal-engine/game-mode-and-game-state-in-unreal-engine>
 - Player Controllers —
@@ -292,7 +292,7 @@ Official docs (UE 5.8, all fetched and confirmed live):
 - Pawn — <https://dev.epicgames.com/documentation/unreal-engine/pawn-in-unreal-engine>
 - Controllers — <https://dev.epicgames.com/documentation/unreal-engine/controllers-in-unreal-engine>
 - Gameplay Framework Quick Reference —
-  <https://dev.epicgames.com/documentation/unreal-engine/ue-gameplay-framework-quick-reference-in-unreal-engine>
+  <https://dev.epicgames.com/documentation/unreal-engine/gameplay-framework-quick-reference-in-unreal-engine>
 
 Deep-dive references in this skill:
 - [references/gamemode-and-state.md](references/gamemode-and-state.md) — GameMode class

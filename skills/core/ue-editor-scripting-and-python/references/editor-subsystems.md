@@ -1,4 +1,4 @@
-# Editor scripting ue-subsystems — full reference
+# Editor scripting subsystems — full reference
 
 Deep dive for [../SKILL.md](../SKILL.md). Covers all `UEditorSubsystem` subclasses used for
 editor automation, their key methods, Python equivalents, and how to obtain them in C++ and
@@ -20,7 +20,7 @@ import unreal
 as_ = unreal.get_editor_subsystem(unreal.EditorActorSubsystem)
 ```
 
-All ue-subsystems are `UEditorSubsystem` → `USubsystem` → `UObject`. Their lifetimes are
+All subsystems are `UEditorSubsystem` → `USubsystem` → `UObject`. Their lifetimes are
 managed by the editor; never store raw pointers across frames.
 
 ---
@@ -155,7 +155,7 @@ Key methods: `OpenEditorForAsset(Asset)`, `CloseAllAssetEditors()`,
 **Header:** `Engine/Source/Editor/UnrealEd/Public/Subsystems/UnrealEditorSubsystem.h:17`  
 **Module:** `UnrealEd`
 
-A small utility subsystem for things that don't belong in the more specific ue-subsystems.
+A small utility subsystem for things that don't belong in the more specific subsystems.
 
 | Method | Line | What it does |
 |---|---|---|
@@ -204,5 +204,5 @@ PIE delegates: `OnBeginPIE`, `OnEndPIE` (`BlueprintAssignable`).
 
 The deprecated classes still exist in
 `Engine/Plugins/Editor/EditorScriptingUtilities/Source/EditorScriptingUtilities/Public/`
-for backwards compatibility, but new code should use the ue-subsystems. Python code that calls
+for backwards compatibility, but new code should use the subsystems. Python code that calls
 `unreal.EditorAssetLibrary.load_asset(...)` still works but generates deprecation warnings.
