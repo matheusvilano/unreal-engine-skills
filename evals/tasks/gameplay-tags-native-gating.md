@@ -1,5 +1,5 @@
 ---
-skill: gameplay-tags
+skill: ue-gameplay-tags
 title: Native tags + tag-gated ability check
 ---
 

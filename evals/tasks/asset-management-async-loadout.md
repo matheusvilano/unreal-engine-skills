@@ -1,5 +1,5 @@
 ---
-skill: asset-management
+skill: ue-asset-management
 title: Async-load a weapon loadout from soft references
 ---
 

@@ -1,5 +1,5 @@
 ---
-skill: gameplay-architecture-planning
+skill: ue-gameplay-architecture-planning
 title: Multiplayer inventory architecture and implementation plan
 ---
 

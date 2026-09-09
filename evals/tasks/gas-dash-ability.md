@@ -1,5 +1,5 @@
 ---
-skill: gameplay-ability-system
+skill: ue-gameplay-ability-system
 title: GAS dash ability with cooldown and stamina cost
 ---
 

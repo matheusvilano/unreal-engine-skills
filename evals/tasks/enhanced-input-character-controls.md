@@ -1,5 +1,5 @@
 ---
-skill: enhanced-input
+skill: ue-enhanced-input
 title: Enhanced Input move/look/jump bindings in C++
 ---
 
