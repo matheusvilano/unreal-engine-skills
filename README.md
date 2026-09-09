@@ -60,72 +60,72 @@ unreal-engine-skills/
 Status: ✅ built · 🟡 planned. (Planned skills are tracked as tasks and built in batches.)
 
 ### Cross-cutting / meta
-- ✅ `gameplay-architecture-planning` — brainstorm systems, compare trade-offs, map ownership/communication/data, and produce implementation plans
-- ✅ `navigating-engine-source` — locate and cite exact APIs in the on-disk engine source
-- ✅ `coding-standards` — Epic C++ coding standard, naming prefixes, conventions
+- ✅ `ue-gameplay-architecture-planning` — brainstorm systems, compare trade-offs, map ownership/communication/data, and produce implementation plans
+- ✅ `ue-navigating-engine-source` — locate and cite exact APIs in the on-disk engine source
+- ✅ `ue-coding-standards` — Epic C++ coding standard, naming prefixes, conventions
 
 ### C++ foundations
-- ✅ `cpp-fundamentals` — UObject, UCLASS/USTRUCT/UENUM, UPROPERTY/UFUNCTION, reflection, GC
-- ✅ `module-and-build-system` — modules, `*.Build.cs`, `*.Target.cs`, dependencies
-- ✅ `project-structure` — `.uproject`, Config/Content/Source layout, plugins
-- ✅ `memory-and-gc` — UPROPERTY ownership, `TObjectPtr`, weak ptrs, smart pointers
-- ✅ `core-types-and-containers` — `TArray`/`TMap`/`TSet`, `FString`/`FName`/`FText`, math types
-- ✅ `delegates-and-events` — single/multicast/dynamic delegates and events
-- ✅ `logging-and-assertions` — `UE_LOG`, log categories, `check`/`ensure`
+- ✅ `ue-cpp-fundamentals` — UObject, UCLASS/USTRUCT/UENUM, UPROPERTY/UFUNCTION, reflection, GC
+- ✅ `ue-module-and-build-system` — modules, `*.Build.cs`, `*.Target.cs`, dependencies
+- ✅ `ue-project-structure` — `.uproject`, Config/Content/Source layout, plugins
+- ✅ `ue-memory-and-gc` — UPROPERTY ownership, `TObjectPtr`, weak ptrs, smart pointers
+- ✅ `ue-core-types-and-containers` — `TArray`/`TMap`/`TSet`, `FString`/`FName`/`FText`, math types
+- ✅ `ue-delegates-and-events` — single/multicast/dynamic delegates and events
+- ✅ `ue-logging-and-assertions` — `UE_LOG`, log categories, `check`/`ensure`
 
 ### Gameplay framework
-- ✅ `gameplay-framework` — GameInstance, GameMode/GameState, PlayerController, Pawn/Character, PlayerState, HUD
-- ✅ `actors-and-components` — `AActor` lifecycle, components, attachment, spawning
-- ✅ `character-and-movement` — `ACharacter`, `UCharacterMovementComponent`
-- ✅ `enhanced-input` — Enhanced Input actions, mapping contexts, bindings
-- ✅ `subsystems` — Engine/GameInstance/World/LocalPlayer subsystems
-- ✅ `timers-and-async` — `FTimerManager`, async tasks, latent actions
-- ✅ `gameplay-tags` — `FGameplayTag`, containers, tag-driven logic
-- ✅ `gameplay-ability-system` — GAS abilities, attributes, effects, tasks
+- ✅ `ue-gameplay-framework` — GameInstance, GameMode/GameState, PlayerController, Pawn/Character, PlayerState, HUD
+- ✅ `ue-actors-and-components` — `AActor` lifecycle, components, attachment, spawning
+- ✅ `ue-character-and-movement` — `ACharacter`, `UCharacterMovementComponent`
+- ✅ `ue-enhanced-input` — Enhanced Input actions, mapping contexts, bindings
+- ✅ `ue-subsystems` — Engine/GameInstance/World/LocalPlayer ue-subsystems
+- ✅ `ue-timers-and-async` — `FTimerManager`, async tasks, latent actions
+- ✅ `ue-gameplay-tags` — `FGameplayTag`, containers, tag-driven logic
+- ✅ `ue-gameplay-ability-system` — GAS abilities, attributes, effects, tasks
 
 ### Blueprints
-- ✅ `blueprint-fundamentals` — BP classes, graphs, variables, components, the C++↔BP relationship
-- ✅ `blueprint-cpp-integration` — expose C++ to BP (`BlueprintCallable`, native events, meta)
+- ✅ `ue-blueprint-fundamentals` — BP classes, graphs, variables, components, the C++↔BP relationship
+- ✅ `ue-blueprint-cpp-integration` — expose C++ to BP (`BlueprintCallable`, native events, meta)
 
 ### Content & assets
-- ✅ `asset-management` — `AssetRegistry`, soft/hard refs, async loading, `FObjectFinder`
-- ✅ `importing-content` — meshes/textures/audio, Interchange, FBX/glTF
-- ✅ `meshes-static-and-skeletal` — static & skeletal mesh setup
-- ✅ `materials-and-shaders` — material graph, instances, parameters, material C++
-- ✅ `data-driven-design` — DataTables, DataAssets, curves, config-driven systems
+- ✅ `ue-asset-management` — `AssetRegistry`, soft/hard refs, async loading, `FObjectFinder`
+- ✅ `ue-importing-content` — meshes/textures/audio, Interchange, FBX/glTF
+- ✅ `ue-meshes-static-and-skeletal` — static & skeletal mesh setup
+- ✅ `ue-materials-and-shaders` — material graph, instances, parameters, material C++
+- ✅ `ue-data-driven-design` — DataTables, DataAssets, curves, config-driven systems
 
 ### Animation
-- ✅ `animation-system` — skeletal meshes, AnimInstance/AnimBP, state machines, montages, notifies
-- ✅ `control-rig-and-ik` — Control Rig, IK Rig/Retargeter
-- ✅ `sequencer-and-cinematics` — Sequencer, cameras, cinematics
+- ✅ `ue-animation-system` — skeletal meshes, AnimInstance/AnimBP, state machines, montages, notifies
+- ✅ `ue-control-rig-and-ik` — Control Rig, IK Rig/Retargeter
+- ✅ `ue-sequencer-and-cinematics` — Sequencer, cameras, cinematics
 
 ### World building
-- ✅ `levels-and-world-partition` — levels, World Partition, data layers, streaming
-- ✅ `landscape-and-foliage` — landscape, foliage, PCG
-- ✅ `lighting-and-lumen` — lighting, Lumen GI/reflections
-- ✅ `nanite-and-rendering` — Nanite, rendering features, post process
+- ✅ `ue-levels-and-world-partition` — levels, World Partition, data layers, streaming
+- ✅ `ue-landscape-and-foliage` — landscape, foliage, PCG
+- ✅ `ue-lighting-and-lumen` — lighting, Lumen GI/reflections
+- ✅ `ue-nanite-and-rendering` — Nanite, rendering features, post process
 
 ### VFX & audio
-- ✅ `niagara-vfx` — Niagara systems, emitters, modules
-- ✅ `audio-and-metasounds` — MetaSounds, audio components, attenuation
+- ✅ `ue-niagara-vfx` — Niagara systems, emitters, modules
+- ✅ `ue-audio-and-metasounds` — MetaSounds, audio components, attenuation
 
 ### UI
-- ✅ `umg-and-slate` — UMG widgets, widget C++, Slate, CommonUI
+- ✅ `ue-umg-and-slate` — UMG widgets, widget C++, Slate, CommonUI
 
 ### Systems
-- ✅ `networking-and-replication` — replication, RPCs, replicated properties, multiplayer
-- ✅ `physics-and-chaos` — collision, physics, Chaos
-- ✅ `ai-and-navigation` — behavior trees, blackboard, EQS, navmesh
-- ✅ `save-and-load` — `USaveGame`, serialization
+- ✅ `ue-networking-and-replication` — replication, RPCs, replicated properties, multiplayer
+- ✅ `ue-physics-and-chaos` — collision, physics, Chaos
+- ✅ `ue-ai-and-navigation` — behavior trees, blackboard, EQS, navmesh
+- ✅ `ue-save-and-load` — `USaveGame`, serialization
 
 ### Tooling, pipeline, quality
-- ✅ `editor-scripting-and-python` — editor utilities, Python, Blutility
-- ✅ `plugins-and-modules` — creating and structuring plugins
-- ✅ `automation-and-testing` — automation specs, functional tests
-- ✅ `profiling-and-optimization` — Unreal Insights, `stat` commands, memory
-- ✅ `game-thread-performance` — game-thread budgets, FPS impact, optimization levers
-- ✅ `packaging-and-deployment` — cooking, packaging, platforms
-- ✅ `debugging-techniques` — debugger, Gameplay Debugger, Visual Logger
+- ✅ `ue-editor-scripting-and-python` — editor utilities, Python, Blutility
+- ✅ `ue-plugins-and-modules` — creating and structuring plugins
+- ✅ `ue-automation-and-testing` — automation specs, functional tests
+- ✅ `ue-profiling-and-optimization` — Unreal Insights, `stat` commands, memory
+- ✅ `ue-game-thread-performance` — game-thread budgets, FPS impact, optimization levers
+- ✅ `ue-packaging-and-deployment` — cooking, packaging, platforms
+- ✅ `ue-debugging-techniques` — debugger, Gameplay Debugger, Visual Logger
 
 ### Marketplace asset pack skills
 
@@ -136,23 +136,23 @@ with one deviation from convention: skills cite the pack's documentation + its p
 pseudocode for packs that have no public C++ API.
 
 #### Ultra Dynamic Sky
-- ✅ `uds-setup-and-modes` — adding UDS to a level, Sky/Color/Project/Feature Mode
-- ✅ `uds-clouds` — Volumetric/Static/2D/Voxel clouds, movement, painter, wisps, light rays
-- ✅ `uds-time` — Time of Day, day/night cycle, runtime functions, event dispatchers
-- ✅ `uds-sun-moon-stars` — sun/moon positioning + appearance, stars, aurora, Space Layer (planets/moons/nebula)
-- ✅ `uds-lighting-and-shadows` — sun/moon directional lights, cloud shadows, sky light modes, exposure, light shafts, Light Day/Night Toggle
-- ✅ `uds-fog-and-atmosphere` — fog density/color, volumetric fog, Global Volumetric Material, dust, sky atmosphere, Simplified Color
-- ✅ `uds-simulation` — real-world sun/moon/stars (lat/long/date/time zone), city presets, Use System Time
-- ✅ `uds-cinematics-rendering` — Sequencer keyframing, Movie Render Queue, Path Tracer support, seamless cloud looping
-- ✅ `uds-modifiers-configs-state` — Sky Modifiers, Configuration Manager, save/load state, lens flare, post process components, interior + Player Occlusion, water level, on-screen UI
-- ✅ `uds-performance-mobile-troubleshooting` — perf levers, mobile + Feature Level, updating UDS, cache system (Static Properties / Hard Reset Cache), common runtime issues
+- ✅ `ue-uds-setup-and-modes` — adding UDS to a level, Sky/Color/Project/Feature Mode
+- ✅ `ue-uds-clouds` — Volumetric/Static/2D/Voxel clouds, movement, painter, wisps, light rays
+- ✅ `ue-uds-time` — Time of Day, day/night cycle, runtime functions, event dispatchers
+- ✅ `ue-uds-sun-moon-stars` — sun/moon positioning + appearance, stars, aurora, Space Layer (planets/moons/nebula)
+- ✅ `ue-uds-lighting-and-shadows` — sun/moon directional lights, cloud shadows, sky light modes, exposure, light shafts, Light Day/Night Toggle
+- ✅ `ue-uds-fog-and-atmosphere` — fog density/color, volumetric fog, Global Volumetric Material, dust, sky atmosphere, Simplified Color
+- ✅ `ue-uds-simulation` — real-world sun/moon/stars (lat/long/date/time zone), city presets, Use System Time
+- ✅ `ue-uds-cinematics-rendering` — Sequencer keyframing, Movie Render Queue, Path Tracer support, seamless cloud looping
+- ✅ `ue-uds-modifiers-configs-state` — Sky Modifiers, Configuration Manager, save/load state, lens flare, post process components, interior + Player Occlusion, water level, on-screen UI
+- ✅ `ue-uds-performance-mobile-troubleshooting` — perf levers, mobile + Feature Level, updating UDS, cache system (Static Properties / Hard Reset Cache), common runtime issues
 
 #### Ultra Dynamic Weather
-- ✅ `udw-setup-and-state` — weather state model, presets, Change Weather, Manual Weather State, sampling, event dispatchers, Actor Weather Status component
-- ✅ `udw-random-seasons-temperature` — Random Weather Variation, seasons (0–4), climate presets, temperature system, Temperature Volumes
-- ✅ `udw-spatial-weather` — Weather Override Volumes, Radial Storms, Weather Above Volumetric Clouds, Weather Mask Brush / Projection Box
-- ✅ `udw-particles-lightning-wind-sounds` — rain/snow/dust particles, collision modes, lightning (incl. strikable actor interface), wind systems, sounds, environment sounds (5.1 metasound)
-- ✅ `udw-material-and-screen-effects` — Surface Weather Effects, DLWE V3, Glass Rain Drips, Foliage Wind, Water Ripples, screen droplets/frost/distortion, Puddle Fluid Volume, drip splines, breath, icicles
+- ✅ `ue-udw-setup-and-state` — weather state model, presets, Change Weather, Manual Weather State, sampling, event dispatchers, Actor Weather Status component
+- ✅ `ue-udw-random-seasons-temperature` — Random Weather Variation, seasons (0–4), climate presets, temperature system, Temperature Volumes
+- ✅ `ue-udw-spatial-weather` — Weather Override Volumes, Radial Storms, Weather Above Volumetric Clouds, Weather Mask Brush / Projection Box
+- ✅ `ue-udw-particles-lightning-wind-sounds` — rain/snow/dust particles, collision modes, lightning (incl. strikable actor interface), wind systems, sounds, environment sounds (5.1 metasound)
+- ✅ `ue-udw-material-and-screen-effects` — Surface Weather Effects, DLWE V3, Glass Rain Drips, Foliage Wind, Water Ripples, screen droplets/frost/distortion, Puddle Fluid Volume, drip splines, breath, icicles
 
 ## Authoring conventions
 
@@ -179,7 +179,7 @@ editing skills, and when re-targeting a new engine version):
 
 ```
 node scripts/check-citations.mjs            # all skills
-node scripts/check-citations.mjs core/gameplay-tags   # one skill
+node scripts/check-citations.mjs core/ue-gameplay-tags   # one skill
 ```
 
 Set `UE_ENGINE_ROOT` if your engine install is not at the default path.

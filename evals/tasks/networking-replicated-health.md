@@ -1,5 +1,5 @@
 ---
-skill: networking-and-replication
+skill: ue-networking-and-replication
 title: Replicated health + server-authoritative damage RPC
 ---
 

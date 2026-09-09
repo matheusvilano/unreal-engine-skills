@@ -83,7 +83,7 @@ Order skills roughly like this. Omit sections that don't apply.
 ## 5. Naming
 
 - Skill folder = `name`. Use the action/domain, lowercase-hyphenated:
-  `gameplay-framework`, `enhanced-input`, `networking-and-replication`.
+  `ue-gameplay-framework`, `ue-enhanced-input`, `ue-networking-and-replication`.
 - Reference files: `references/REFERENCE.md` for the main deep-dive, or topic files like
   `references/replication-conditions.md`.
 - Scripts: name by what they do, e.g. `scripts/create_widget_blueprint.py`.

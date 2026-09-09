@@ -1,5 +1,5 @@
 ---
-skill: umg-and-slate
+skill: ue-umg-and-slate
 title: C++ HUD widget with BindWidget and dynamic updates
 ---
 

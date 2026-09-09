@@ -10,7 +10,7 @@
  *
  * Usage:
  *   node scripts/check-citations.mjs            # check all skills
- *   node scripts/check-citations.mjs core/gameplay-tags   # check one skill dir
+ *   node scripts/check-citations.mjs core/ue-gameplay-tags   # check one skill dir
  *
  * Engine root resolution:
  *   1. UE_ENGINE_ROOT env var (the directory that CONTAINS Engine/), if set.
