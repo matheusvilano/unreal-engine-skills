@@ -1,5 +1,5 @@
 ---
-name: mover-movement-system
+name: ue-mover-movement-system
 description: Implement actor movement with Unreal's experimental Mover plugin
   (UE 5.8) — the modular, rollback-networked successor to
   CharacterMovementComponent. Covers UMoverComponent / UCharacterMoverComponent

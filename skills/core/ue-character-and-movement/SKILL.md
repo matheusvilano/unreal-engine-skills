@@ -286,7 +286,7 @@ Epic states CMC will remain supported "for the foreseeable future" after Mover
 reaches production status. For new projects targeting UE 5.8+, evaluate Mover
 only if you need its modular architecture or non-capsule shapes and can accept
 experimental status. See `references/networked-movement.md` for the CMC vs.
-Mover replication model comparison, and the dedicated `mover-movement-system`
+Mover replication model comparison, and the dedicated `ue-mover-movement-system`
 skill for full Mover setup, modes, layered moves, and backends.
 
 ## Gotchas
